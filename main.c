@@ -2,7 +2,7 @@
  * Station.c
  *
  * Created: 2014-12-11 17:03:22
- *  Author: Daniel
+ *  Author: Daniel and Staffan
  */ 
 
 #include "mem.h"
@@ -14,11 +14,13 @@
 #include "rtc.h"
 
 float fTemp_Sum = 0;
-int iN_Avg = 0;
-
-inline void Save_Measurements();
-inline void Temp_Sensor();
-inline void Measure();
+int iN_Avg = 0;//should be initialized at welcome screen
+extern char cTemp_Reset_Ready_Flag;
+extern char cTemp_Measurement_Ready_Flag;
+char cTimeToReadTemp = 0;
+void Save_Measurements();
+void Temp_Sensor();
+void Measure();
 /**
  * \brief Application entry point.
  *
@@ -27,15 +29,14 @@ inline void Measure();
 int main(void)
 {
     /* Initialize the SAM system */
-    SystemInit();
-	int MODE = 0;
-	
-	RTC_Init(00,00,22,20,14,12,14,7);
+	SystemInit();
+	int MODE = 0;//should be initialized at welcome screen
+	RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
 	//Memory_Init();
 	//Keypad_Init();
 	//Display_Init();
 	//Display_Set_Default_State();
-    while (1) 
+	while (1) 
     {
 		Temp_Sensor();
 		//Display_Write("hejhej",0,0);
@@ -64,7 +65,7 @@ void SysTick_Handler(void){
 inline void Save_Measurements(){
 	Memory_Save(fTemp_Sum/(float)iN_Avg);
 	fTemp_Sum = 0;
-	//TODO: add saving of humidity
+	//TODO: add saving of humidity. Maybe display updates
 }
 
 inline void Measure(){
