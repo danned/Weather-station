@@ -17,6 +17,9 @@
  * End of bitmasks
  *----------------------------------------------------------------*/
 //extern char cLight_Sensor_State = -1;
+extern float fTemp_Sum;
+extern int iN_Avg;
 extern int MODE;
-void Delay(int Value);
+extern void Delay(int Value);
+extern void Save_Measurements();
 
