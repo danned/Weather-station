@@ -102,6 +102,17 @@ int Memory_Remove(){
 	}
 }
 
+/**
+ * Returns float value of temp stored at node
+ */
+float Memory_Get( node *prNode ){
+	if(prNode != NULL){
+		return (float)prNode->sTemp/100;
+	}else{
+		return 600; //TODO: this return should indicate error
+	}
+}
+
 /*-------------------------------------------------------------------------------------------------------------------*
  *												INTERNAL FUNCTIONS												     *
  *												  implementations												     *

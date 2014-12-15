@@ -3,7 +3,7 @@
  * This file contains implementations for the servo.
  *
  * This sensor uses interrupts triggered by ADC
- * You have to make a global variable in your program called cLight_Sensor_State set to -1. can make time module set state to 0 when temp reading is requested.
+ * You have to make a extern variable in your program called cLight_Sensor_State. Set state to 0 when reading is required
  * In main program do below
  * if state == 0 
  *   Call Light_Sensor_Start_Measure
