@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "includes/common.h"
 void Interupt_RTC_Start();
-void Interupt_RTC_Set_Mode();
+void Interupt_RTC_Set_Mode(char mode);
  /* Real time clock - see page ~256 of atmel doc when working with this
 Cent is 19 or 20, year is for example 15, day is 1-7 weekday. date is 1-31
 Usage: Set values in natural BCD numbers. for example highest value in sec and min is 59
@@ -30,9 +30,8 @@ void RTC_Init(char sec, char min, char hr, char cent, char year, char month, cha
 }
 
 inline void Interupt_RTC_Start(){
-	*AT91C_RTC_TIMALR = 1<<15;//TODO: Remove this. This register is set when fastmode is set/clear
-	*AT91C_RTC_IDR = 0x1f;
-  	*AT91C_RTC_IER = 1<<3;
+	*AT91C_RTC_TIMALR = 1<<7;// set minute interrupt on time interrupt
+	Interupt_RTC_Set_Mode(1);
 	NVIC_ClearPendingIRQ(RTC_IRQn);
   	NVIC_SetPriority(RTC_IRQn, 7);
   	NVIC_EnableIRQ(RTC_IRQn);
@@ -40,13 +39,14 @@ inline void Interupt_RTC_Start(){
 /************************************************************************/
 /* 0 = sec, 1 = min                                                     */
 /************************************************************************/
-inline void Interupt_RTC_Set_Mode(){
-	
-	if((1&0x1) > 0){
-		*AT91C_RTC_TIMALR = 1<<15;
-	}else{//wrong mode set minute mode
-		*AT91C_RTC_TIMALR = 1<<7;
-	}
+inline void Interupt_RTC_Set_Mode(char mode){
+	*AT91C_RTC_IDR = 0x1f; // disable all interrupts
+	if((mode) == 0){
+		*AT91C_RTC_IER = 1<<2; //enable second periodic interrupt
+		//*AT91C_RTC_TIMALR = 1<<15;
+	}else if(mode == 1){
+		*AT91C_RTC_IER = 1<<1;
+	}//wrong mode do nothing
 }
 
 //NOTE: Only small numbers <100
