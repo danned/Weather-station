@@ -7,21 +7,33 @@
 
 #include "mem.h"
 #include "peripherals/temp_sensor.h"
+#include "peripherals/light_sensor.h"
 #include "peripherals/keypad.h"
 #include "peripherals/display.h"
+#include "controller.h"
 #include "includes/system_sam3x.h"
 #include "includes/common.h"
 #include "rtc.h"
 
 float fTemp_Sum = 0;
-int iN_Avg = 0;//should be initialized at welcome screen
+int iN_Avg = 3;//default setting
+int MODE = 0;//default mode
+
+char nState = 0; //keeps track of current state
+char nTempWarning = 0; //0 OR 1
+char nMemWarning = 0; // 0 OR 2   2 is active warning!
+
 extern char cTemp_Reset_Ready_Flag;
 extern char cTemp_Measurement_Ready_Flag;
+
 char cMeasure = 0;
 char cTimeToReadTemp = 0;
+
 void Save_Measurements();
 void Temp_Sensor();
+void Light_Sensor();
 void Measure();
+void Station_Init();
 /**
  * \brief Application entry point.
  *
@@ -29,21 +41,21 @@ void Measure();
  */
 int main(void)
 {
-    /* Initialize the SAM system */
-	SystemInit();
-	int MODE = 0;//should be initialized at welcome screen
-	RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
-	//Memory_Init();
-	//Keypad_Init();
-	//Display_Init();
-	//Display_Set_Default_State();
+	
+    Station_Init();// initializes station
+
+
 	while (1) 
     {
-		//if flag is set, temp will be measured
-		Temp_Sensor();
+		 /*CONTROLLER CODE*/
+		//---- State INDEPENDENT Keypad readings ----
+		unsigned char pressed = Keypad_Read();
+		Controller_User_Input(pressed);
 		
-		//if flag is set. Values will be saved
-		Save_Measurements();
+		
+		Temp_Sensor();//if flag is set, temp will be measured
+		Light_Sensor();	
+		Save_Measurements();//if flag is set. Values will be saved
 		
 		//Display_Write("hejhej",0,0);
     }
@@ -76,6 +88,7 @@ inline void Save_Measurements(){
 		Memory_Save(fTemp_Sum/(float)iN_Avg);
 		fTemp_Sum = 0;
 		//TODO: add saving of humidity. Maybe display updates
+		cLight_Sensor_State = 0; //sets to update lux value onscreen
 	}
 }
 
@@ -101,7 +114,29 @@ inline void Temp_Sensor(){
 		fTemp_Sum += Temp_Get();
 		//printf("%f",temp);
 	}
+
 }
 
+inline void Light_Sensor(){
+	if(cLight_Sensor_State  == 1){
+		cLight_Sensor_State = -1;
+	}
+}
+
+
+inline void Station_Init(){
+	/* Initialize the SAM system */
+	SystemInit();
+	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
+	
+	RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
+	Keypad_Init();
+	Temp_Init();	
+	Display_Init();
+	/*Build UI first time*/
+	Display_Write_Header(1,"System test","00:00");
+	Display_Write_Sidebar(0);
+	//Display_Write_Testing_Screen(Temp_Test(),0,0,0); //TODO implement
+}
 
 //TEST FROM STAEF GIT

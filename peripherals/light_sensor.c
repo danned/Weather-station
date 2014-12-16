@@ -51,6 +51,12 @@ void Light_Sensor_Start_Measure(void){
   
 }
 
+float Light_Sensor_Get(){
+	int reading = *AT91C_ADCC_LCDR;
+	//convert from 12-bit value to volt
+	return (3.3/(0xFFF))*reading;
+}
+
 
 /*----------------------------------------------------------------
  * ADC Handler
