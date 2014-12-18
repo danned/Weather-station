@@ -68,7 +68,7 @@ int main(void)
  */
 void RTC_Handler(void){
 	cMeasure = 1;
-	*AT91C_RTC_SCCR = 1<<1;
+	*AT91C_RTC_SCCR = 3<<1;
 	//printf("RTC Interrupt!");
 }
 
