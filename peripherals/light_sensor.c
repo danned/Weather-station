@@ -19,7 +19,7 @@
 
 
 
-char cLight_Sensor_State = -1;
+signed char cLight_Sensor_State = -1;
 /*----------------------------------------------------------------
  * \brief Light sensor init.
  * Enables clock for ADC block, and configures adc to 14MHz and resets adc
@@ -31,7 +31,10 @@ void LIGHTSENS_init(void){
 
 	//Config adc
 	*AT91C_ADCC_MR = (2<<8); //prescale clock to 14mhz
-	*AT91C_ADCC_CR = AT91C_ADC_SWRST;
+	*AT91C_ADCC_EMR = 3; //Interrupt on OUT of window
+	*AT91C_ADCC_CWR = 0x70F|(0x8FF<<16); //Window thresholds
+	*AT91C_ADCC_COR = (1<<16); //Enable diff mode
+	//*AT91C_ADCC_CR = AT91C_ADC_SWRST;
 	NVIC_ClearPendingIRQ(ADC_IRQn);
 	NVIC_SetPriority(ADC_IRQn, 5);
 	NVIC_EnableIRQ(ADC_IRQn);
@@ -44,19 +47,18 @@ void LIGHTSENS_init(void){
  *---------------------------------------------------------------- */
 void LIGHTSENS_startMeas(void){
   cLight_Sensor_State = 2;
-  *AT91C_ADCC_CHER = AT91C_ADC_CH0|AT91C_ADC_CH1; //channel enable AD1
+  *AT91C_ADCC_CHER = AT91C_ADC_CH0|AT91C_ADC_CH1; //channel enable AD13
+  *AT91C_ADCC_IER = (1<<24); //Enabling COMPARE interrupt
   *AT91C_ADCC_CR = AT91C_ADC_START; //channel start conversion
-  *AT91C_ADCC_IER = AT91C_ADC_CH0|AT91C_ADC_CH1;
-	;
   //*AT91C_ADCC_IER = (1<<1);
 
 }
 
 float LIGHTSENS_get(char ch){
- int reading;
-  if(ch == 0){
+    int reading;
+    if(ch == 0){
 	reading = *AT91C_ADCC_CDR0;
-  }
+    }
     if(ch == 1){
 	  reading = *AT91C_ADCC_CDR1;
 	}
@@ -79,12 +81,8 @@ float LIGHTSENS_getDiff(){
  * This flag indicates that the conversion is ready and data is ready to be read.
  *----------------------------------------------------------------*/
 void ADC_Handler(void){
-
-
-  if(*AT91C_ADCC_SR & (AT91C_ADC_CH0|AT91C_ADC_CH1) == 3){
- 	cLight_Sensor_State = 1;
-  	*AT91C_ADCC_IDR = AT91C_ADC_CH0|AT91C_ADC_CH1;
-  }
+	cLight_Sensor_State = 1;
+	*AT91C_ADCC_IDR = (1<<24); 
 
 }
 

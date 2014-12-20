@@ -7011,7 +7011,7 @@ typedef struct _AT91S_CAN {
 #define AT91C_ADCC_CDR7 (AT91_CAST(AT91_REG *) 	0x400C006C) // (ADCC) ADC Channel Data Register 7
 #define AT91C_ADCC_CHDR (AT91_CAST(AT91_REG *) 	0x400C0014) // (ADCC) ADC Channel Disable Register
 #define AT91C_ADCC_CDR0 (AT91_CAST(AT91_REG *) 	0x400C0050) // (ADCC) ADC Channel Data Register 0
-#define AT91C_ADCC_CWR  (AT91_CAST(AT91_REG *) 	0x400C0040) // (ADCC) unspecified
+#define AT91C_ADCC_EMR  (AT91_CAST(AT91_REG *) 	0x400C0040) // (ADCC) Extended mode reg
 #define AT91C_ADCC_CDR1 (AT91_CAST(AT91_REG *) 	0x400C0054) // (ADCC) ADC Channel Data Register 1
 #define AT91C_ADCC_ADDRSIZE (AT91_CAST(AT91_REG *) 	0x400C00EC) // (ADCC) ADC ADDRSIZE REGISTER 
 #define AT91C_ADCC_CDR5 (AT91_CAST(AT91_REG *) 	0x400C0064) // (ADCC) ADC Channel Data Register 5
@@ -7024,7 +7024,7 @@ typedef struct _AT91S_CAN {
 #define AT91C_ADCC_VER  (AT91_CAST(AT91_REG *) 	0x400C00FC) // (ADCC) ADC VERSION REGISTER
 #define AT91C_ADCC_CDR11 (AT91_CAST(AT91_REG *) 	0x400C007C) // (ADCC) ADC Channel Data Register 11
 #define AT91C_ADCC_CR   (AT91_CAST(AT91_REG *) 	0x400C0000) // (ADCC) ADC Control Register
-#define AT91C_ADCC_CWSR (AT91_CAST(AT91_REG *) 	0x400C0044) // (ADCC) unspecified
+#define AT91C_ADCC_CWR (AT91_CAST(AT91_REG *) 	0x400C0044) // (ADCC) Window select reg
 #define AT91C_ADCC_LCDR (AT91_CAST(AT91_REG *) 	0x400C0020) // (ADCC) ADC Last Converted Data Register
 #define AT91C_ADCC_OVR  (AT91_CAST(AT91_REG *) 	0x400C003C) // (ADCC) unspecified
 #define AT91C_ADCC_CDR8 (AT91_CAST(AT91_REG *) 	0x400C0070) // (ADCC) ADC Channel Data Register 8

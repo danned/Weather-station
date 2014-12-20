@@ -21,7 +21,7 @@
  * Period time is 20 ms, pwm clock is mck/32
  * CDTYR register will be set to 1.5 ms duty time
  *---------------------------------------------------------------- */
-void Servo_Init( void ){
+void SERVO_init( void ){
    *AT91C_PMC_PCER1 =   (1<<4);
    *AT91C_PMC_PCER =   (1<<11);
    *AT91C_PIOA_ABMR = (1<<20);
@@ -33,4 +33,13 @@ void Servo_Init( void ){
    
    *AT91C_PWMC_CH2_CDTYR = (int)2625*1.5;
    
+}
+
+int SERVO_getPos(void){
+	
+	return *AT91C_PWMC_CH2_CDTYR;
+}
+
+void SERVO_setPos(int val){
+	   *AT91C_PWMC_CH2_CDTYR = val;
 }

@@ -34,7 +34,7 @@ void RTC_Init(char sec, char min, char hr, char cent, char year, char month, cha
 
 inline void intStart(){
 	*AT91C_RTC_TIMALR = 1<<7;// set minute interrupt on time interrupt
-	intSetMode(1);
+	intSetMode(0);
 	NVIC_ClearPendingIRQ(RTC_IRQn);
   	NVIC_SetPriority(RTC_IRQn, 7);
   	NVIC_EnableIRQ(RTC_IRQn);

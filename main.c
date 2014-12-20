@@ -45,7 +45,8 @@ static void saveMeas(){
 		MEM_save(fTemp_Sum/(float)iN_Avg);
 		fTemp_Sum = 0;
 		//TODO: add saving of humidity. Maybe display updates
-		cLight_Sensor_State = 0; //sets to update lux value onscreen
+		if(cLight_Sensor_State == -1)
+			cLight_Sensor_State = 0; //sets to update lux value onscreen
 	}
 }
 
@@ -75,9 +76,12 @@ static void tempSens(){
 }
 
 static void lightSens(){
-	if(cLight_Sensor_State  == 1){
+	if(cLight_Sensor_State  == 0 ){
+		LIGHTSENS_startMeas(); 
+		cLight_Sensor_State = 2;
+	}else if(cLight_Sensor_State == 1){
+		printf("Diff: %f\n",LIGHTSENS_getDiff());
 		cLight_Sensor_State = -1;
-		//should measure
 	}
 }
 
@@ -103,7 +107,7 @@ static void stationInit(){
  *
  * \return Unused (ANSI-C compatibility).
  */
-int main(void)
+int main3(void)
 {
 
     stationInit();// initializes station
@@ -111,17 +115,17 @@ int main(void)
 
 	while (1)
     {
-	  printf("Diff: %f\n",LIGHTSENS_getDiff());
+	  
 
 		 /*CONTROLLER CODE*/
 		//---- State INDEPENDENT Keypad readings ----
 		/*unsigned char pressed = Keypad_Read();
 		Controller_User_Input(pressed);
-		tempSens();//if flag is set, temp will be measured
-		lightSens();
+		tempSens();//if flag is set, temp will be measured*/
+		lightSens();  
 		saveMeas();//if flag is set. Values will be saved
 		//Display_Write("hejhej",0,0);
-	  */
+	
     }
 }
 
@@ -140,7 +144,7 @@ void RTC_Handler(void){
  * \brief SysTick triggers measurement of sensors TODO maybe use another counter. SysTick is used by other functions which needs it to interrupt every ms
  * Should make N interrupts per minute/second depending on mode.
  */
-void SysTick_Handler(void){
+void SysTick2_Handler(void){
 	measure();
 }
 

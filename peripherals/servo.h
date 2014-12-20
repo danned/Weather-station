@@ -19,5 +19,8 @@
  * Period time is 20 ms, pwm clock is mck/32
  * CDTYR register will be set to 1.5 ms duty time
  *---------------------------------------------------------------- */
-void Servo_Init( void );
+void SERVO_init( void );
+
+int SERVO_getPos(void);
+void SERVO_setPos(int val);
 #endif // _SERVO_H

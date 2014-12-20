@@ -20,7 +20,7 @@
  * This variable is used to keep in track what state the light sensor is.
  * 1 is done. -1 is inactive. 2 is busy. 0 is set when reading is required
  *----------------------------------------------------------------*/
-extern char cLight_Sensor_State;
+extern signed char cLight_Sensor_State;
 
 
 /*----------------------------------------------------------------
