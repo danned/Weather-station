@@ -30,8 +30,13 @@ TODO:
 - Cleanup comments
 - Testing, what if systicks gets ahead of my timer
 */
-#include "temp_sensor.h"
+#define START_DELAY 25
+#define SETUP_DELAY 840
 
+#include "temp_sensor.h"
+#include "../includes/system_sam3x.h"
+#include "../includes/at91sam3x8.h"
+#include "../includes/common.h"
 char cTemp_Reset_Ready_Flag = 0; //Shared!
 char cTemp_Measurement_Ready_Flag = 0; //Shared!
 

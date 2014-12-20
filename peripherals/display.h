@@ -1,8 +1,5 @@
-#include "../includes/at91sam3x8.h"
-#include "../includes/common.h"
-
-#define LONG_DELAY 100
-#define SHORT_DELAY 20
+#ifndef _DISPLAY_H_
+#define _DISPLAY_H_
 
 /*------PUBLIC------*/
 /* prints string at coordinate null terminated*/
@@ -41,3 +38,4 @@ void Display_Write_Sidebar(char state);
 
 /* clears display */
 void Display_Clear_Text(void);
+#endif // _DISPLAY_H_

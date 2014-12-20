@@ -19,6 +19,13 @@ TODO:
 */
 
 #include "controller.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "peripherals/display.h"
+#include "peripherals/temp_sensor.h"
+#include "includes/at91sam3x8.h"
+#include "rtc.h"
+
 /* Main flow control structure - takes a pressed key val*/
 char Controller_User_Input(char pressed){
 		if(pressed != 0){

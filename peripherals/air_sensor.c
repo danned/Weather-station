@@ -1,5 +1,5 @@
 #include "air_sensor.h"
-
+#include "../includes/at91sam3x8.h"
 void Air_Sensor_Init(){
 	/*
 		-Set CLDIV, CHDIV, CKDIV in TWI_CWGR
@@ -16,12 +16,12 @@ void Air_Sensor_Init(){
 	*AT91C_TWI0_CWGR = 0x60606;//ckdiv = 7, chdiv = cldiv = 3
 	*AT91C_TWI0_CR = AT91C_TWI_SVDIS | AT91C_TWI_MSEN;
 	*AT91C_TWI0_MMR = (0x60<<16) | AT91C_TWI_IADRSZ_1_BYTE ;
-        
+
         //for(int i = 0; i < 1000 ; i++)
           //asm("nop");
-	Air_Sensor_Write(BMP180_CTRL_REG1, BMP180_CTRL_REG_SBYB |1<<BMP180_CTRL_REG_OS );// set raw data output, oversample ratio = 2. Alt = 0. Sbyb = 1       
+	Air_Sensor_Write(BMP180_CTRL_REG1, BMP180_CTRL_REG_SBYB |1<<BMP180_CTRL_REG_OS );// set raw data output, oversample ratio = 2. Alt = 0. Sbyb = 1
 	Air_Sensor_Write(BMP180_PT_DATA_CFG, BMP180_PT_DATA_CFG_PDEFE|BMP180_PT_DATA_CFG_DREM );
-      
+
 
 }
 
@@ -57,7 +57,7 @@ char Air_Sensor_Read( char reg ){
 	*AT91C_TWI0_IADR = reg;
 	*AT91C_TWI0_CR =  AT91C_TWI_START|AT91C_TWI_STOP;
         //*AT91C_TWI0_CR = AT91C_TWI_STOP ;
-     
+
 	int timeout = 0;
 	while(!(*AT91C_TWI0_SR&AT91C_TWI_RXRDY) && timeout < 10000){
 		timeout ++;

@@ -1,8 +1,8 @@
-#include "peripherals/air_sensor.h"
+#include "air_sensor.h"
 #include <stdio.h>
-#include "includes/system_sam3x.h"
+#include "../includes/system_sam3x.h"
 
-int main(){
+int main2(){
     SystemInit();
     Air_Sensor_Init();
     unsigned char who = Air_Sensor_Read(0xc);

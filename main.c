@@ -3,7 +3,7 @@
  *
  * Created: 2014-12-11 17:03:22
  *  Author: Daniel and Staffan
- */ 
+ */
 
 #include "mem.h"
 #include "peripherals/temp_sensor.h"
@@ -14,6 +14,7 @@
 #include "includes/system_sam3x.h"
 #include "includes/common.h"
 #include "rtc.h"
+#include "includes/at91sam3x8.h"
 
 float fTemp_Sum = 0;
 int iN_Avg = 3;//default setting
@@ -41,22 +42,19 @@ void Station_Init();
  */
 int main(void)
 {
-	
+
     Station_Init();// initializes station
 
 
-	while (1) 
+	while (1)
     {
 		 /*CONTROLLER CODE*/
 		//---- State INDEPENDENT Keypad readings ----
 		unsigned char pressed = Keypad_Read();
 		Controller_User_Input(pressed);
-		
-		
 		Temp_Sensor();//if flag is set, temp will be measured
-		Light_Sensor();	
+		Light_Sensor();
 		Save_Measurements();//if flag is set. Values will be saved
-		
 		//Display_Write("hejhej",0,0);
     }
 }
@@ -74,7 +72,7 @@ void RTC_Handler(void){
 
 /**
  * \brief SysTick triggers measurement of sensors TODO maybe use another counter. SysTick is used by other functions which needs it to interrupt every ms
- * Should make N interrupts per minute/second depending on mode. 
+ * Should make N interrupts per minute/second depending on mode.
  */
 void SysTick_Handler(void){
 	Measure();
@@ -129,10 +127,10 @@ inline void Station_Init(){
 	/* Initialize the SAM system */
 	SystemInit();
 	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
-	
+
 	RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
 	Keypad_Init();
-	Temp_Init();	
+	Temp_Init();
 	Display_Init();
 	/*Build UI first time*/
 	Display_Write_Header(1,"System test","00:00");

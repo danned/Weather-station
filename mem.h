@@ -10,7 +10,8 @@
 /************************************************************************/
 /* Type definitions crucial for memory module                           */
 /************************************************************************/
-
+#ifndef _MEM_H_
+#define _MEM_H_
 typedef struct datestamp_t{
 	int date	: 5;
 	int month	: 4;
@@ -52,5 +53,5 @@ int Memory_Save(float fNew_Value);
 int Memory_Remove();
 
 
-
+#endif // _MEM_H_
 

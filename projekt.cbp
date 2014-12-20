@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="projekt" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release c::b">
+				<Option output="bin/Release/projekt" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="controller.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="controller.h" />
+		<Unit filename="includes/at91sam3x8.h" />
+		<Unit filename="includes/common.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="includes/common.h" />
+		<Unit filename="includes/core_cm3.h" />
+		<Unit filename="includes/core_cmFunc.h" />
+		<Unit filename="includes/core_cmInstr.h" />
+		<Unit filename="includes/cstartup.s" />
+		<Unit filename="includes/exceptions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="includes/exceptions.h" />
+		<Unit filename="includes/startup_sam3x.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="includes/system_sam3x.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="includes/system_sam3x.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="mem.h" />
+		<Unit filename="peripherals/air_sensor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="peripherals/air_sensor.h" />
+		<Unit filename="peripherals/air_sensor_test.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="peripherals/display.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="peripherals/display.h" />
+		<Unit filename="peripherals/keypad.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="peripherals/keypad.h" />
+		<Unit filename="peripherals/light_sensor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="peripherals/light_sensor.h" />
+		<Unit filename="peripherals/servo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="peripherals/servo.h" />
+		<Unit filename="peripherals/temp_sensor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="peripherals/temp_sensor.h" />
+		<Unit filename="rtc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="rtc.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -25,6 +25,11 @@ TODO:
 */
 #include "display.h"
 #include <math.h>
+#include "../includes/at91sam3x8.h"
+#include "../includes/common.h"
+
+#define LONG_DELAY 100
+#define SHORT_DELAY 20
 /* Displays X number of buttons in navigation bar
 Takes a pointer to an array containing chars[] (strings)
 So we loop thorugh each button,

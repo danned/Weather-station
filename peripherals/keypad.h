@@ -6,8 +6,8 @@
  * Then use Keypad_Read to check if there are any buttons pressed on pad
  * last updated 2014-12-10
  *----------------------------------------------------------------*/
-
-
+#ifndef _KEYPAD_H_
+#define _KEYPAD_H_
 /* ----------------------------------------------------------------
  * Keypad Read
  * Configures pin 7 8 9 as output, to set columns high and low
@@ -28,3 +28,5 @@ int Keypad_Read(void);
  * PIOD pin 2 and 0 will be configured as output set to 1
  * --------------------------------------------------------*/
 void Keypad_Init(void);
+
+#endif // _KEYPAD_H_

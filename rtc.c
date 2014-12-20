@@ -5,6 +5,9 @@
 #include "rtc.h"
 #include <stdio.h>
 #include "includes/common.h"
+#include "includes/at91sam3x8.h"
+#include "includes/system_sam3x.h"
+
 void Interupt_RTC_Start();
 void Interupt_RTC_Set_Mode(char mode);
  /* Real time clock - see page ~256 of atmel doc when working with this
@@ -23,8 +26,8 @@ void RTC_Init(char sec, char min, char hr, char cent, char year, char month, cha
   *AT91C_RTC_TIMR = make_BCD_pattern(sec)|(make_BCD_pattern(min)<<8)|(make_BCD_pattern(hr)<<16); //
   *AT91C_RTC_CALR = (make_BCD_pattern(cent))|(make_BCD_pattern(year)<<8)|(make_BCD_pattern(month)<<16)|(make_BCD_pattern(date)<<24)|(make_BCD_pattern(day)<<21);
   *AT91C_RTC_CR = 0; //Start counting
-  
-  
+
+
 	//Interupt_RTC_Set_Mode();
 	Interupt_RTC_Start();
 }

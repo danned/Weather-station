@@ -1,4 +1,5 @@
-#include "../includes/at91sam3x8.h"
+#ifndef _AIR_SENSOR_H_
+#define _AIR_SENSOR_H_
 
 /*
 	BMP180 specific defines
@@ -29,3 +30,4 @@ unsigned int Air_Sensor_Get_Pressure();
 	byte IIC_StopRead(void);
 
 */
+#endif // _AIR_SENSOR_H_
