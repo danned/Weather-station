@@ -29,12 +29,74 @@ extern char cTemp_Measurement_Ready_Flag;
 
 char cMeasure = 0;
 char cTimeToReadTemp = 0;
+/** Prototypes. NOT USED
+void saveMeas();
+void tempSensor();
+void lightSensor();
+void measure();
+void stationInit();
+*/
+/**
+ * \brief inline method for saving current values to memory
+ */
+static void saveMeas(){
+	if(cMeasure > 0){
+		cMeasure = 0;
+		MEM_save(fTemp_Sum/(float)iN_Avg);
+		fTemp_Sum = 0;
+		//TODO: add saving of humidity. Maybe display updates
+		cLight_Sensor_State = 0; //sets to update lux value onscreen
+	}
+}
 
-void Save_Measurements();
-void Temp_Sensor();
-void Light_Sensor();
-void Measure();
-void Station_Init();
+/**
+ * \brief call this function to start measuring
+ */
+static void measure(){
+	 cTimeToReadTemp = 1;
+	 //TODO: add measuring of humidity
+}
+
+/**
+ * \brief inline method used for measuring temperature. start flag is set by systick
+ */
+static void tempSens(){
+	if(cTimeToReadTemp == 1){
+		Temp_Reset();
+	}
+	if(cTemp_Reset_Ready_Flag  == 1){
+		Temp_Read();
+	}
+	if(cTemp_Measurement_Ready_Flag == 1){
+		fTemp_Sum += Temp_Get();
+		//printf("%f",temp);
+	}
+
+}
+
+static void lightSens(){
+	if(cLight_Sensor_State  == 1){
+		cLight_Sensor_State = -1;
+		//should measure
+	}
+}
+
+
+static void stationInit(){
+	/* Initialize the SAM system */
+	SystemInit();
+	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
+
+	RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
+	Keypad_Init();
+	Temp_Init();
+	Display_Init();
+	/*Build UI first time*/
+	Display_Write_Header(1,"System test","00:00");
+	Display_Write_Sidebar(0);
+	//Display_Write_Testing_Screen(Temp_Test(),0,0,0); //TODO implement
+}
+
 /**
  * \brief Application entry point.
  *
@@ -43,7 +105,7 @@ void Station_Init();
 int main(void)
 {
 
-    Station_Init();// initializes station
+    stationInit();// initializes station
 
 
 	while (1)
@@ -52,9 +114,9 @@ int main(void)
 		//---- State INDEPENDENT Keypad readings ----
 		unsigned char pressed = Keypad_Read();
 		Controller_User_Input(pressed);
-		Temp_Sensor();//if flag is set, temp will be measured
-		Light_Sensor();
-		Save_Measurements();//if flag is set. Values will be saved
+		tempSens();//if flag is set, temp will be measured
+		lightSens();
+		saveMeas();//if flag is set. Values will be saved
 		//Display_Write("hejhej",0,0);
     }
 }
@@ -75,67 +137,9 @@ void RTC_Handler(void){
  * Should make N interrupts per minute/second depending on mode.
  */
 void SysTick_Handler(void){
-	Measure();
-}
-
-/**
- * \brief inline method for saving current values to memory
- */
-inline void Save_Measurements(){
-	if(cMeasure > 0){
-		cMeasure = 0;
-		Memory_Save(fTemp_Sum/(float)iN_Avg);
-		fTemp_Sum = 0;
-		//TODO: add saving of humidity. Maybe display updates
-		cLight_Sensor_State = 0; //sets to update lux value onscreen
-	}
-}
-
-/**
- * \brief call this function to start measuring
- */
-inline void Measure(){
-	 cTimeToReadTemp = 1;
-	 //TODO: add measuring of humidity
-}
-
-/**
- * \brief inline method used for measuring temperature. start flag is set by systick
- */
-inline void Temp_Sensor(){
-	if(cTimeToReadTemp == 1){
-		Temp_Reset();
-	}
-	if(cTemp_Reset_Ready_Flag  == 1){
-		Temp_Read();
-	}
-	if(cTemp_Measurement_Ready_Flag == 1){
-		fTemp_Sum += Temp_Get();
-		//printf("%f",temp);
-	}
-
-}
-
-inline void Light_Sensor(){
-	if(cLight_Sensor_State  == 1){
-		cLight_Sensor_State = -1;
-	}
+	measure();
 }
 
 
-inline void Station_Init(){
-	/* Initialize the SAM system */
-	SystemInit();
-	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
-
-	RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
-	Keypad_Init();
-	Temp_Init();
-	Display_Init();
-	/*Build UI first time*/
-	Display_Write_Header(1,"System test","00:00");
-	Display_Write_Sidebar(0);
-	//Display_Write_Testing_Screen(Temp_Test(),0,0,0); //TODO implement
-}
 
 //TEST FROM STAEF GIT

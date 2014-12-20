@@ -4,13 +4,13 @@
 
 int main2(){
     SystemInit();
-    Air_Sensor_Init();
-    unsigned char who = Air_Sensor_Read(0xc);
+    AIRSENS_init();
+    unsigned char who = AIRSENS_read(0xc);
     printf("who am i: %x\n", who);
-    unsigned char status = Air_Sensor_Read(0x06);
+    unsigned char status = AIRSENS_read(0x06);
     printf("Status: %x \n", status);
 
   while(1){
-    printf("Pressure: %d\n", Air_Sensor_Get_Pressure() );
+    printf("Pressure: %d\n", AIRSENS_getPress() );
   }
 }

@@ -17,12 +17,12 @@
 #define BMP180_P_OUT_LSB 0x3
 
 
-void Air_Sensor_Init( );
-void Air_Sensor_Start( );
-void Air_Sensor_Stop( );
-char Air_Sensor_Read( char reg );
-void Air_Sensor_Write( char reg, char data );
-unsigned int Air_Sensor_Get_Pressure();
+void AIRSENS_init( );
+void AIRSENS_start( );
+void AIRSENS_stop( );
+char AIRSENS_read( char reg );
+void AIRSENS_write( char reg, char data );
+unsigned int AIRSENS_getPress();
 /*
 	void IIC_RegWrite(byte address, byte reg,byte val);
 	byte IIC_RegRead(byte address, byte reg);

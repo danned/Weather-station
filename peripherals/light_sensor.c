@@ -21,19 +21,11 @@
 
 char cLight_Sensor_State = -1;
 /*----------------------------------------------------------------
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> a55f474c2e66745f729109d41e698253dd201c41
  * \brief Light sensor init.
- * Enables clock for ADC block, and configures adc to 14mhz and resets adc
-=======
- * Light sensor init.
  * Enables clock for ADC block, and configures adc to 14MHz and resets adc
->>>>>>> origin/master
  * Enables interrupt for adc in NVIC
  *---------------------------------------------------------------- */
-void Light_Sensor_Init(void){
+void LIGHTSENS_init(void){
 	//Init clock ADC
 	*AT91C_PMC_PCER1 = (1<<5);
 
@@ -50,7 +42,7 @@ void Light_Sensor_Init(void){
  * Will enable adc channel 1 and start analog to digital conversion.
  * Interrupt is enabled on data ready
  *---------------------------------------------------------------- */
-void Light_Sensor_Start_Measure(void){
+void LIGHTSENS_startMeas(void){
   cLight_Sensor_State = 2;
   *AT91C_ADCC_CHER = (1<<1); //channel enable AD1
   *AT91C_ADCC_CR = (2); //channel start conversion
@@ -59,7 +51,7 @@ void Light_Sensor_Start_Measure(void){
 
 }
 
-float Light_Sensor_Get(){
+float LIGHTSENS_get(){
 	int reading = *AT91C_ADCC_LCDR;
 	//convert from 12-bit value to volt
 	return (3.3/(0xFFF))*reading;

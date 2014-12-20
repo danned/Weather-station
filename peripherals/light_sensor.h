@@ -6,7 +6,7 @@
  * You have to make a global variable in your program called cLight_Sensor_State set to -1. can make time module set state to 0 when temp reading is requested.
  * In main program do below
  * if state == 0
- *   Call Light_Sensor_Start_Measure
+ *   Call LIGHTSENS_startMeas()
  *
  * ADC handler will set state to 1 when reading is done
  * cLight_Sensor_State 2 is reading light state
@@ -28,7 +28,7 @@ extern char cLight_Sensor_State;
  * Enables clock for ADC block, and configures adc to 14mhz and resets adc
  * Enables interrupt for ADC in NVIC
  *---------------------------------------------------------------- */
-void Light_Sensor_Init(void);
+void LIGHTSENS_init(void);
 
 
 /*----------------------------------------------------------------
@@ -36,7 +36,7 @@ void Light_Sensor_Init(void);
  * Will enable adc channel 1 and start analog to digital conversion.
  * Interrupt is enabled on data ready
  *---------------------------------------------------------------- */
-void Light_Sensor_Start_Measure(void);
+void LIGHTSENS_startMeas(void);
 
 /*----------------------------------------------------------------
  * ADC Handler

@@ -12,16 +12,16 @@
 /************************************************************************/
 #ifndef _MEM_H_
 #define _MEM_H_
-typedef struct datestamp_t{
+typedef struct {
 	int date	: 5;
 	int month	: 4;
 	int year	: 7;
-}datestamp;
+}datestamp_t;
 
 typedef struct node_t{
 	//float fTemp;
-	signed short int sTemp;
-	datestamp tDate;
+	signed short int temp;
+	datestamp_t date;
 	/*time_t tTime;*/
 	struct node_t *next;
 }node;
@@ -31,7 +31,7 @@ extern node *prMem;
 /************************************************************************/
 /* Will initialize the datastructure. Call this method only once        */
 /************************************************************************/
-int Memory_Init( void );
+int MEM_init( void );
 
 /************************************************************************/
 /* Saves new value at first place in data structure                     */
@@ -42,7 +42,7 @@ int Memory_Init( void );
 /*  1 on success, old value overwritten									*/
 /* -1 on error															*/
 /************************************************************************/
-int Memory_Save(float fNew_Value);
+int MEM_save(float fNew_Value);
 
 
 /************************************************************************/
@@ -50,7 +50,7 @@ int Memory_Save(float fNew_Value);
 /* Returns 1 if success.												*/
 /* -1 = unable to remove entry											*/
 /************************************************************************/
-int Memory_Remove();
+int MEM_remove();
 
 
 #endif // _MEM_H_

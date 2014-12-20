@@ -1,6 +1,6 @@
 #include "air_sensor.h"
 #include "../includes/at91sam3x8.h"
-void Air_Sensor_Init(){
+void AIRSENS_init(){
 	/*
 		-Set CLDIV, CHDIV, CKDIV in TWI_CWGR
 
@@ -12,20 +12,20 @@ void Air_Sensor_Init(){
 
 	*/
 	*AT91C_PMC_PCER = (1<<22)|(1<<11);
-        *AT91C_PIOA_PDR = (3<<17);
+    *AT91C_PIOA_PDR = (3<<17);
 	*AT91C_TWI0_CWGR = 0x60606;//ckdiv = 7, chdiv = cldiv = 3
 	*AT91C_TWI0_CR = AT91C_TWI_SVDIS | AT91C_TWI_MSEN;
 	*AT91C_TWI0_MMR = (0x60<<16) | AT91C_TWI_IADRSZ_1_BYTE ;
 
         //for(int i = 0; i < 1000 ; i++)
           //asm("nop");
-	Air_Sensor_Write(BMP180_CTRL_REG1, BMP180_CTRL_REG_SBYB |1<<BMP180_CTRL_REG_OS );// set raw data output, oversample ratio = 2. Alt = 0. Sbyb = 1
-	Air_Sensor_Write(BMP180_PT_DATA_CFG, BMP180_PT_DATA_CFG_PDEFE|BMP180_PT_DATA_CFG_DREM );
+	AIRSENS_write(BMP180_CTRL_REG1, BMP180_CTRL_REG_SBYB |1<<BMP180_CTRL_REG_OS );// set raw data output, oversample ratio = 2. Alt = 0. Sbyb = 1
+	AIRSENS_write(BMP180_PT_DATA_CFG, BMP180_PT_DATA_CFG_PDEFE|BMP180_PT_DATA_CFG_DREM );
 
 
 }
 
-void Air_Sensor_Start(){
+void AIRSENS_start(){
 	/*
 		Set TWI_CR start |stop
 
@@ -34,14 +34,14 @@ void Air_Sensor_Start(){
 	//AT91C_TWI0_CR
 }
 
-void Air_Sensor_Ready(){
+void AIRSENS_ready(){
 	int timeout = 0;
 	while(!(*AT91C_TWI0_SR&AT91C_TWI_TXCOMP_MASTER) && timeout < 1000){
 		timeout ++;
 	}
 }
 
-char Air_Sensor_Read( char reg ){
+char AIRSENS_read( char reg ){
 	/*
 		-Set master mode register: dev slave adress, transfer direction bit
 		-Set the internal address
@@ -52,7 +52,7 @@ char Air_Sensor_Read( char reg ){
 		while ((!TX Complete)))
 
 	*/
-        Air_Sensor_Ready();
+    AIRSENS_ready();
 	*AT91C_TWI0_MMR |= AT91C_TWI_MREAD;
 	*AT91C_TWI0_IADR = reg;
 	*AT91C_TWI0_CR =  AT91C_TWI_START|AT91C_TWI_STOP;
@@ -71,10 +71,10 @@ char Air_Sensor_Read( char reg ){
         return c_Return_Data;
 }
 
-void Air_Sensor_Write( char reg, char data ){
+void AIRSENS_write( char reg, char data ){
 	//MREAD = 0
 	//Air_Sensor_Start();
-        Air_Sensor_Ready();
+    AIRSENS_ready();
 	*AT91C_TWI0_MMR &= ~AT91C_TWI_MREAD;
 	*AT91C_TWI0_IADR = reg;
 	*AT91C_TWI0_THR = data;
@@ -90,9 +90,9 @@ void Air_Sensor_Write( char reg, char data ){
 }
 
 
-unsigned int Air_Sensor_Get_Pressure(){
-    unsigned char msb = Air_Sensor_Read(BMP180_P_OUT_MSB);
-    unsigned char csb = Air_Sensor_Read(BMP180_P_OUT_CSB);
-    unsigned char lsb = Air_Sensor_Read(BMP180_P_OUT_LSB);
+unsigned int AIRSENS_getPress(){
+    unsigned char msb = AIRSENS_read(BMP180_P_OUT_MSB);
+    unsigned char csb = AIRSENS_read(BMP180_P_OUT_CSB);
+    unsigned char lsb = AIRSENS_read(BMP180_P_OUT_LSB);
     return lsb>>6 | csb<<2|msb<<10;
 }
