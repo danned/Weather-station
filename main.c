@@ -91,6 +91,7 @@ static void stationInit(){
 	Keypad_Init();
 	Temp_Init();
 	Display_Init();
+	LIGHTSENS_init();
 	/*Build UI first time*/
 	Display_Write_Header(1,"System test","00:00");
 	Display_Write_Sidebar(0);
@@ -110,14 +111,17 @@ int main(void)
 
 	while (1)
     {
+	  printf("Diff: %f\n",LIGHTSENS_getDiff());
+
 		 /*CONTROLLER CODE*/
 		//---- State INDEPENDENT Keypad readings ----
-		unsigned char pressed = Keypad_Read();
+		/*unsigned char pressed = Keypad_Read();
 		Controller_User_Input(pressed);
 		tempSens();//if flag is set, temp will be measured
 		lightSens();
 		saveMeas();//if flag is set. Values will be saved
 		//Display_Write("hejhej",0,0);
+	  */
     }
 }
 

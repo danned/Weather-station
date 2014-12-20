@@ -31,7 +31,7 @@ void LIGHTSENS_init(void){
 
 	//Config adc
 	*AT91C_ADCC_MR = (2<<8); //prescale clock to 14mhz
-	*AT91C_ADCC_CR = (1);
+	*AT91C_ADCC_CR = AT91C_ADC_SWRST;
 	NVIC_ClearPendingIRQ(ADC_IRQn);
 	NVIC_SetPriority(ADC_IRQn, 5);
 	NVIC_EnableIRQ(ADC_IRQn);
@@ -44,19 +44,33 @@ void LIGHTSENS_init(void){
  *---------------------------------------------------------------- */
 void LIGHTSENS_startMeas(void){
   cLight_Sensor_State = 2;
-  *AT91C_ADCC_CHER = (1<<1); //channel enable AD1
-  *AT91C_ADCC_CR = (2); //channel start conversion
-  *AT91C_ADCC_IER = (1<<24);
+  *AT91C_ADCC_CHER = AT91C_ADC_CH0|AT91C_ADC_CH1; //channel enable AD1
+  *AT91C_ADCC_CR = AT91C_ADC_START; //channel start conversion
+  *AT91C_ADCC_IER = AT91C_ADC_CH0|AT91C_ADC_CH1;
+	;
   //*AT91C_ADCC_IER = (1<<1);
 
 }
 
-float LIGHTSENS_get(){
-	int reading = *AT91C_ADCC_LCDR;
+float LIGHTSENS_get(char ch){
+ int reading;
+  if(ch == 0){
+	reading = *AT91C_ADCC_CDR0;
+  }
+    if(ch == 1){
+	  reading = *AT91C_ADCC_CDR1;
+	}
+
 	//convert from 12-bit value to volt
 	return (3.3/(0xFFF))*reading;
 }
 
+float LIGHTSENS_getDiff(){
+	float rd0 =  LIGHTSENS_get(0);
+	float rd1 =  LIGHTSENS_get(1);
+	return (rd1-rd0);
+
+}
 
 /*----------------------------------------------------------------
  * ADC Handler
@@ -65,8 +79,13 @@ float LIGHTSENS_get(){
  * This flag indicates that the conversion is ready and data is ready to be read.
  *----------------------------------------------------------------*/
 void ADC_Handler(void){
-  cLight_Sensor_State = 1;
-  *AT91C_ADCC_IDR = (1<<24);
+
+
+  if(*AT91C_ADCC_SR & (AT91C_ADC_CH0|AT91C_ADC_CH1) == 3){
+ 	cLight_Sensor_State = 1;
+  	*AT91C_ADCC_IDR = AT91C_ADC_CH0|AT91C_ADC_CH1;
+  }
+
 }
 
 

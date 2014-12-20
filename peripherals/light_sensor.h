@@ -39,6 +39,11 @@ void LIGHTSENS_init(void);
 void LIGHTSENS_startMeas(void);
 
 /*----------------------------------------------------------------
+ * Light sensor get diff between ch0 and ch1.
+ *---------------------------------------------------------------- */
+float LIGHTSENS_getDiff(void);
+
+/*----------------------------------------------------------------
  * ADC Handler
  * This function will handle interrupts on dataready from light sensor.
  * cLight_Sensor_State = 1
