@@ -21,7 +21,7 @@ void RTC_Init(char sec, char min, char hr, char cent, char year, char month, cha
   //Stop counting with upd_cal and upd_tim to be able to set datetime
   *AT91C_RTC_CR = AT91C_RTC_UPDTIM|AT91C_RTC_UPDCAL; //AT91C_RTC_TIMEVSEL_DAY24 if we want trigger every night
   *AT91C_RTC_MR = (0); //Set 24-hr mode, not necessary but added for clarity AT91C_RTC_HRMOD
-  Delay(4000000);
+  Delay(40000);
   *AT91C_RTC_SCCR = 1; //acknowledge clear status now we can set time
   *AT91C_RTC_TIMR = make_BCD_pattern(sec)|(make_BCD_pattern(min)<<8)|(make_BCD_pattern(hr)<<16); //
   *AT91C_RTC_CALR = (make_BCD_pattern(cent))|(make_BCD_pattern(year)<<8)|(make_BCD_pattern(month)<<16)|(make_BCD_pattern(date)<<24)|(make_BCD_pattern(day)<<21);
@@ -100,6 +100,7 @@ void RTC_Get_Time_String(char* time){
   	//printf("%s\n", time);
 }
 
+//TODO FOR STAEF NEEDS DOCUMENTATION OR REWRITE BADLY
 void RTC_Get_Date_String(char* date){
   int bcd_date = RTC_Get_Date();
   int mask = 0x00;

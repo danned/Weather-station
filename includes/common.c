@@ -2,8 +2,7 @@
 #include "../includes/at91sam3x8.h"
 
 void Delay(int Value){
-  int i;
-  for(i=0;i<Value;i++)
+  for(int i=0;i<Value;i++)
     asm("nop");
 }
 
@@ -11,4 +10,3 @@ void Delay(int Value){
 
 
 
-  

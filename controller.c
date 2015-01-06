@@ -26,8 +26,9 @@ TODO:
 #include "includes/at91sam3x8.h"
 #include "rtc.h"
 
+
 /* Main flow control structure - takes a pressed key val*/
-char Controller_User_Input(char pressed){
+char Controller_User_Input(volatile char pressed){
 		if(pressed != 0){
 	      if(pressed <= 5){
 			Display_Clear_Text();
@@ -80,7 +81,7 @@ char Controller_User_Input(char pressed){
 	            break;
 	          case 3:
 	            nState = 3;
-	            Display_Write_Header(Controller_Get_Warnings(), "Temp History", time);
+	            Display_Write_Header(Controller_Get_Warnings(), "Temp Hist", time);
 	            Display_Write_Temp_Screen(); //This has to take the  temp data or something
 
 	            break;
@@ -97,7 +98,7 @@ char Controller_User_Input(char pressed){
 	            break;
 	        }
 			free(time);
-	        Display_Write_Sidebar(nState);
+	        Display_Write_Sidebar();
 	        /*
 	        *AT91C_PWMC_CH2_CDTYR = (int)1838.0*(1.0+((1.0/9.0)*(float)pressed));
 	        printf("%d",pressed);*/

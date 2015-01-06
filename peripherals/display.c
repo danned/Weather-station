@@ -40,8 +40,8 @@ Left side under header all the way down.
 TODO do we need params in?
 Note: Max 5 chars for every button
  */
-
-
+int RTC_Get_Date_String(char* date); //TODO REMOVE
+extern volatile char nState;
 /* ------ PUBLIC functions ------ */
 
 
@@ -73,8 +73,27 @@ void Display_Init(void){
 
 }
 
+/*Display has 40 coloumns and 16 rows
+void DISPLAY_writeAt(char *text, char coloumn , char row){
 
-/* prints string at coordinate null terminated*/
+    pos = (y-1)*40 + nXPos;
+
+    nXRest = x%nBit;
+    nXRest = nBit - nXRest;
+
+  	Display_Write_Data(x);
+	Display_Write_Data(y);
+	Display_Write_Command(0x24);//Set text coordinates
+
+	 Go thorugh each character and write it with auto increment
+	for(int i = 0; *(text + i) != 0x00 ; i++){
+		Display_Write_Data( (*(text+i)-0x20) );
+		Display_Write_Command(0xC0);
+	}
+}
+*/
+
+/*DEPRECATED AS OF 2014-12-23 prints string*/
 void Display_Write(char *text, char x , char y){
 
   Display_Write_Data(x);
@@ -103,7 +122,7 @@ void Display_Write_Home_Screen(char* temp, char* lux){
 }
 void Display_Write_Light_Screen(void){
   Display_Write("Sun position ",95,0);
-    Display_Write("63.5*",108,0);
+  Display_Write("SERVO_getPos()",108,0);
 
 	//Draw suntracker painting.
 	Display_Draw_Arc(145, 135, 70);
@@ -111,7 +130,9 @@ void Display_Write_Light_Screen(void){
 }
 void Display_Write_Temp_Screen(void){
     Display_Write("Date: ",92,0);
-    Display_Write("2014-12-24",98,0); //TODO Implement
+	//char* date = "";
+    //RTC_Get_Date_String(date);
+   // Display_Write(date,98,0); //TODO Implement
 	Display_Write("Min: ",110,0);
 	Display_Write("1.0",115,0); //TODO Implement
 	Display_Write("Max: ",150,0);
@@ -123,7 +144,9 @@ void Display_Write_Temp_Screen(void){
 }
 void Display_Write_Air_Screen(void){
   Display_Write("Date: ",92,0);
-  Display_Write("2014-06-12",98,0); //TODO Implement
+ // char* date = "";
+ // RTC_Get_Date_String(date);
+ // Display_Write(date,98,0); //TODO Implement
 
   Display_Write("Min: ",110,0);
   Display_Write("1.0",115,0); //TODO Implement
@@ -186,21 +209,22 @@ void Display_Draw_Graph(int* day_data){}
 
 
 /*Writes out standard sidebar nav and then state dependent part*/
-void Display_Write_Sidebar(char state){
+void Display_Write_Sidebar(){
   //Regular sidebar part
   Display_Write("1 Home",40*2,0);
   Display_Write("2 Sun",40*3,0);
   Display_Write("3 Temp",40*4,0);
   Display_Write("4 Air",40*5,0);
-  Display_Write("5 Conf",40*6,0);
+ 	Display_Write("5 Conf",40*6,0);
 
   //state dependent sidebar part (Offset is y=1 x = 24)
-  switch(state){
+  switch(nState){
     case 1: //Home screen
 
     break;
 
     case 2: //Light follower
+    //TODO write start and stop buttons
 
     break;
 
@@ -246,7 +270,7 @@ void Display_Write_Header(char warning_status, char* title, char* time){
   }
   //Write title and clock
   Display_Write(title,12,0); // 10 chars nr  will be space
-  Display_Write(time,33,0); //5 chars
+  Display_Write(time,8,0); //5 chars
 
   /*Draw horizontal line*/
   Display_Write_Data(0x40);
@@ -400,7 +424,7 @@ void Display_Clear_Text(){
   Display_Write_Data(0x00);
   Display_Write_Command(0x24);//Set coordinates
 
-  for(int i =0;i<640;i++ ){
+  for(int i =0;i<=640;i++ ){
     Display_Write_Data(0x00);
     Display_Write_Command(0xC0);
   }
@@ -500,11 +524,13 @@ void Display_Draw_Axis(){
 	    Display_Draw_Pixel(60,110-i);
 	}
 	//Mark time of day
-	Display_Write("00",57,2);
-	Display_Write("06",62,2);
-	Display_Write("12",67,2);
-	Display_Write("20",72,2);
-	Display_Write("24",77,2);
+	Display_Write("Mo",57,2);
+	Display_Write("Tue",60,2);
+	Display_Write("We",63,2);
+	Display_Write("Th",66,2);
+	Display_Write("Fr",69,2);
+  Display_Write("Sa",72,2);
+  Display_Write("Su",75,2);
   }
 
 

@@ -1,5 +1,3 @@
-/*Common includes*/
-
 
 /*----------------------------------------------------------------
  * Below are common used bitmasks

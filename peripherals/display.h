@@ -34,7 +34,7 @@ void Display_Draw_Graph(int* day_data);
 void Display_Clear_Graphics();
 
 void Display_Write_Header(char error_code,char* title,char* time);
-void Display_Write_Sidebar(char state);
+void Display_Write_Sidebar();
 
 /* clears display */
 void Display_Clear_Text(void);

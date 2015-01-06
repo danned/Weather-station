@@ -4,7 +4,7 @@
  * Created: 2014-12-11 17:03:22
  *  Author: Daniel and Staffan
  */
-
+#include "includes/common.h"
 #include "mem.h"
 #include "peripherals/temp_sensor.h"
 #include "peripherals/light_sensor.h"
@@ -12,7 +12,6 @@
 #include "peripherals/display.h"
 #include "controller.h"
 #include "includes/system_sam3x.h"
-#include "includes/common.h"
 #include "rtc.h"
 #include "includes/at91sam3x8.h"
 
@@ -77,10 +76,10 @@ static void tempSens(){
 
 static void lightSens(){
 	if(cLight_Sensor_State  == 0 ){
-		LIGHTSENS_startMeas(); 
+		LIGHTSENS_startMeas();
 		cLight_Sensor_State = 2;
 	}else if(cLight_Sensor_State == 1){
-		printf("Diff: %f\n",LIGHTSENS_getDiff());
+		//printf("Diff: %f\n",LIGHTSENS_getDiff());
 		cLight_Sensor_State = -1;
 	}
 }
@@ -107,7 +106,7 @@ static void stationInit(){
  *
  * \return Unused (ANSI-C compatibility).
  */
-int main3(void)
+int main(void)
 {
 
     stationInit();// initializes station
@@ -115,17 +114,16 @@ int main3(void)
 
 	while (1)
     {
-	  
+
 
 		 /*CONTROLLER CODE*/
 		//---- State INDEPENDENT Keypad readings ----
-		/*unsigned char pressed = Keypad_Read();
+		unsigned char pressed = Keypad_Read();
 		Controller_User_Input(pressed);
-		tempSens();//if flag is set, temp will be measured*/
-		lightSens();  
+		tempSens();//if flag is set, temp will be measured
+		lightSens();
 		saveMeas();//if flag is set. Values will be saved
 		//Display_Write("hejhej",0,0);
-	
     }
 }
 
@@ -144,10 +142,18 @@ void RTC_Handler(void){
  * \brief SysTick triggers measurement of sensors TODO maybe use another counter. SysTick is used by other functions which needs it to interrupt every ms
  * Should make N interrupts per minute/second depending on mode.
  */
-void SysTick2_Handler(void){
+void SysTick_Handler(void){
 	measure();
 }
 
-
+void NMI_Handler( void ){while(1){}}
+void HardFault_Handler( void ){while(1){}}
+void MemManage_Handler( void ){while(1){}}
+void BusFault_Handler( void ){while(1){}}
+void UsageFault_Handler( void ){while(1){}}
+void SVC_Handler( void ){while(1){}}
+void DebugMon_Handler( void ){while(1){}}
+void PendSV_Handler( void ){while(1){}}
+//void SysTick_Handler( void ){while(1){}}
 
 //TEST FROM STAEF GIT

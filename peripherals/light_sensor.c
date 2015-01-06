@@ -82,7 +82,7 @@ float LIGHTSENS_getDiff(){
  *----------------------------------------------------------------*/
 void ADC_Handler(void){
 	cLight_Sensor_State = 1;
-	*AT91C_ADCC_IDR = (1<<24); 
+	*AT91C_ADCC_IDR = (1<<24);
 
 }
 
