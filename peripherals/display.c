@@ -18,8 +18,7 @@ Display_Write_Temp_screen();
 
 ---------------------------
 TODO:
-- Include Default_State() in Display_Init() function.
-- Create the usecases on paper
+- Remove dependencies from this module, for example fetching data. must be done in controller
 - Clean display.h and create the defines
 - Test module
 */
@@ -147,10 +146,16 @@ void Display_Write_Temp_Screen(char* date){
   Display_Write(date,86,0);
 	Display_Write("Min: ",100,0);
   Display_Draw_Axis();
-  //fetch this weeks data
-  
-  Display_Draw_Graph();
-
+  //fetch tinitial data, this weeks
+  datestamp_t todays_datestamp = mem_root_pr->date; //TODO get date from RTC
+  node_t *temp = mem_root_pr;
+  char count = 0;
+  //Get last 7 days worth of data from database
+  while(temp->next != NULL && count <7){
+	Display_Draw_Graph(&temp->temp, count);
+    count++;
+    temp = temp->next;
+  }
 }
 void Display_Write_Air_Screen(char* date){
   //int test_fetched_temp = *mem_pr->next->temp;
@@ -207,8 +212,28 @@ void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,c
 }
 
 /*Draws the bar graphs for one week three bars for every day min avg max*/
-void Display_Draw_Graph(int* week_data){
-  for(){}
+void Display_Draw_Graph(temp_t* temp, char count){
+ //TODO assign from temperature struct
+ char min = 10;
+ char avg = 15;
+ char max = 20;
+
+  //Draw min bar, origin is at (62,100)
+  int start_pos = 61+(count*3)+0;
+  for(int i =0;i< min;i++ ){
+    Display_Draw_Pixel(start_pos,110-i);
+  }
+  //Draw avg bar
+  start_pos = 61+(count*3)+1;
+  for(int i =0;i<avg;i++ ){
+    Display_Draw_Pixel(start_pos,110-i);
+  }
+  //Draw max bar
+  start_pos = 61+(count*3)+2;
+  /*Draw vertical line*/
+  for(int i =0;i<max;i++ ){
+    Display_Draw_Pixel(start_pos,110-i);
+  }
 
 }
 
@@ -534,15 +559,15 @@ void Display_Draw_Axis(){
 	if(i<80){
 	    Display_Draw_Pixel(60,110-i);
 	}
-	//Mark time of day
-	Display_Write("Mo",57,2);
+
+	/*Display_Write("Mo",57,2);
 	Display_Write("Tue",60,2);
 	Display_Write("We",63,2);
 	Display_Write("Th",66,2);
 	Display_Write("Fr",69,2);
   Display_Write("Sa",72,2);
   Display_Write("Su",75,2);
-  }
+  */}
 
 
 

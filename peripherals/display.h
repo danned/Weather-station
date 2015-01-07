@@ -30,7 +30,7 @@ void Display_Draw_Pixel(int x, int y);
 void Display_Draw_Sun(int xw, int yw, int rw);
 void Display_Draw_Arc(int xw, int yw, int rw);
 void Display_Draw_Axis(void);
-void Display_Draw_Graph(int* day_data);
+void Display_Draw_Graph(temp_t* data, char count);
 /*Empties graphics memory, EXPENSIVE!*/
 void Display_Clear_Graphics();
 
