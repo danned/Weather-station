@@ -9,6 +9,7 @@
 #include "peripherals/temp_sensor.h"
 #include "peripherals/light_sensor.h"
 #include "peripherals/keypad.h"
+#include "peripherals/servo.h"
 #include "peripherals/display.h"
 #include "controller.h"
 #include "includes/system_sam3x.h"
@@ -95,6 +96,7 @@ static void stationInit(){
 	Temp_Init();
 	Display_Init();
 	LIGHTSENS_init();
+	SERVO_init();
 	/*Build UI first time*/
 	Display_Write_Header(1,"System test","00:00");
 	Display_Write_Sidebar(0);

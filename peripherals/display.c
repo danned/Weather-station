@@ -110,43 +110,51 @@ void Display_Write(char *text, char x , char y){
 
 
 /*Home screen*/
-void Display_Write_Home_Screen(char* temp, char* lux){
+void Display_Write_Home_Screen(char* temp, char* lux, char* air, char* date){
 
+    //Display_Write("Date: ",0,0);
+    Display_Write(date,6,0);
     Display_Write("Temp: ",130,0);
     Display_Write(temp,137,0);
     Display_Write(" Celsius",142,0);
     Display_Write("Illu: ",170,0);
     Display_Write(lux,177,0);
     Display_Write(" Lux",183,0);
+    Display_Write("Air: ",0,0);
+    Display_Write(air,5,0);
+    Display_Write(" kPa",200,0);
+
+
 
 }
 void Display_Write_Light_Screen(void){
   Display_Write("Sun position ",95,0);
-  Display_Write("SERVO_getPos()",108,0);
+  int reading = SERVO_getPos();
+  reading = (reading)/44; //Turn into angle
+ char *angle = malloc(12*sizeof(char *));
+  if(angle == 0){
+    //TODO Handle error
+  }
+sprintf(angle, "%d degrees", reading);
 
+  Display_Write(angle,128,0);
+  free(angle);
 	//Draw suntracker painting.
 	Display_Draw_Arc(145, 135, 70);
 	Display_Draw_Sun(80, 110, 10); //TODO make this take the angle from servo
 }
-void Display_Write_Temp_Screen(void){
-    Display_Write("Date: ",92,0);
-	//char* date = "";
-    //RTC_Get_Date_String(date);
-   // Display_Write(date,98,0); //TODO Implement
-	Display_Write("Min: ",110,0);
-	Display_Write("1.0",115,0); //TODO Implement
-	Display_Write("Max: ",150,0);
-	Display_Write("3.0",155,0); //TODO Implement
-	Display_Write("Avg: ",190,0);
-	Display_Write("1.5",195,0); //TODO Implement
-    Display_Draw_Axis();
+void Display_Write_Temp_Screen(char* date){
+  Display_Write(date,86,0);
+	Display_Write("Min: ",100,0);
+  Display_Draw_Axis();
+  //fetch this weeks data
+  
+  Display_Draw_Graph();
 
 }
-void Display_Write_Air_Screen(void){
-  Display_Write("Date: ",92,0);
- // char* date = "";
- // RTC_Get_Date_String(date);
- // Display_Write(date,98,0); //TODO Implement
+void Display_Write_Air_Screen(char* date){
+  //int test_fetched_temp = *mem_pr->next->temp;
+  Display_Write(date,98,0);
 
   Display_Write("Min: ",110,0);
   Display_Write("1.0",115,0); //TODO Implement
@@ -198,8 +206,11 @@ void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,c
 	}
 }
 
-/*Draws the bar graphs*/
-void Display_Draw_Graph(int* day_data){}
+/*Draws the bar graphs for one week three bars for every day min avg max*/
+void Display_Draw_Graph(int* week_data){
+  for(){}
+
+}
 
 
 

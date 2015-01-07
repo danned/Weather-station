@@ -23,6 +23,7 @@ TODO:
 #include <stdio.h>
 #include "peripherals/display.h"
 #include "peripherals/temp_sensor.h"
+#include "peripherals/air_sensor.h"
 #include "includes/at91sam3x8.h"
 #include "rtc.h"
 
@@ -33,63 +34,84 @@ char Controller_User_Input(volatile char pressed){
 	      if(pressed <= 5){
 			Display_Clear_Text();
 	  		Display_Clear_Graphics(); //TODO change this to only clear whats necessary
-	  		//Get a time string of current time
+	  		//Alloc time and date string
 			char *time = malloc(15*sizeof(char *));
 			if(time == 0){
 			  return 0;
 			}
+	        char *date = malloc(12*sizeof(char *)); //TODO change from 15
+			if(date == 0){
+			  return 0;
+			}
+			//Populate strings with time and date
 			RTC_Get_Time_String(time);
+			RTC_Get_Date_String(date);
+
+			//First 5 menu options:
 	        switch(pressed){
-		  //TODO CLEANUP HOME SCREEN CODE
 	          case 1:
-	            nState = 1;
-		    char *temp = malloc(15*sizeof(char *)); //TODO change from 15
-			if(temp == 0){
-			  return 0;
-			}
-			char *lux = malloc(15*sizeof(char *));
-			if(lux == 0){
-			  return 0;
-			}
-			float temperature = Temp_Get();
-			if(temperature >25 || temperature <0){
-				nTempWarning = 1; //TODO not correct,
-			}
-			else{
-				nTempWarning = 0;
-			}
-		    sprintf(temp, "%.2f", temperature);// TODO do not use sprintf
+		        nState = 1;
+		        //Allocate memory for strings to be used
+				char *air = malloc(15*sizeof(char *));
+				if(air == 0){
+				  return 0;
+				}
+			    char *temp = malloc(15*sizeof(char *));
+				if(temp == 0){
+				  return 0;
+				}
+				char *lux = malloc(15*sizeof(char *));
+				if(lux == 0){
+				  return 0;
+				}
 
-			int reading = *AT91C_ADCC_LCDR;
-		    //convert from 12-bit value to volt to lux
-		    float voltage = (3.3/(0xFFF))*reading;
-		    float luxfloat = 3000 * (1/(voltage*voltage));//3v = 60lux , 1v 3000 lux 2v = 1000 lux
+				//Get current temperature
+				float temperature = Temp_Get();
+				if(temperature >25 || temperature <0){
+					nTempWarning = 1; //TODO not correct
+				}
+				else{
+					nTempWarning = 0;
+				}
+			    sprintf(temp, "%.2f", temperature);// Populate string
 
-		    sprintf(lux, "%.2f", luxfloat);// TODO do not use sprintf
-	        Display_Write_Header(Controller_Get_Warnings(), "Home screen", time);
-	        Display_Write_Home_Screen(temp,lux);
-		    free(lux);
-			free(temp);
+				//Get current light
+				int reading = *AT91C_ADCC_LCDR;
+			    float voltage = (3.3/(0xFFF))*reading;//convert from 12-bit value to volt to lux
+			    float luxfloat = 3000 * (1/(voltage*voltage));//3v = 60lux , 1v 3000 lux 2v = 1000 lux
+			    sprintf(lux, "%.2f", luxfloat);// Populate string
+
+			 	//Get current Air pressure
+			    int air_reading = AIRSENS_getPress();
+			    sprintf(air, "%d", air_reading);// Populate string
+
+				//Write to display and finish
+		        Display_Write_Header(Controller_Get_Warnings(), "Home screen", time);
+		        Display_Write_Home_Screen(temp,lux,air,date);
+			    free(lux);
+				free(temp);
+				free(air);
 
 	            break;
 
 	          case 2:
 	            nState = 2;
-		    Display_Write_Header(Controller_Get_Warnings(), "Sun tracker", time);
-		    Display_Write_Light_Screen();
-		    //TODO Enable tracking mode, also remember to disable on state change somehow
+			    Display_Write_Header(Controller_Get_Warnings(), "Sun tracker", time);
+			    Display_Write_Light_Screen();
+			    //TODO Enable tracking mode, also remember to disable on state change somehow
 	            break;
 	          case 3:
 	            nState = 3;
+
 	            Display_Write_Header(Controller_Get_Warnings(), "Temp Hist", time);
-	            Display_Write_Temp_Screen(); //This has to take the  temp data or something
+	            Display_Write_Temp_Screen(date); //This has to take the  temp data or something
 
 	            break;
 
 	          case 4:
 	            nState = 4;
 	            Display_Write_Header(Controller_Get_Warnings(), "Air History", time);
-	            Display_Write_Air_Screen();
+	            Display_Write_Air_Screen(date);
 	            break;
 	          case 5:
 	            nState = 5;
@@ -98,6 +120,7 @@ char Controller_User_Input(volatile char pressed){
 	            break;
 	        }
 			free(time);
+			free(date);
 	        Display_Write_Sidebar();
 	        /*
 	        *AT91C_PWMC_CH2_CDTYR = (int)1838.0*(1.0+((1.0/9.0)*(float)pressed));

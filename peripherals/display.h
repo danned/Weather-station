@@ -1,6 +1,7 @@
 #ifndef _DISPLAY_H_
 #define _DISPLAY_H_
-
+#include "../mem.h"
+#include <stdlib.h>
 /*------PUBLIC------*/
 /* prints string at coordinate null terminated*/
 void Display_Write(char *text, char x, char y);
@@ -16,10 +17,10 @@ unsigned char Display_Read_Status(void);
 
 /* sends data to display */
 void Display_Write_Command(unsigned char Data);
-void Display_Write_Home_Screen(char* temp, char* lux);
+void Display_Write_Home_Screen(char* temp, char* lux, char* air, char* date);
 void Display_Write_Light_Screen(void);
-void Display_Write_Temp_Screen(void);
-void Display_Write_Air_Screen(void);
+void Display_Write_Temp_Screen(char* date);
+void Display_Write_Air_Screen(char* date);
 void Display_Write_Settings_Screen(void);
 void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,char mem_pass);
 /* sends data to display */
