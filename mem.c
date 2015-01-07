@@ -9,7 +9,8 @@
 
 #include "mem.h"
 #include <stdlib.h>
-node_t *mem_root_pr;
+#include "includes/common.h"
+mem_t mem;
 
 /************************************************************************/
 /* Internal functions                                                    */
@@ -18,21 +19,23 @@ int addNode(short int, datestamp_t);
 datestamp_t getTime();
 
 /************************************************************************/
-/* NOT USED														        */
 /* Will initialize the data structure. Call this method only once       */
+/* 																        */
 /* return value -1. Unable to allocate memory							*/
 /************************************************************************/
 int MEM_init( void ){
-	mem_root_pr = NULL;
-	/**prMem = malloc(sizeof(node));
-
-	if(prMem != NULL){
-		return 1;
-	}else{ // Address of root to mem at null, error
+	//mem.root = NULL;
+	mem.root = malloc(sizeof(node_t) );
+	if(mem.root == NULL){ // Address of root to mem at null, error
 		/* need a error message*/
-		/*return -1;
-	}*/
-		return 1;
+		return -1;
+	}
+		
+	mem.root->next = NULL;
+	mem.root->temp.min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
+	mem.root->temp.max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
+	mem.root->temp.avg = 0; 		 // initialize avg to 0
+	return 1;
 }
 
 
@@ -47,7 +50,7 @@ int MEM_init( void ){
 /* -1 fail. no value TODO: implement									*/
 /************************************************************************/
 int MEM_save(float new_val_f){
-	node_t *cur_node = mem_root_pr;
+	node_t *cur_node = mem.root;
 	short int new_val_s = (short int) new_val_f*100;// saves value of 2 decimals. truncate rest
 	cur_node->temp.avg+= new_val_s;
 	cur_node->temp.count++;
@@ -74,7 +77,7 @@ int MEM_save(float new_val_f){
 /************************************************************************/
 /*int MEM_save(float fNew_Value){
 	short int sNew_Value = (short int)fNew_Value*100;// saves value of 2 decimals. truncate rest
-	if(mem_root_pr != NULL){
+	if(mem.root != NULL){
 		if( addNode( sNew_Value, getTime() ) < 0){
 */			/* out of memory, remove oldest entry and try again */
 /*			int resp = MEM_remove();
@@ -103,11 +106,12 @@ int MEM_save(float new_val_f){
 /************************************************************************/
 /* Removes oldest entry of list											*/
 /* Returns 1 if success.												*/
+/* Returns 2 if removed node is only node								*/
 /* -1 = unable to remove node											*/
 /* -2 = no nodes to remove, empty list									*/
 /************************************************************************/
 int MEM_remove(){
-	node_t *it_pr = mem_root_pr;
+	node_t *it_pr = mem.root;
 	if(it_pr != NULL){
 		if(it_pr->next != NULL){
 
@@ -119,9 +123,9 @@ int MEM_remove(){
 			it_pr->next = NULL;
 			return 1;
 		}else{//list has only 1 node
-			free(mem_root_pr);
-			mem_root_pr = NULL;
-			return 1;
+			free(mem.root);
+			mem.root = NULL;
+			return 2;
 		}
 	}else{//trying to remove item of empty list
 		return -2;
@@ -139,6 +143,36 @@ temp_t MEM_get( node_t *node_pr ){
 	//}
 }
 
+
+
+/************************************************************************/
+/* Adds new day to linked list											*/
+/* Returns 1 if success.												*/
+/* Returns -1 if fail													*/
+/************************************************************************/
+int MEM_newDay(){
+	node_t *new_node_pr = malloc(sizeof(node_t));
+	if(new_node_pr == NULL){// memory is full. Remove oldest entry
+		mem.status.MEM_FULL = TRUE;
+		signed char resp = MEM_remove();
+		if(resp < 0){ // unable to clear space in memory
+			//mem.status.MEM_ERROR = TRUE;
+		}else{
+			new_node_pr = malloc(sizeof(node_t));
+		}
+	}
+	
+	if(new_node_pr != NULL){
+		new_node_pr->next = mem.root;
+		mem.root = new_node_pr;
+		return 1;
+	}else{
+		mem.status.MEM_ERROR = TRUE;
+		return -1;
+	}
+}
+
+
 /*-------------------------------------------------------------------------------------------------------------------*
  *												INTERNAL FUNCTIONS												     *
  *												  implementations												     *
@@ -152,20 +186,20 @@ temp_t MEM_get( node_t *node_pr ){
 /* 1 if node successfully added.										*/
 /* -1 if unable to allocate mem (out of memory	)						*/
 /************************************************************************/
-/*int addNode(short int new_temp, datestamp_t time){
+int addNode(short int new_temp, datestamp_t time){
 	node_t *tmp_node_pr;
 	tmp_node_pr = malloc(sizeof(node_t));
 
 	if(tmp_node_pr!= NULL){
-		tmp_node_pr->temp = new_temp;
+		//tmp_node_pr->temp = new_temp;
 		tmp_node_pr->date = time;
-		tmp_node_pr->next = mem_root_pr;
-		mem_root_pr = tmp_node_pr;
+		tmp_node_pr->next = mem.root;
+		mem.root = tmp_node_pr;
 		return 1;
 	}else{ //Unable to allocate memory. Handle error
 		return -1;
 	}
-}*/
+}
 
 
 /************************************************************************/

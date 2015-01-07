@@ -1,4 +1,5 @@
-
+#ifndef _COMMON_H_
+#define _COMMON_H_
 /*----------------------------------------------------------------
  * Below are common used bitmasks
  *----------------------------------------------------------------*/
@@ -11,6 +12,8 @@
 #define BIT_12_TO_17 ((0x3F)<<12)
 #define BIT_18_19 (3<<18)
 #define BIT_17_AND_18 6<<16
+#define TRUE 1
+#define FALSE 0
 /*----------------------------------------------------------------
  * End of bitmasks
  *----------------------------------------------------------------*/
@@ -20,4 +23,4 @@ extern int iN_Avg;			// in main program
 extern int MODE;
 extern void Delay(int Value);
 
-
+#endif // _COMMON_H_

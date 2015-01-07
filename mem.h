@@ -31,7 +31,18 @@ typedef struct node{
 	struct node *next;
 }node_t;
 
-extern node_t *mem_root_pr;
+typedef struct{
+	char MEM_FULL  : 1;
+	char MEM_ERROR : 1;
+}status_t;
+
+typedef struct{
+	node_t *root;
+	status_t status;
+}mem_t;
+
+//extern node_t *mem_root_pr;
+extern mem_t mem;
 
 /************************************************************************/
 /* Will initialize the datastructure. Call this method only once        */
@@ -62,6 +73,14 @@ int MEM_remove();
  * Returns float value of temp stored at node
  */
 temp_t MEM_get( node_t *node_pr );
+
+/************************************************************************/
+/* Adds new day to linked list											*/
+/* Returns 1 if success.												*/
+/* Returns -1 if fail													*/
+/************************************************************************/
+int MEM_newDay();
+
 
 #endif // _MEM_H_
 
