@@ -18,15 +18,20 @@ typedef struct {
 	int year	: 7;
 }datestamp_t;
 
-typedef struct node_t{
-	//float fTemp;
-	signed short int temp;
-	datestamp_t date;
-	/*time_t tTime;*/
-	struct node_t *next;
-}node;
+typedef struct {
+	short min;
+	short avg;
+	short max;
+	short count; // this might be removed
+}temp_t;
 
-extern node *prMem;
+typedef struct node{
+	temp_t temp;
+	datestamp_t date;
+	struct node *next;
+}node_t;
+
+extern node_t *mem_root_pr;
 
 /************************************************************************/
 /* Will initialize the datastructure. Call this method only once        */
@@ -52,6 +57,11 @@ int MEM_save(float fNew_Value);
 /************************************************************************/
 int MEM_remove();
 
+
+/**
+ * Returns float value of temp stored at node
+ */
+temp_t MEM_get( node_t *node_pr );
 
 #endif // _MEM_H_
 
