@@ -1,11 +1,16 @@
-/************************************************************************/
-/* Memory module														*/
-/* This is the implementation of the memory module for the project		*/
-/* This module will perform all memory specific code					*/
-/* Uses a single liked list data structure and requires only calls to	*/
-/* add and get data. Will set flag and remove oldest entry when			*/
-/* memory is full														*/
-/************************************************************************/
+/************************************************************************************************************************/
+/* Memory module																										*/
+/* This is the implementation of the memory module for the project														*/
+/* This module will perform all memory specific code																	*/
+/* Uses a single liked list data structure and requires only calls to													*/
+/* add and get data. Will set flag and remove oldest entry when															*/
+/* All variables of module can be found in mem struct, defined in header												*/
+/* root of temp list ist at mem.root																					*/
+/* status flags are found at mem.status																					*/
+/* memory is full																										*/
+/* memory is full																										*/
+
+/************************************************************************************************************************/
 
 #include "mem.h"
 #include <stdlib.h>
@@ -16,7 +21,7 @@ mem_t mem;
 /* Internal functions                                                    */
 /************************************************************************/
 int addNode(short int, datestamp_t);
-datestamp_t getTime();
+datestamp_t getDate();
 
 /************************************************************************/
 /* Will initialize the data structure. Call this method only once       */
@@ -35,6 +40,7 @@ int MEM_init( void ){
 	mem.root->temp.min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
 	mem.root->temp.max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
 	mem.root->temp.avg = 0; 		 // initialize avg to 0
+	mem.root->date = getDate();
 	return 1;
 }
 
@@ -47,22 +53,25 @@ int MEM_init( void ){
 /*  0 Success. No new min, max saved									*/
 /* 	1 Success. new min saved											*/
 /*  2 Success. New Max saved											*/
+/*  3 Success. New Max and Min saved									*/
 /* -1 fail. no value TODO: implement									*/
 /************************************************************************/
 int MEM_save(float new_val_f){
 	node_t *cur_node = mem.root;
 	short int new_val_s = (short int) new_val_f*100;// saves value of 2 decimals. truncate rest
+	char ret_val = 0;
 	cur_node->temp.avg+= new_val_s;
 	cur_node->temp.count++;
 	if(new_val_s < cur_node->temp.min){
 		cur_node->temp.min = new_val_s;
-		return 1;
+		ret_val += 1;
 	}
-	else if( new_val_s > cur_node->temp.max){
+	
+	if( new_val_s > cur_node->temp.max){
 		cur_node->temp.max = new_val_s;
-		return 2;
+		ret_val += 2;
 	}	
-	return 0;
+	return ret_val;
 }
 
 /************************************************************************/
@@ -205,7 +214,7 @@ int addNode(short int new_temp, datestamp_t time){
 /************************************************************************/
 /* Returns current time                                                 */
 /************************************************************************/
-datestamp_t getTime(){
+datestamp_t getDate(){
 	/*currTime = RTC_Get_Date();
 	datestamp newStamp;
 	newStamp.date =  currTime.date;	TODO: remove comments

@@ -58,7 +58,7 @@ int MEM_init( void );
 /*  1 on success, old value overwritten									*/
 /* -1 on error															*/
 /************************************************************************/
-int MEM_save(float fNew_Value);
+int MEM_save(float new_value_f);
 
 
 /************************************************************************/
