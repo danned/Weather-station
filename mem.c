@@ -10,6 +10,7 @@
 /************************************************************************************************************************/
 
 #include "mem.h"
+#include "rtc.h"
 #include <stdlib.h>
 #include "includes/common.h"
 mem_t mem;
@@ -37,7 +38,8 @@ int MEM_init( void ){
 	mem.temp->temp.min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
 	mem.temp->temp.max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
 	mem.temp->temp.avg = 0; 		 // initialize avg to 0
-	mem.temp->date = getDate();
+	mem.temp->date = RTC_getDate();
+
 	return 1;
 }
 
@@ -63,11 +65,11 @@ int MEM_save(float new_val_f){
 		cur_node->temp.min = new_val_s;
 		ret_val += 1;
 	}
-	
+
 	if( new_val_s > cur_node->temp.max){
 		cur_node->temp.max = new_val_s;
 		ret_val += 2;
-	}	
+	}
 	return ret_val;
 }
 
