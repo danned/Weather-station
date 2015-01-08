@@ -40,7 +40,6 @@ TODO do we need params in?
 Note: Max 5 chars for every button
  */
 int RTC_Get_Date_String(char* date); //TODO REMOVE
-extern volatile char nState;
 /* ------ PUBLIC functions ------ */
 
 
@@ -147,8 +146,8 @@ void Display_Write_Temp_Screen(char* date){
 	Display_Write("Min: ",100,0);
   Display_Draw_Axis();
   //fetch tinitial data, this weeks
-  datestamp_t todays_datestamp = mem.root->date; //TODO get date from RTC
-  node_t *temp = mem.root;
+  datestamp_t todays_datestamp = mem.temp->date; //TODO get date from RTC
+  node_t *temp = mem.temp;
   char count = 0;
   //Get last 7 days worth of data from database
   while(temp->next != NULL && count <7){
@@ -259,7 +258,7 @@ void Display_Write_Sidebar(){
  	Display_Write("5 Conf",40*6,0);
 
   //state dependent sidebar part (Offset is y=1 x = 24)
-  switch(nState){
+  switch(sta.state){
     case 1: //Home screen
 
     break;

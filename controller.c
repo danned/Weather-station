@@ -1,7 +1,7 @@
 /* Controller that handles the different states
 and how they respond to user input.
 Depends on:
-nState
+sta.state
 nTempWarning
 nMemWarning
 
@@ -25,6 +25,7 @@ TODO:
 #include "peripherals/temp_sensor.h"
 #include "peripherals/air_sensor.h"
 #include "includes/at91sam3x8.h"
+#include "includes/common.h"
 #include "rtc.h"
 
 
@@ -50,7 +51,7 @@ char Controller_User_Input(volatile char pressed){
 			//First 5 menu options:
 	        switch(pressed){
 	          case 1:
-		        nState = 1;
+		        sta.state = 1;
 		        //Allocate memory for strings to be used
 				char *air = malloc(15*sizeof(char *));
 				if(air == 0){
@@ -95,13 +96,13 @@ char Controller_User_Input(volatile char pressed){
 	            break;
 
 	          case 2:
-	            nState = 2;
+	            sta.state = 2;
 			    Display_Write_Header(Controller_Get_Warnings(), "Sun tracker", time);
 			    Display_Write_Light_Screen();
 			    //TODO Enable tracking mode, also remember to disable on state change somehow
 	            break;
 	          case 3:
-	            nState = 3;
+	            sta.state = 3;
 
 	            Display_Write_Header(Controller_Get_Warnings(), "Temp Hist", time);
 	            Display_Write_Temp_Screen(date); //This has to take the  temp data or something
@@ -109,12 +110,12 @@ char Controller_User_Input(volatile char pressed){
 	            break;
 
 	          case 4:
-	            nState = 4;
+	            sta.state = 4;
 	            Display_Write_Header(Controller_Get_Warnings(), "Air History", time);
 	            Display_Write_Air_Screen(date);
 	            break;
 	          case 5:
-	            nState = 5;
+	            sta.state = 5;
 	            Display_Write_Header(Controller_Get_Warnings(), "Settings Screen", time);
 	            Display_Write_Settings_Screen();
 	            break;
