@@ -18,7 +18,7 @@ static void lightSens(){
 	}
 }
 
-int main(){
+int LightFollow(){
 	SystemInit();
 	SERVO_init();
 	LIGHTSENS_init();
@@ -29,7 +29,7 @@ int main(){
 }
 
 
-void SysTick_Handler(void){
+void SysTick_Handler_Follower(void){//use this when starting followmode
 
 	ms_counter ++;
 	

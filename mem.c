@@ -5,11 +5,8 @@
 /* Uses a single liked list data structure and requires only calls to													*/
 /* add and get data. Will set flag and remove oldest entry when															*/
 /* All variables of module can be found in mem struct, defined in header												*/
-/* root of temp list ist at mem.root																					*/
+/* root of temp list ist at mem.temp																					*/
 /* status flags are found at mem.status																					*/
-/* memory is full																										*/
-/* memory is full																										*/
-
 /************************************************************************************************************************/
 
 #include "mem.h"
@@ -29,18 +26,18 @@ datestamp_t getDate();
 /* return value -1. Unable to allocate memory							*/
 /************************************************************************/
 int MEM_init( void ){
-	//mem.root = NULL;
-	mem.root = malloc(sizeof(node_t) );
-	if(mem.root == NULL){ // Address of root to mem at null, error
+	//mem.temp = NULL;
+	mem.temp = malloc(sizeof(node_t) );
+	if(mem.temp == NULL){ // Address of root to mem at null, error
 		/* need a error message*/
 		return -1;
 	}
 		
-	mem.root->next = NULL;
-	mem.root->temp.min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
-	mem.root->temp.max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
-	mem.root->temp.avg = 0; 		 // initialize avg to 0
-	mem.root->date = getDate();
+	mem.temp->next = NULL;
+	mem.temp->temp.min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
+	mem.temp->temp.max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
+	mem.temp->temp.avg = 0; 		 // initialize avg to 0
+	mem.temp->date = getDate();
 	return 1;
 }
 
@@ -57,8 +54,8 @@ int MEM_init( void ){
 /* -1 fail. no value TODO: implement									*/
 /************************************************************************/
 int MEM_save(float new_val_f){
-	node_t *cur_node = mem.root;
-	short int new_val_s = (short int) new_val_f*100;// saves value of 2 decimals. truncate rest
+	node_t *cur_node = mem.temp;
+	short int new_val_s = (short int) (new_val_f*100);// saves value of 2 decimals. truncate rest
 	char ret_val = 0;
 	cur_node->temp.avg+= new_val_s;
 	cur_node->temp.count++;
@@ -86,7 +83,7 @@ int MEM_save(float new_val_f){
 /************************************************************************/
 /*int MEM_save(float fNew_Value){
 	short int sNew_Value = (short int)fNew_Value*100;// saves value of 2 decimals. truncate rest
-	if(mem.root != NULL){
+	if(mem.temp != NULL){
 		if( addNode( sNew_Value, getTime() ) < 0){
 */			/* out of memory, remove oldest entry and try again */
 /*			int resp = MEM_remove();
@@ -120,7 +117,7 @@ int MEM_save(float new_val_f){
 /* -2 = no nodes to remove, empty list									*/
 /************************************************************************/
 int MEM_remove(){
-	node_t *it_pr = mem.root;
+	node_t *it_pr = mem.temp;
 	if(it_pr != NULL){
 		if(it_pr->next != NULL){
 
@@ -132,8 +129,8 @@ int MEM_remove(){
 			it_pr->next = NULL;
 			return 1;
 		}else{//list has only 1 node
-			free(mem.root);
-			mem.root = NULL;
+			free(mem.temp);
+			mem.temp = NULL;
 			return 2;
 		}
 	}else{//trying to remove item of empty list
@@ -170,10 +167,14 @@ int MEM_newDay(){
 			new_node_pr = malloc(sizeof(node_t));
 		}
 	}
-	
+
 	if(new_node_pr != NULL){
-		new_node_pr->next = mem.root;
-		mem.root = new_node_pr;
+		new_node_pr->next = mem.temp;
+		mem.temp = new_node_pr;
+		mem.temp->temp.min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
+		mem.temp->temp.max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
+		mem.temp->temp.avg = 0; 		 // initialize avg to 0
+		mem.temp->date = getDate();
 		return 1;
 	}else{
 		mem.status.MEM_ERROR = TRUE;
@@ -202,8 +203,8 @@ int addNode(short int new_temp, datestamp_t time){
 	if(tmp_node_pr!= NULL){
 		//tmp_node_pr->temp = new_temp;
 		tmp_node_pr->date = time;
-		tmp_node_pr->next = mem.root;
-		mem.root = tmp_node_pr;
+		tmp_node_pr->next = mem.temp;
+		mem.temp = tmp_node_pr;
 		return 1;
 	}else{ //Unable to allocate memory. Handle error
 		return -1;
@@ -225,4 +226,27 @@ datestamp_t getDate(){
 	newStamp.month = 2;
 	newStamp.year =  3;
 	return newStamp;
+}
+
+int MEM_test(void){
+    MEM_init();
+    MEM_save(25.5);
+    MEM_save(23.3);
+    MEM_newDay();
+    MEM_save(10);
+    MEM_save(12);
+    MEM_newDay();
+    MEM_save(-2);
+    MEM_save(-5);
+
+    node_t *temp = mem.temp;
+    char count = 0;
+    //Get last 7 days worth of data from database
+    while(temp != NULL && count <7){
+        //Display_Draw_Graph(&temp->temp, count);
+        printf("max: %f. min: %f. avg: %f\n",((float)MEM_get(temp).max)/100,((float)MEM_get(temp).min)/100,((float)MEM_get(temp).avg)/100);
+        count++;
+        temp = temp->next;
+    }
+
 }

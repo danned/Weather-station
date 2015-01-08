@@ -34,11 +34,11 @@ typedef struct node{
 typedef struct{
 	char MEM_FULL  : 1;
 	char MEM_ERROR : 1;
-}status_t;
+}mem_status_t;
 
 typedef struct{
-	node_t *root;
-	status_t status;
+	node_t *temp;
+	mem_status_t status;
 }mem_t;
 
 //extern node_t *mem_root_pr;
@@ -80,6 +80,9 @@ temp_t MEM_get( node_t *node_pr );
 /* Returns -1 if fail													*/
 /************************************************************************/
 int MEM_newDay();
+
+
+int MEM_test(void);
 
 
 #endif // _MEM_H_

@@ -23,4 +23,19 @@ extern int iN_Avg;			// in main program
 extern int MODE;
 extern void Delay(int Value);
 
+typedef struct{
+	char MEAS : 1;
+	char TEMP_RDY : 1;
+	char NEW_DAY : 1;
+}status_t;
+
+typedef struct{
+	status_t status;
+	char mode;
+	char state;
+	int n_avg;
+	float temp_sum_f;
+}program_t;
+
+extern program_t sta;
 #endif // _COMMON_H_
