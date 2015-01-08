@@ -3,6 +3,7 @@
 */
 
 #include "rtc.h"
+#include "mem.h"
 #include <stdio.h>
 #include "includes/common.h"
 #include "includes/at91sam3x8.h"
@@ -116,6 +117,24 @@ void RTC_Get_Date_String(char* date){
 
   sprintf(date, "Date: %d%d-%d-%d \n", reverse_BCD_pattern(cent),reverse_BCD_pattern(year),reverse_BCD_pattern(month),reverse_BCD_pattern(date2));// TODO do not use sprintf
 }
+
+datestamp_t RTC_getDate(){
+  int bcd_date = RTC_Get_Date();
+  int mask = 0xFF;
+  char year = reverse_BCD_pattern( (char)(mask & (bcd_date >> 8)) );
+  mask = 0x1F;
+  char month = reverse_BCD_pattern( (char)(mask & (bcd_date >> 16)) );
+   mask = 0x3F;
+  char date2 = reverse_BCD_pattern( (char)(mask & (bcd_date >> 24)) );
+
+	datestamp_t newStamp;
+	newStamp.date =  date2;
+	newStamp.month = month;
+	newStamp.year =  year;
+	return newStamp;
+
+}
+
 void RTC_Get_Day_String(char* day){
   int bcd_date = RTC_Get_Date();
   int mask = 0x00;
