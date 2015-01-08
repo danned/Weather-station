@@ -18,30 +18,54 @@ typedef struct {
 	int year	: 7;
 }datestamp_t;
 
-typedef struct {
+
+/* datastructures for temperature start */
+/*typedef struct {
 	short min;
 	short avg;
 	short max;
 	short count; // this might be removed
 }temp_t;
-
+*/
 typedef struct node{
-	temp_t temp;
+	short min;
+	short avg;
+	short max;
+	short count; // this might be removed
 	datestamp_t date;
 	struct node *next;
-}node_t;
+}temp_t;
+/* temperature end */
 
+/* datastructures for air pressure start */
+
+/*typedef struct{
+	
+}pres_value_t;
+*/
+
+typedef struct {
+	char day;
+	char count;
+	unsigned int max[7];
+	unsigned int avg[7];
+	unsigned int min[7];
+}air_pres_t;
+
+/* air pressure end */
 typedef struct{
 	char MEM_FULL  : 1;
 	char MEM_ERROR : 1;
 }mem_status_t;
 
 typedef struct{
-	node_t *temp;
+	temp_t *temp;
+	
+	air_pres_t pres;
 	mem_status_t status;
 }mem_t;
 
-//extern node_t *mem_root_pr;
+//extern temp_t *mem_root_pr;
 extern mem_t mem;
 
 /************************************************************************/
@@ -58,8 +82,12 @@ int MEM_init( void );
 /*  1 on success, old value overwritten									*/
 /* -1 on error															*/
 /************************************************************************/
-int MEM_save(float new_value_f);
+int MEM_tempSave(float new_value_f);
 
+
+int MEM_presSave(unsigned int new_value_u32);
+
+int MEM_Save(float new_temp_f, unsigned int new_pres_u32);
 
 /************************************************************************/
 /* Removes oldest entry of list											*/
@@ -72,7 +100,7 @@ int MEM_remove();
 /**
  * Returns float value of temp stored at node
  */
-temp_t MEM_get( node_t *node_pr );
+temp_t MEM_get( temp_t *node_pr );
 
 /************************************************************************/
 /* Adds new day to linked list											*/

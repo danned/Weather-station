@@ -147,11 +147,11 @@ void Display_Write_Temp_Screen(char* date){
   Display_Draw_Axis();
   //fetch tinitial data, this weeks
   datestamp_t todays_datestamp = mem.temp->date; //TODO get date from RTC
-  node_t *temp = mem.temp;
+  temp_t *temp = mem.temp;
   char count = 0;
   //Get last 7 days worth of data from database
   while(temp->next != NULL && count <7){
-	Display_Draw_Graph(&temp->temp, count);
+	Display_Draw_Graph(temp, count);
     count++;
     temp = temp->next;
   }

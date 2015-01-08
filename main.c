@@ -151,16 +151,23 @@ int main(void)
  * aswell var with sum of measurement results. Globals are found in common.h.
  */
 void RTC_Handler(void){
+	//should trigger every minute for normal mode. Every second for fast mode
 	
 	sta.status.MEAS = 1;
+	
+	//should trigger every day for normal mode. Every hour for fast mode
 	sta.status.NEW_DAY = 1;
+	
+	
+	
+	
 	*AT91C_RTC_SCCR = 3<<1;
 	//printf("RTC Interrupt!");
 }
 
 /**
  * \brief SysTick triggers measurement of sensors TODO maybe use another counter. SysTick is used by other functions which needs it to interrupt every ms
- * Should make N interrupts per minute/second depending on mode.
+ * Should make N interrupts per minute/second depending on mode. Only for temp sensor
  */
 void SysTick_Handler(void){
 	measure();

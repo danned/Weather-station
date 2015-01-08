@@ -19,7 +19,23 @@ mem_t mem;
 /* Internal functions                                                    */
 /************************************************************************/
 int addNode(short int, datestamp_t);
-datestamp_t getDate();
+datestamp_t getDate();//deprecated
+
+
+static void initTemp(){
+	mem.temp->min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
+	mem.temp->max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
+	mem.temp->avg = 0; 		 // initialize avg to 0
+	mem.temp->date = RTC_getDate();
+	mem.temp->count = 0;
+}
+
+static void initPres(int day){
+	mem.pres.min[day] = 0;
+	mem.pres.max[day] = 0;
+	mem.pres.avg[day] = 0;
+	mem.pres.count = 0;
+}
 
 /************************************************************************/
 /* Will initialize the data structure. Call this method only once       */
@@ -28,24 +44,35 @@ datestamp_t getDate();
 /************************************************************************/
 int MEM_init( void ){
 	//mem.temp = NULL;
-	mem.temp = malloc(sizeof(node_t) );
+	
+	/* temp init start */
+	mem.temp = malloc(sizeof(temp_t) );
 	if(mem.temp == NULL){ // Address of root to mem at null, error
 		/* need a error message*/
 		return -1;
 	}
 		
 	mem.temp->next = NULL;
-	mem.temp->temp.min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
-	mem.temp->temp.max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
-	mem.temp->temp.avg = 0; 		 // initialize avg to 0
+	initTemp();
+	/*mem.temp->min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
+	mem.temp->max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
+	mem.temp->avg = 0; 		 // initialize avg to 0
+	mem.temp->count = 0;*/
 	mem.temp->date = RTC_getDate();
-
+	
+	/* temp init end */
+	/* pres init start */
+	for(int i = 0; i<7;i++){
+		initPres(i);
+	}
+	mem.pres.count = 0;
+	/* pres init end */
 	return 1;
 }
 
 
 /************************************************************************/
-/* Updates values of current day						                */
+/* Updates temp values of current day						                */
 /* if new meas is less then saved min. Min val is updated				*/
 /* same for max. Avg will hold sum of values until new day event		*/
 /*	count holds number of measurements									*/
@@ -55,21 +82,60 @@ int MEM_init( void ){
 /*  3 Success. New Max and Min saved									*/
 /* -1 fail. no value TODO: implement									*/
 /************************************************************************/
-int MEM_save(float new_val_f){
-	node_t *cur_node = mem.temp;
+int MEM_tempSave(float new_val_f){
+	temp_t *cur_node = mem.temp;
 	short int new_val_s = (short int) (new_val_f*100);// saves value of 2 decimals. truncate rest
 	char ret_val = 0;
-	cur_node->temp.avg+= new_val_s;
-	cur_node->temp.count++;
-	if(new_val_s < cur_node->temp.min){
-		cur_node->temp.min = new_val_s;
+	cur_node->avg+= new_val_s;
+	cur_node->count++;
+	if(new_val_s < cur_node->min){
+		cur_node->min = new_val_s;
 		ret_val += 1;
 	}
 
-	if( new_val_s > cur_node->temp.max){
-		cur_node->temp.max = new_val_s;
+	if( new_val_s > cur_node->max){
+		cur_node->max = new_val_s;
 		ret_val += 2;
 	}
+	return ret_val;
+}
+
+
+/************************************************************************/
+/* Updates pressure values of current day						                */
+/* if new meas is less then saved min. Min val is updated				*/
+/* same for max. Avg will hold sum of values until new day event		*/
+/*	count holds number of measurements									*/
+/*  0 Success. No new min, max saved									*/
+/* 	1 Success. new min saved											*/
+/*  2 Success. New Max saved											*/
+/*  3 Success. New Max and Min saved									*/
+/* -1 fail. no value TODO: implement									*/
+/************************************************************************/
+int MEM_presSave(unsigned int new_val_u32){
+	int ret_val = 0;
+	if( new_val_u32 > mem.pres.max[mem.pres.day] ){
+		mem.pres.max[mem.pres.day] = new_val_u32;
+		ret_val+=2;
+	}	
+	if( new_val_u32 < mem.pres.min[mem.pres.day] ){
+		mem.pres.min[mem.pres.day] = new_val_u32;
+		ret_val+=1;
+	}
+	
+	mem.pres.avg[mem.pres.day]+= new_val_u32;	
+	mem.pres.count++;
+	return ret_val;
+}
+
+
+int MEM_save(float new_temp_f, unsigned int new_pres_u32){
+	int ret_val = 0;
+	if(MEM_tempSave( new_temp_f ) > 0)
+		ret_val += 1;
+	if(MEM_presSave( new_pres_u32 ) > 0)
+		ret_val += 2;
+		
 	return ret_val;
 }
 
@@ -119,7 +185,7 @@ int MEM_save(float new_val_f){
 /* -2 = no nodes to remove, empty list									*/
 /************************************************************************/
 int MEM_remove(){
-	node_t *it_pr = mem.temp;
+	temp_t *it_pr = mem.temp;
 	if(it_pr != NULL){
 		if(it_pr->next != NULL){
 
@@ -141,11 +207,11 @@ int MEM_remove(){
 }
 
 /**
- * Returns float value of temp stored at node
+ * Returns float value of temp stored at node Completely useless atm. maybe write get function to return object of floats
  */
-temp_t MEM_get( node_t *node_pr ){
+temp_t MEM_get( temp_t *node_pr ){
 	//if(node_pr != NULL){
-		return node_pr->temp;
+		return *node_pr;
 	//}else{
 		//return NULL; //TODO: this return should indicate error
 	//}
@@ -154,34 +220,57 @@ temp_t MEM_get( node_t *node_pr ){
 
 
 /************************************************************************/
-/* Adds new day to linked list											*/
-/* Returns 1 if success.												*/
+/* Adds new day to linked list	and updates variable for pressure 		*/
+/* Will update status flag mem.status.MEM_FULL if old temp values  		*/
+/* are overwritten. mem.status.MEM_ERROR indicates error, BAD			*/
+/* Returns 1 if temp is success.										*/
+/* Returns 2 if pressure is success.									*/
+/* Returns 3 if all is success.											*/
 /* Returns -1 if fail													*/
 /************************************************************************/
 int MEM_newDay(){
-	node_t *new_node_pr = malloc(sizeof(node_t));
+	/* start update day temp */
+	int ret_val = 0;
+	mem.temp->avg /= mem.temp->count;
+	temp_t *new_node_pr = malloc(sizeof(temp_t));
 	if(new_node_pr == NULL){// memory is full. Remove oldest entry
 		mem.status.MEM_FULL = TRUE;
 		signed char resp = MEM_remove();
 		if(resp < 0){ // unable to clear space in memory
 			//mem.status.MEM_ERROR = TRUE;
 		}else{
-			new_node_pr = malloc(sizeof(node_t));
+			new_node_pr = malloc(sizeof(temp_t));
 		}
 	}
 
 	if(new_node_pr != NULL){
 		new_node_pr->next = mem.temp;
 		mem.temp = new_node_pr;
-		mem.temp->temp.min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
-		mem.temp->temp.max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
-		mem.temp->temp.avg = 0; 		 // initialize avg to 0
-		mem.temp->date = getDate();
-		return 1;
+		initTemp();
+		/*mem.temp->min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
+		mem.temp->max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
+		mem.temp->avg = 0; 		 // initialize avg to 0
+		mem.temp->date = RTC_getDate();
+		mem.temp->count = 0;*/
+		ret_val += 1;
 	}else{
 		mem.status.MEM_ERROR = TRUE;
-		return -1;
 	}
+	/* end update day temp */
+	
+	/* start update day pressure */
+	
+	mem.pres.avg[mem.pres.day] /= mem.pres.count;
+	
+	if(++mem.pres.day >= 7)
+		mem.pres.day = 0;
+		
+	initPres(mem.pres.day);
+	if(mem.pres.max[mem.pres.day] == 0 && mem.pres.min == 0 && mem.pres.avg == 0 && mem.pres.count == 0)
+		ret_val+=2;
+	/* end update day pressure */
+	
+	return ret_val;
 }
 
 
@@ -199,8 +288,8 @@ int MEM_newDay(){
 /* -1 if unable to allocate mem (out of memory	)						*/
 /************************************************************************/
 int addNode(short int new_temp, datestamp_t time){
-	node_t *tmp_node_pr;
-	tmp_node_pr = malloc(sizeof(node_t));
+	temp_t *tmp_node_pr;
+	tmp_node_pr = malloc(sizeof(temp_t));
 
 	if(tmp_node_pr!= NULL){
 		//tmp_node_pr->temp = new_temp;
@@ -215,10 +304,11 @@ int addNode(short int new_temp, datestamp_t time){
 
 
 /************************************************************************/
-/* Returns current time                                                 */
+/* Returns current time      DEPRECATED                                 */
 /************************************************************************/
 datestamp_t getDate(){
-	/*currTime = RTC_Get_Date();
+	/*
+	currTime = RTC_Get_Date();
 	datestamp newStamp;
 	newStamp.date =  currTime.date;	TODO: remove comments
 	newStamp.month = currTime.month;
@@ -232,23 +322,29 @@ datestamp_t getDate(){
 
 int MEM_test(void){
     MEM_init();
-    MEM_save(25.5);
-    MEM_save(23.3);
+    MEM_save(25.5, 100000);
+    MEM_save(23.3, 102000);
     MEM_newDay();
-    MEM_save(10);
-    MEM_save(12);
+    MEM_save(10, 140000);
+    MEM_save(12, 145000);
     MEM_newDay();
-    MEM_save(-2);
-    MEM_save(-5);
+    MEM_save(-2, 90000);
+    MEM_save(-5, 100000);
 
-    node_t *temp = mem.temp;
+    temp_t *temp = mem.temp;
     char count = 0;
     //Get last 7 days worth of data from database
     while(temp != NULL && count <7){
-        //Display_Draw_Graph(&temp->temp, count);
-        printf("max: %f. min: %f. avg: %f\n",((float)MEM_get(temp).max)/100,((float)MEM_get(temp).min)/100,((float)MEM_get(temp).avg)/100);
+        //Display_Draw_Graph(&temp->, count);
+        printf("temp values: max: %f. min: %f. avg: %f\n",((float)MEM_get(temp).max)/100,((float)MEM_get(temp).min)/100,((float)MEM_get(temp).avg)/100);
         count++;
         temp = temp->next;
     }
-
+	for(int i = 0;i<7;i++){
+		printf("pressure values: max: %d. min %d. avg: %d\n", mem.pres.max[i], mem.pres.min[i], mem.pres.avg[i]);
+	}
+	
+	return 0;
 }
+
+
