@@ -147,8 +147,8 @@ void Display_Write_Temp_Screen(char* date){
 	Display_Write("Min: ",100,0);
   Display_Draw_Axis();
   //fetch tinitial data, this weeks
-  datestamp_t todays_datestamp = mem_root_pr->date; //TODO get date from RTC
-  node_t *temp = mem_root_pr;
+  datestamp_t todays_datestamp = mem.root->date; //TODO get date from RTC
+  node_t *temp = mem.root;
   char count = 0;
   //Get last 7 days worth of data from database
   while(temp->next != NULL && count <7){
@@ -214,10 +214,15 @@ void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,c
 /*Draws the bar graphs for one week three bars for every day min avg max*/
 void Display_Draw_Graph(temp_t* temp, char count){
  //TODO assign from temperature struct
- char min = 10;
- char avg = 15;
- char max = 20;
-
+ char min = temp->min;
+ char avg = temp->avg;
+ char max = temp->max;
+//TODO remove - Prevent painting over the whole screen for now
+  if(min>60||avg>60||max>60){
+     min = 60;
+     avg = 60;
+     max = 60;
+  }
   //Draw min bar, origin is at (62,100)
   int start_pos = 61+(count*3)+0;
   for(int i =0;i< min;i++ ){

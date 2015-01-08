@@ -106,13 +106,13 @@ void RTC_Get_Date_String(char* date){
   int mask = 0x00;
 
   mask = 0x7F;
-  char cent = (char)(mask && (bcd_date));
+  char cent = (char)(mask & (bcd_date));
   mask = 0xFF;
-  char year = (char)(mask && (bcd_date >> 8));
-  mask = 0x2F;
-  char month = (char)(mask && (bcd_date >> 16));
-   mask = 0x4F;
-  char date2 = (char)(mask && (bcd_date >> 24));
+  char year = (char)(mask & (bcd_date >> 8));
+  mask = 0x1F;
+  char month = (char)(mask & (bcd_date >> 16));
+   mask = 0x3F;
+  char date2 = (char)(mask & (bcd_date >> 24));
 
   sprintf(date, "Date: %d%d-%d-%d \n", reverse_BCD_pattern(cent),reverse_BCD_pattern(year),reverse_BCD_pattern(month),reverse_BCD_pattern(date2));// TODO do not use sprintf
 }
