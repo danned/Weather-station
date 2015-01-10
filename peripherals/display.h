@@ -25,6 +25,7 @@ void Display_Write_Settings_Screen(void);
 void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,char mem_pass);
 /* sends data to display */
 void Display_Write_Data(unsigned char Data);
+void Display_Write_Datetime_Screen(void);
 /*Fills a single pixel*/
 void Display_Draw_Pixel(int x, int y);
 void Display_Draw_Sun(int xw, int yw, int rw);

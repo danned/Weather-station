@@ -172,8 +172,6 @@ void Display_Write_Air_Screen(char* date){
 void Display_Write_Settings_Screen(void){
     Display_Write("N= ",95,0);
     Display_Write("10",110,0); //TODO Implement changable N value
-    Display_Write("Set datetime ",135,0);
-    Display_Write("0 ms",150,0); //TODO Implement setting the time
     Display_Write("Fast mode ",175,0);
     Display_Write("ENABLED",190,0); //TODO Implement enable/disable fast mode
 

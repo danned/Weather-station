@@ -127,8 +127,7 @@ int main(void)
 {
 
     stationInit();// initializes station
-
-
+    //TODO Insert set state and draw date-time screen with void Display_Write_Datetime_Screen(void)
 	while (1)
     {
 
@@ -182,5 +181,3 @@ void SVC_Handler( void ){while(1){}}
 void DebugMon_Handler( void ){while(1){}}
 void PendSV_Handler( void ){while(1){}}
 //void SysTick_Handler( void ){while(1){}}
-
-//TEST FROM STAEF GIT
