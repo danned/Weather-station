@@ -31,7 +31,7 @@ static void initTemp(){
 }
 
 static void initPres(int day){
-	mem.pres.min[day] = 0;
+	mem.pres.min[day] = 2000000;
 	mem.pres.max[day] = 0;
 	mem.pres.avg[day] = 0;
 	mem.pres.count = 0;
@@ -86,8 +86,10 @@ int MEM_tempSave(float new_val_f){
 	temp_t *cur_node = mem.temp;
 	short int new_val_s = (short int) (new_val_f*100);// saves value of 2 decimals. truncate rest
 	char ret_val = 0;
-	cur_node->avg+= new_val_s;
+	int temp_sum = (cur_node->avg*cur_node->count) + new_val_s;
 	cur_node->count++;
+	cur_node->avg= temp_sum/cur_node->count;
+	
 	if(new_val_s < cur_node->min){
 		cur_node->min = new_val_s;
 		ret_val += 1;
@@ -122,9 +124,10 @@ int MEM_presSave(unsigned int new_val_u32){
 		mem.pres.min[mem.pres.day] = new_val_u32;
 		ret_val+=1;
 	}
-	
-	mem.pres.avg[mem.pres.day]+= new_val_u32;	
+	int pres_sum = (mem.pres.avg[mem.pres.day] * mem.pres.count) + new_val_u32;
 	mem.pres.count++;
+	mem.pres.avg[mem.pres.day]= pres_sum / mem.pres.count;	
+	//mem.pres.count++;
 	return ret_val;
 }
 
@@ -231,7 +234,7 @@ temp_t MEM_get( temp_t *node_pr ){
 int MEM_newDay(){
 	/* start update day temp */
 	int ret_val = 0;
-	mem.temp->avg /= mem.temp->count;
+	//mem.temp->avg /= mem.temp->count;
 	temp_t *new_node_pr = malloc(sizeof(temp_t));
 	if(new_node_pr == NULL){// memory is full. Remove oldest entry
 		mem.status.MEM_FULL = TRUE;
@@ -260,7 +263,7 @@ int MEM_newDay(){
 	
 	/* start update day pressure */
 	
-	mem.pres.avg[mem.pres.day] /= mem.pres.count;
+	//mem.pres.avg[mem.pres.day] /= mem.pres.count;
 	
 	if(++mem.pres.day >= 7)
 		mem.pres.day = 0;
@@ -330,15 +333,40 @@ int MEM_test(void){
     MEM_newDay();
     MEM_save(-2, 90000);
     MEM_save(-5, 100000);
-
-    temp_t *temp = mem.temp;
+	MEM_newDay();
+    MEM_save(-2, 90000);
+    MEM_save(-5, 100000);
+	MEM_newDay();
+    MEM_save(20, 80000);
+    MEM_save(15, 90000);
+	MEM_newDay();
+    MEM_save(15, 103000);
+    MEM_save(16, 102000);
+	MEM_newDay();
+    MEM_save(20, 90000);
+    MEM_save(13, 100000);
+	MEM_newDay();
+    MEM_save(12, 90000);
+    MEM_save(11, 100000);
+	MEM_newDay();
+    MEM_save(10, 90000);
+    MEM_save(9, 100000);
+	MEM_remove();
+	MEM_save(11,90000);
+	MEM_save(12,90000);
+	MEM_save(13,90000);
+	MEM_save(14,90000);
+	MEM_save(15,90000);
+	MEM_save(16,90000);
+	MEM_save(17,90000);
+    temp_t *tmp = mem.temp;
     char count = 0;
     //Get last 7 days worth of data from database
-    while(temp != NULL && count <7){
+    while(tmp != NULL/* && count <7 */){
         //Display_Draw_Graph(&temp->, count);
-        printf("temp values: max: %f. min: %f. avg: %f\n",((float)MEM_get(temp).max)/100,((float)MEM_get(temp).min)/100,((float)MEM_get(temp).avg)/100);
+        printf("temp values: max: %f. min: %f. avg: %f\n",((float)MEM_get(tmp).max)/100,((float)MEM_get(tmp).min)/100,((float)MEM_get(tmp).avg)/100);
         count++;
-        temp = temp->next;
+        tmp = tmp->next;
     }
 	for(int i = 0;i<7;i++){
 		printf("pressure values: max: %d. min %d. avg: %d\n", mem.pres.max[i], mem.pres.min[i], mem.pres.avg[i]);

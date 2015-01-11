@@ -32,7 +32,7 @@ extern char cTemp_Reset_Ready_Flag;
 extern char cTemp_Measurement_Ready_Flag;
 
 //char cMeasure = 0; deprecated. see sta.status.MEAS
-//char cTimeToReadTemp = 0; deprecated. see sta.status.TEMP_RDY;
+//char cTimeToReadTemp = 0; deprecated. see sta.status.TEMP_REQ;
 /** Prototypes. NOT USED
 void saveMeas();
 void tempSensor();
@@ -59,7 +59,7 @@ static void saveMeas(){
  * \brief call this function to start measuring
  */
 static void measure(){
-	 sta.status.TEMP_RDY = 1;
+	 sta.status.TEMP_REQ = 1;
 	 //TODO: add measuring of humidity
 }
 
@@ -67,7 +67,7 @@ static void measure(){
  * \brief inline method used for measuring temperature. start flag is set by systick
  */
 static void tempSens(){
-	if(sta.status.TEMP_RDY == 1){
+	if(sta.status.TEMP_REQ == 1){
 		Temp_Reset();
 	}
 	if(cTemp_Reset_Ready_Flag  == 1){
@@ -103,7 +103,7 @@ static void stationInit(){
 	sta.n_avg = 3;
 	sta.temp_sum_f = 0;
 	sta.status.MEAS = 0;
-	sta.status.TEMP_RDY = 0;
+	sta.status.TEMP_REQ = 0;
 	/* stop initializing variables */
 	MEM_init();
 	MEM_test();

@@ -25,7 +25,7 @@ extern void Delay(int Value);
 
 typedef struct{
 	char MEAS : 1;
-	char TEMP_RDY : 1;
+	char TEMP_REQ : 1;
 	char NEW_DAY : 1;
 }status_t;
 
