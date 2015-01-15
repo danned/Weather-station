@@ -28,6 +28,8 @@ char nState = 0; //keeps track of current state*/
 char nTempWarning = 0; //0 OR 1
 char nMemWarning = 0; // 0 OR 2   2 is active warning!
 
+int ms_counter = 0;
+
 extern char cTemp_Reset_Ready_Flag;
 extern char cTemp_Measurement_Ready_Flag;
 
@@ -95,8 +97,8 @@ static void stationInit(){
 	/* Initialize the SAM system */
 	SystemInit();
 	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
-	RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
-	
+	//RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
+
 	/* start initializing variables */
 	sta.mode = 0;
 	sta.state = 0;
@@ -106,16 +108,26 @@ static void stationInit(){
 	sta.status.TEMP_REQ = 0;
 	/* stop initializing variables */
 	MEM_init();
-	MEM_test();
+	//MEM_test();
 	Keypad_Init();
 	Temp_Init();
 	Display_Init();
 	LIGHTSENS_init();
 	SERVO_init();
-	/*Build UI first time*/
+
+	/*Show system test screen for a while*/
 	Display_Write_Header(1,"System test","00:00");
-	Display_Write_Sidebar(0);
-	//Display_Write_Testing_Screen(Temp_Test(),0,0,0); //TODO implement
+	//Display_Write_Sidebar(0);
+	Display_Write_Testing_Screen(Temp_Test(),1,1,1); //TODO add the other test results
+	//Push any button to remove testing screen
+	while(!Keypad_Read()){}
+	Delay(2000000);
+
+	/*Force user to enter date and time*/
+	Display_Write_Header(0,"Date and time","00:00");
+	Display_Write_Sidebar();
+	//Display_Write_Sidebar(0);
+	Display_Write_Date_Screen();
 }
 
 /**
@@ -151,15 +163,15 @@ int main(void)
  */
 void RTC_Handler(void){
 	//should trigger every minute for normal mode. Every second for fast mode
-	
+
 	sta.status.MEAS = 1;
-	
+
 	//should trigger every day for normal mode. Every hour for fast mode
 	sta.status.NEW_DAY = 1;
-	
-	
-	
-	
+
+
+
+
 	*AT91C_RTC_SCCR = 3<<1;
 	//printf("RTC Interrupt!");
 }
@@ -170,6 +182,11 @@ void RTC_Handler(void){
  */
 void SysTick_Handler(void){
 	measure();
+	ms_counter ++;
+	if((ms_counter >= 100 && cLight_Sensor_State != 2) ){
+	 cLight_Sensor_State = 0;
+	 ms_counter = 0;
+	}
 }
 
 void NMI_Handler( void ){while(1){}}

@@ -22,6 +22,7 @@ void Display_Write_Light_Screen(void);
 void Display_Write_Temp_Screen(char* date);
 void Display_Write_Air_Screen(char* date);
 void Display_Write_Settings_Screen(void);
+void Display_Write_Date_Screen(void);
 void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,char mem_pass);
 /* sends data to display */
 void Display_Write_Data(unsigned char Data);
@@ -31,7 +32,7 @@ void Display_Draw_Pixel(int x, int y);
 void Display_Draw_Sun(int xw, int yw, int rw);
 void Display_Draw_Arc(int xw, int yw, int rw);
 void Display_Draw_Axis(void);
-void Display_Draw_Graph(temp_t* data, char count);
+void Display_Draw_Temp_Graph(temp_t* data, char count);
 /*Empties graphics memory, EXPENSIVE!*/
 void Display_Clear_Graphics();
 

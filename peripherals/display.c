@@ -23,6 +23,7 @@ TODO:
 - Test module
 */
 #include "display.h"
+#include "../rtc.h"
 #include <math.h>
 #include "../includes/at91sam3x8.h"
 #include "../includes/common.h"
@@ -39,7 +40,7 @@ Left side under header all the way down.
 TODO do we need params in?
 Note: Max 5 chars for every button
  */
-int RTC_Get_Date_String(char* date); //TODO REMOVE
+//int RTC_Get_Date_String(char* date); //TODO REMOVE
 /* ------ PUBLIC functions ------ */
 
 
@@ -91,7 +92,7 @@ void DISPLAY_writeAt(char *text, char coloumn , char row){
 }
 */
 
-/*DEPRECATED AS OF 2014-12-23 prints string*/
+/*Writes to a cell, needs rewrite to take correct x and y*/
 void Display_Write(char *text, char x , char y){
 
   Display_Write_Data(x);
@@ -142,8 +143,8 @@ sprintf(angle, "%d degrees", reading);
 	Display_Draw_Sun(80, 110, 10); //TODO make this take the angle from servo
 }
 void Display_Write_Temp_Screen(char* date){
-  Display_Write(date,86,0);
-	Display_Write("Min: ",100,0);
+  Display_Write(date,87,0);
+	//Display_Write("Min: ",100,0);
   Display_Draw_Axis();
   //fetch tinitial data, this weeks
   datestamp_t todays_datestamp = mem.temp->date; //TODO get date from RTC
@@ -151,10 +152,185 @@ void Display_Write_Temp_Screen(char* date){
   char count = 0;
   //Get last 7 days worth of data from database
   while(temp->next != NULL && count <7){
-	Display_Draw_Graph(temp, count);
+	Display_Draw_Temp_Graph(temp, count);
     count++;
     temp = temp->next;
+    count++;
+    printf("Entry: %d",count-1);
   }
+}
+/*Draws the initial set date screen on startup*/
+void Display_Write_Date_Screen(void){
+
+  Display_Write("Cent:              ",88,0);
+	Display_Write("Year:              ",128,0);
+	Display_Write("Month:              ",168,0);
+	Display_Write("Date:               ",208,0);
+	Display_Write("                    ",248,0);
+
+  unsigned char date_entries_done = 0;
+  unsigned char time_entries_done = 0;
+  char cent = 0;
+  char year = 0;
+  char month = 0;
+  char date = 0;
+  char hr = 0;
+  char sec = 0;
+  char min = 0;
+
+  unsigned char pressed;
+  while(date_entries_done < 8){
+	  pressed = Keypad_Read();
+    if(pressed != 0){
+
+    	switch(pressed){
+        case 1:
+          Display_Write("1",94+((date_entries_done%2)*40),0); //write the number at correct place
+            date_entries_done++;
+		    break;
+        case 2:
+          Display_Write("2",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+            date_entries_done++;
+		    break;
+        case 3:
+          Display_Write("3",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+            date_entries_done++;
+        break;
+        case 4:
+			   Display_Write("4",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+          date_entries_done++;
+        break;
+        case 5:
+			Display_Write("5",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+            date_entries_done++;
+        break;
+        case 6:
+			Display_Write("6",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+            date_entries_done++;
+        break;
+        case 7:
+			Display_Write("7",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+            date_entries_done++;
+        break;
+        case 8:
+			Display_Write("8",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+            date_entries_done++;
+        break;
+        case 9:
+			Display_Write("9",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+            date_entries_done++;
+        break;
+        case 11:
+			Display_Write("0",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
+            date_entries_done++;
+        break;
+    }
+
+	if(!(pressed == 10 || pressed == 12)){
+		if(pressed == 11){pressed = 0;} //Quickfix to make saving easier
+
+		//Find out if its cent year month or date user is entering
+		switch((date_entries_done-1)/2){
+		  case 0:
+			cent = (cent*10)+pressed;
+		  break;
+		  case 1:
+			year = (year*10)+pressed;
+		  break;
+		  case  2:
+			month = (month*10)+pressed;
+		  break;
+		  case 3:
+			date = (date*10)+pressed;
+		  break;
+		}
+	}
+
+
+    //Press star to move to next item
+  while(Keypad_Read() != 10){}
+	Delay(2000000);
+    }
+  }
+
+  //Now let user enter the time
+  Display_Write("Hr:                ",88,0);
+  Display_Write("Min:               ",128,0);
+  Display_Write("Sec:              ",168,0);
+  Display_Write("                   ",208,0);
+  Display_Write("                    ",248,0);
+
+
+  while(time_entries_done < 6){
+    pressed = Keypad_Read();
+      if(pressed != 0){
+
+        switch(pressed){
+          case 1:
+            Display_Write("1",94+((time_entries_done%2)*40),0); //write the number at correct place
+              time_entries_done++;
+        break;
+          case 2:
+            Display_Write("2",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+        break;
+          case 3:
+            Display_Write("3",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+          break;
+          case 4:
+        Display_Write("4",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+          break;
+          case 5:
+        Display_Write("5",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+          break;
+          case 6:
+        Display_Write("6",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+          break;
+          case 7:
+        Display_Write("7",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+          break;
+          case 8:
+        Display_Write("8",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+          break;
+          case 9:
+        Display_Write("9",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+          break;
+          case 11:
+        Display_Write("0",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+              time_entries_done++;
+          break;
+      }
+
+      if(!(pressed == 10 || pressed == 12)){
+        if(pressed == 11){pressed = 0;} //Quickfix to make saving easier
+        //Find out if its hr min or sec or date user is entering
+        switch((time_entries_done-1)/2){
+          case 0:
+            hr = (hr*10)+pressed;
+          break;
+          case 1:
+            min = (min*10)+pressed;
+          break;
+          case  2:
+            sec = (sec*10)+pressed;
+          break;
+        }
+      }
+      //Press star to move to next item
+      while(Keypad_Read() != 10){}
+    Delay(2000000);
+    }
+  }
+
+  RTC_Init(sec, min,hr, cent, year, month, date, 1); //TODO do day aswell, hardcoded for now
+
 }
 void Display_Write_Air_Screen(char* date){
   //int test_fetched_temp = *mem_pr->next->temp;
@@ -209,17 +385,32 @@ void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,c
 }
 
 /*Draws the bar graphs for one week three bars for every day min avg max*/
-void Display_Draw_Graph(temp_t* temp, char count){
+void Display_Draw_Temp_Graph(temp_t* temp, char count){
  //TODO assign from temperature struct
- char min = temp->min;
- char avg = temp->avg;
- char max = temp->max;
+ signed char min = temp->min;
+ signed char avg = temp->avg;
+ signed char max = temp->max;
 //TODO remove - Prevent painting over the whole screen for now
-  if(min>60||avg>60||max>60){
+  if(min>60){
      min = 60;
+  }
+   if(avg>60){
      avg = 60;
+  }
+   if(max>60){
      max = 60;
   }
+  if(min<-10){
+     min = -10;
+  }
+   if(avg<-10){
+     avg = -10;
+  }
+   if(max<-10){
+     max = -10;
+  }
+
+
   //Draw min bar, origin is at (62,100)
   int start_pos = 61+(count*3)+0;
   for(int i =0;i< min;i++ ){
@@ -248,32 +439,44 @@ void Display_Draw_Graph(temp_t* temp, char count){
 
 /*Writes out standard sidebar nav and then state dependent part*/
 void Display_Write_Sidebar(){
-  //Regular sidebar part
-  Display_Write("1 Home",40*2,0);
-  Display_Write("2 Sun",40*3,0);
-  Display_Write("3 Temp",40*4,0);
-  Display_Write("4 Air",40*5,0);
- 	Display_Write("5 Conf",40*6,0);
+  if(sta.state == 0){ //Startup sidebar
+    Display_Write("* Next",24+40,1);
+    Display_Write("1",40*2,0);
+    Display_Write("2",40*3,0);
+    Display_Write("3",40*4,0);
+    Display_Write("4",40*5,0);
+    Display_Write("Etc.",40*6,0);
+  }else{
+    //Regular sidebar part
+    Display_Write("1 Home",40*2,0);
+    Display_Write("2 Sun",40*3,0);
+    Display_Write("3 Temp",40*4,0);
+    Display_Write("4 Air",40*5,0);
+    Display_Write("5 Conf",40*6,0);
+  }
+
 
   //state dependent sidebar part (Offset is y=1 x = 24)
   switch(sta.state){
+
     case 1: //Home screen
 
     break;
 
     case 2: //Light follower
     //TODO write start and stop buttons
-
+      Display_Write("* Strt",24+40,1);
+      Display_Write("# Stop",24+40*2,1);
     break;
 
     case 3: //Temperature history
-      Display_Write("* -Day",24+40,1);
-      Display_Write("# +Day",24+40*2,1);
+      Display_Write("* -Wk",24+40,1);
+      Display_Write("# +Wk",24+40*2,1);
     break;
 
     case 4: //Air pressure history
-      Display_Write("* -Day",24+40,1);
-      Display_Write("# +Day",24+40*2,1);
+      //Display_Write("* -Day",24+40,1);
+      //Display_Write("# +Day",24+40*2,1);
     break;
 
     case 5: //Conf Settings screen

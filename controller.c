@@ -27,7 +27,7 @@ TODO:
 #include "includes/at91sam3x8.h"
 #include "includes/common.h"
 #include "rtc.h"
-
+extern signed char cLight_Sensor_State;
 
 /* Main flow control structure - takes a pressed key val*/
 char Controller_User_Input(volatile char pressed){
@@ -132,8 +132,11 @@ char Controller_User_Input(volatile char pressed){
 	      else{
 		switch(pressed){
 	        case 6:
+	        //TODO Stop light follower
+
 	          break;
 	        case 7:
+	        //TODO Start light follower
 	          break;
 	        case 8:
 	          //TODO State 5 move up (select setting above)(also increase)
@@ -141,13 +144,13 @@ char Controller_User_Input(volatile char pressed){
 	        case 9:
 	          break;
 	        case 10:
-	          //TODO State 3,4,5 move left (save setting and return to select)
+	        if(sta.state == 2){cLight_Sensor_State = 0;int a = LightFollow();}
 	          break;
 	        case 11:
 	          //TODO State 5 move down (select setting below)(also decrease)
 	          break;
 	        case 12:
-	          //State 3,4,5 move right (also edit setting and end select)
+	          if(sta.state == 2){cLight_Sensor_State = -1;}
 	          break;
 			}
 		}
