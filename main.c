@@ -126,8 +126,7 @@ static void stationInit(){
 	/*Force user to enter date and time*/
 	Display_Write_Header(0,"Date and time","00:00");
 	Display_Write_Sidebar();
-	//Display_Write_Sidebar(0);
-	Display_Write_Date_Screen();
+	Display_Write_Date_Screen(); //TODO PUT THIS BACK<-------------
 }
 
 /**

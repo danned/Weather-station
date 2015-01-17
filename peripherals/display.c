@@ -106,24 +106,22 @@ void Display_Write(char *text, char x , char y){
 
 }
 
-
-
-/*Home screen*/
+/*Home screen that shows current values of everything*/
 void Display_Write_Home_Screen(char* temp, char* lux, char* air, char* date){
 
-    //Display_Write("Date: ",0,0);
-    Display_Write(date,6,0);
-    Display_Write("Temp: ",130,0);
-    Display_Write(temp,137,0);
-    Display_Write(" Celsius",142,0);
-    Display_Write("Illu: ",170,0);
-    Display_Write(lux,177,0);
-    Display_Write(" Lux",183,0);
-    Display_Write("Air: ",0,0);
-    Display_Write(air,5,0);
-    Display_Write(" kPa",200,0);
+    Display_Write(date,87,0); //Already includes wrapping string "Date: "
 
-
+    Display_Write("Temp: ",167,0);
+    Display_Write(temp,172,0);
+    Display_Write(" Cels",177,0);
+    
+    Display_Write("Illu: ",207,0);
+    Display_Write(lux,212,0);
+    Display_Write(" Lux",218,0);
+    
+    Display_Write("Air: ",247,0);
+    Display_Write(air,252,0);
+    Display_Write(" kPa",0,1);
 
 }
 void Display_Write_Light_Screen(void){
@@ -146,17 +144,23 @@ void Display_Write_Temp_Screen(char* date){
   Display_Write(date,87,0);
 	//Display_Write("Min: ",100,0);
   Display_Draw_Axis();
+
+  Display_Write("Tdy",57,2);
+  Display_Write("Ytd",61,2);
+
+  Display_Write("40",167,0);
+  Display_Write("20",71,1);
+  Display_Write("0",16,2);
   //fetch tinitial data, this weeks
   datestamp_t todays_datestamp = mem.temp->date; //TODO get date from RTC
-  temp_t *temp = mem.temp;
+  temp_t *tmp = mem.temp;
   char count = 0;
   //Get last 7 days worth of data from database
-  while(temp->next != NULL && count <7){
-	Display_Draw_Temp_Graph(temp, count);
-    count++;
-    temp = temp->next;
-    count++;
-    printf("Entry: %d",count-1);
+  while(tmp != NULL && count <7 ){
+      //Display_Draw_Graph(&temp->, count);
+      Display_Draw_Temp_Graph(tmp, count);
+      count++;
+      tmp = tmp->next;
   }
 }
 /*Draws the initial set date screen on startup*/
@@ -177,7 +181,7 @@ void Display_Write_Date_Screen(void){
   char hr = 0;
   char sec = 0;
   char min = 0;
-
+  Display_Write("_",94+((date_entries_done%2)*40),0);
   unsigned char pressed;
   while(date_entries_done < 8){
 	  pressed = Keypad_Read();
@@ -223,6 +227,7 @@ void Display_Write_Date_Screen(void){
         case 11:
 			Display_Write("0",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
             date_entries_done++;
+
         break;
     }
 
@@ -249,6 +254,7 @@ void Display_Write_Date_Screen(void){
 
     //Press star to move to next item
   while(Keypad_Read() != 10){}
+  Display_Write("_",94+((date_entries_done/2)*40)+(date_entries_done%2),0);
 	Delay(2000000);
     }
   }
@@ -259,15 +265,13 @@ void Display_Write_Date_Screen(void){
   Display_Write("Sec:              ",168,0);
   Display_Write("                   ",208,0);
   Display_Write("                    ",248,0);
-
-
+  Display_Write("_",94+((time_entries_done/2)*40)+(time_entries_done%2),0);
   while(time_entries_done < 6){
     pressed = Keypad_Read();
       if(pressed != 0){
-
         switch(pressed){
           case 1:
-            Display_Write("1",94+((time_entries_done%2)*40),0); //write the number at correct place
+            Display_Write("2",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
               time_entries_done++;
         break;
           case 2:
@@ -324,7 +328,8 @@ void Display_Write_Date_Screen(void){
         }
       }
       //Press star to move to next item
-      while(Keypad_Read() != 10){}
+    while(Keypad_Read() != 10){}
+    Display_Write("_",94+((time_entries_done/2)*40)+(time_entries_done%2),0);
     Delay(2000000);
     }
   }
@@ -336,22 +341,20 @@ void Display_Write_Air_Screen(char* date){
   //int test_fetched_temp = *mem_pr->next->temp;
   Display_Write(date,98,0);
 
-  Display_Write("Min: ",110,0);
-  Display_Write("1.0",115,0); //TODO Implement
-  Display_Write("Max: ",150,0);
-  Display_Write("3.0",155,0); //TODO Implement
-  Display_Write("Avg: ",190,0);
-  Display_Write("1.5",195,0); //TODO Implement
-
   Display_Draw_Axis();
+  Display_Write("Hi",167,0);
+  Display_Write("--",71,1);
+  Display_Write("Lo",15,2);
 }
 void Display_Write_Settings_Screen(void){
-    Display_Write("N= ",95,0);
-    Display_Write("10",110,0); //TODO Implement changable N value
-    Display_Write("Fast mode ",175,0);
-    Display_Write("ENABLED",190,0); //TODO Implement enable/disable fast mode
-
-
+    Display_Write("N= ",88,0);
+    Display_Write("10",90,0); //TODO Implement getting N value from state
+    Display_Write("Fast: ",168,0);
+    if(sta.mode > 0){
+      Display_Write("ENABLED",174,0);
+    }else{
+      Display_Write("DISABLED",174,0);
+    }
 }
 void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,char mem_pass){
 
@@ -390,49 +393,54 @@ void Display_Draw_Temp_Graph(temp_t* temp, char count){
  signed char min = temp->min;
  signed char avg = temp->avg;
  signed char max = temp->max;
-//TODO remove - Prevent painting over the whole screen for now
-  if(min>60){
-     min = 60;
+//Normalize values to spec 0-40 degrees celsius
+  if(min>40){
+     min = 40;
   }
-   if(avg>60){
-     avg = 60;
+   if(avg>40){
+     avg = 40;
   }
-   if(max>60){
-     max = 60;
+   if(max>40){
+     max = 40;
   }
   if(min<-10){
-     min = -10;
+     min = 0;
   }
    if(avg<-10){
-     avg = -10;
+     avg = 0;
   }
    if(max<-10){
-     max = -10;
+     max = 0;
   }
-
+  //For testing graph drawing
+  //min = 10;
+  //avg = 20;
+  //max = 30;
 
   //Draw min bar, origin is at (62,100)
-  int start_pos = 61+(count*3)+0;
-  for(int i =0;i< min;i++ ){
+  int start_pos = 61+(count*11)+0;
+  for(int i =0;i< min*2;i++ ){
     Display_Draw_Pixel(start_pos,110-i);
+    Display_Draw_Pixel(start_pos+1,110-i);
+    Display_Draw_Pixel(start_pos+2,110-i);
   }
   //Draw avg bar
-  start_pos = 61+(count*3)+1;
-  for(int i =0;i<avg;i++ ){
+  start_pos = 61+(count*11)+3;
+  for(int i =0;i<avg*2;i++ ){
     Display_Draw_Pixel(start_pos,110-i);
+    Display_Draw_Pixel(start_pos+1,110-i);
+    Display_Draw_Pixel(start_pos+2,110-i);
   }
   //Draw max bar
-  start_pos = 61+(count*3)+2;
+  start_pos = 61+(count*11)+7;
   /*Draw vertical line*/
-  for(int i =0;i<max;i++ ){
+  for(int i =0;i<max*2;i++ ){
     Display_Draw_Pixel(start_pos,110-i);
+    Display_Draw_Pixel(start_pos+1,110-i);
+    Display_Draw_Pixel(start_pos+2,110-i);
   }
 
 }
-
-
-
-
 /* ------ PRIVATE helpers ------ */
 //Takes X amount of input and graphs it in the content area.
 
@@ -480,10 +488,9 @@ void Display_Write_Sidebar(){
     break;
 
     case 5: //Conf Settings screen
-      Display_Write("8 Up",24+40,1);
-      Display_Write("0 Down",24+40*2,1);
-      Display_Write("* L",24+40*3,1);
-      Display_Write("# R",24+40*4,1);
+      //Display_Write("* =10",24+40,1);
+      Display_Write("0 SetN",24+40*2,1);
+      Display_Write("# Fast",24+40*3,1);
     break;
   }
 
@@ -510,8 +517,8 @@ void Display_Write_Header(char warning_status, char* title, char* time){
 
   }
   //Write title and clock
-  Display_Write(title,12,0); // 10 chars nr  will be space
-  Display_Write(time,8,0); //5 chars
+  Display_Write(title,8,0); // 10 chars nr  will be space
+  Display_Write(time,24,0); //5 chars
 
   /*Draw horizontal line*/
   Display_Write_Data(0x40);
@@ -765,17 +772,6 @@ void Display_Draw_Axis(){
 	    Display_Draw_Pixel(60,110-i);
 	}
 
-	/*Display_Write("Mo",57,2);
-	Display_Write("Tue",60,2);
-	Display_Write("We",63,2);
-	Display_Write("Th",66,2);
-	Display_Write("Fr",69,2);
-  Display_Write("Sa",72,2);
-  Display_Write("Su",75,2);
-  */}
-
-
-
-
+  }
 
 }

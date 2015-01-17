@@ -147,17 +147,47 @@ char Controller_User_Input(volatile char pressed){
 	        if(sta.state == 2){cLight_Sensor_State = 0;int a = LightFollow();}
 	          break;
 	        case 11:
-	          //TODO State 5 move down (select setting below)(also decrease)
+	          if(sta.state == 5){
+			  
+			  Display_Write("_ ",90,0);
+			  unsigned char pressed;
+			  while(1){
+				pressed = Keypad_Read();
+				if(pressed != 0 && pressed < 11){
+					char *pressed_str = malloc(3*sizeof(char *));
+					if(pressed_str == 0){
+					  return 0;
+					}
+			    	sprintf(pressed_str, "%d", pressed);// Populate string
+					Display_Write(pressed_str,90,0);
+					free(pressed_str);
+					sta.n_avg = pressed;
+					Delay(4000000);
+					break;
+				}
+			  }
 	          break;
 	        case 12:
 	          if(sta.state == 2){cLight_Sensor_State = -1;}
+	          if(sta.state == 5){
+	          	Display_Write("_         ",174,0);
+	          	if(sta.mode > 0){
+	          		sta.mode = 0;
+	          		Display_Write("DISABLED",174,0);
+	          	}else{
+	          		sta.mode = 1;
+	          		Display_Write("ENABLED",174,0);
+	          	}
+	          	Delay(2000000);
+
+	          }
 	          break;
 			}
 		}
 	}
 	return 1;
 }
-
+}
 char Controller_Get_Warnings(void){
   return nTempWarning+nMemWarning;
 }
