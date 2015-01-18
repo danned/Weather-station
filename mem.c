@@ -44,14 +44,14 @@ static void initPres(int day){
 /************************************************************************/
 int MEM_init( void ){
 	//mem.temp = NULL;
-	
+
 	/* temp init start */
 	mem.temp = malloc(sizeof(temp_t) );
 	if(mem.temp == NULL){ // Address of root to mem at null, error
 		/* need a error message*/
 		return -1;
 	}
-		
+
 	mem.temp->next = NULL;
 	initTemp();
 	/*mem.temp->min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
@@ -59,7 +59,7 @@ int MEM_init( void ){
 	mem.temp->avg = 0; 		 // initialize avg to 0
 	mem.temp->count = 0;*/
 	mem.temp->date = RTC_getDate();
-	
+
 	/* temp init end */
 	/* pres init start */
 	for(int i = 0; i<7;i++){
@@ -89,7 +89,7 @@ int MEM_tempSave(float new_val_f){
 	int temp_sum = (cur_node->avg*cur_node->count) + new_val_s;
 	cur_node->count++;
 	cur_node->avg= temp_sum/cur_node->count;
-	
+
 	if(new_val_s < cur_node->min){
 		cur_node->min = new_val_s;
 		ret_val += 1;
@@ -119,14 +119,14 @@ int MEM_presSave(unsigned int new_val_u32){
 	if( new_val_u32 > mem.pres.max[mem.pres.day] ){
 		mem.pres.max[mem.pres.day] = new_val_u32;
 		ret_val+=2;
-	}	
+	}
 	if( new_val_u32 < mem.pres.min[mem.pres.day] ){
 		mem.pres.min[mem.pres.day] = new_val_u32;
 		ret_val+=1;
 	}
 	int pres_sum = (mem.pres.avg[mem.pres.day] * mem.pres.count) + new_val_u32;
 	mem.pres.count++;
-	mem.pres.avg[mem.pres.day]= pres_sum / mem.pres.count;	
+	mem.pres.avg[mem.pres.day]= pres_sum / mem.pres.count;
 	//mem.pres.count++;
 	return ret_val;
 }
@@ -138,7 +138,7 @@ int MEM_save(float new_temp_f, unsigned int new_pres_u32){
 		ret_val += 1;
 	if(MEM_presSave( new_pres_u32 ) > 0)
 		ret_val += 2;
-		
+
 	return ret_val;
 }
 
@@ -260,19 +260,19 @@ int MEM_newDay(){
 		mem.status.MEM_ERROR = TRUE;
 	}
 	/* end update day temp */
-	
+
 	/* start update day pressure */
-	
+
 	//mem.pres.avg[mem.pres.day] /= mem.pres.count;
-	
+
 	if(++mem.pres.day >= 7)
 		mem.pres.day = 0;
-		
+
 	initPres(mem.pres.day);
 	if(mem.pres.max[mem.pres.day] == 0 && mem.pres.min == 0 && mem.pres.avg == 0 && mem.pres.count == 0)
 		ret_val+=2;
 	/* end update day pressure */
-	
+
 	return ret_val;
 }
 
@@ -371,7 +371,7 @@ int MEM_test(void){
 	for(int i = 0;i<7;i++){
 		printf("pressure values: max: %d. min %d. avg: %d\n", mem.pres.max[i], mem.pres.min[i], mem.pres.avg[i]);
 	}
-	
+
 	return 0;
 }
 

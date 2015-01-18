@@ -19,6 +19,7 @@ TODO:
 */
 
 #include "controller.h"
+#include "mem.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "peripherals/display.h"
@@ -28,7 +29,7 @@ TODO:
 #include "includes/common.h"
 #include "rtc.h"
 extern signed char cLight_Sensor_State;
-
+static int cur_week = 0;
 /* Main flow control structure - takes a pressed key val*/
 char Controller_User_Input(volatile char pressed){
 		if(pressed != 0){
@@ -136,10 +137,42 @@ char Controller_User_Input(volatile char pressed){
 
 	          break;
 	        case 7:
-	        //TODO Start light follower
+		        if(sta.state == 3){
+					char count = 0;
+					cur_week++;
+			        temp_t* temp = mem.temp;
+					 while(temp != NULL && count <cur_week*7 ){
+					     count++;
+					     temp = temp->next;
+					}
+
+					 count = 0;
+					 //Get last 7 days worth of data from database
+					 while(temp != NULL && count <7 ){
+					     Display_Draw_Temp_Graph(temp, count);
+					     count++;
+					     temp = temp->next;
+					}
+				}
 	          break;
 	        case 8:
-	          //TODO State 5 move up (select setting above)(also increase)
+	          if(sta.state == 3){
+					char count = 0;
+					cur_week--;
+			        temp_t* temp = mem.temp;
+					 while(temp != NULL && count <cur_week*7 ){
+					     count++;
+					     temp = temp->next;
+					}
+
+					 count = 0;
+					 //Get last 7 days worth of data from database
+					 while(temp != NULL && count <7 ){
+					     Display_Draw_Temp_Graph(temp, count);
+					     count++;
+					     temp = temp->next;
+					}
+				}
 	          break;
 	        case 9:
 	        	if(sta.state == 5){ //If we are in settings screen
@@ -225,17 +258,18 @@ char Controller_User_Input(volatile char pressed){
 			}
 	          break;
 	        case 10:
-	        
+
 		        if(sta.state == 2){cLight_Sensor_State = 0;int a = LightFollow();}//If we are in light follower screen
 		        //Load test data
 			    if(sta.state == 5){ //If we are in settings screen
 					Display_Write("Loading data:",112,1);
 					Display_Write("[          ]",152,1);
-					
+
 		        	for (int i = 0; i < 10; i++)
 		        	{
 		        		Display_Write("~",153+i,1);
 						Delay(2000000);
+						//MEM_init();
 						    MEM_save(25.5, 100000);
 						    MEM_save(23.3, 102000);
 						    MEM_newDay();
@@ -278,7 +312,7 @@ char Controller_User_Input(volatile char pressed){
 	          break;
 	        case 11:
 	          if(sta.state == 5){
-			  
+
 			  Display_Write("_ ",90,0);
 			  unsigned char pressed;
 			  while(1){

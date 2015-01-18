@@ -560,8 +560,8 @@ void Display_Write_Sidebar(){
     break;
 
     case 3: //Temperature history
-      Display_Write("* -Wk",24+40,1);
-      Display_Write("# +Wk",24+40*2,1);
+      Display_Write("7 -Wk",24+40,1);
+      Display_Write("8 +Wk",24+40*2,1);
     break;
 
     case 4: //Air pressure history
