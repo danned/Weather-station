@@ -571,8 +571,8 @@ void Display_Write_Sidebar(){
 
     case 5: //Conf Settings screen
       //Display_Write("* =10",24+40,1);
-      Display_Write("9 SetL",24+40*0,1);
-      Display_Write("* SetH",24+40*1,1);
+      Display_Write("9 SetA",24+40*0,1);
+      Display_Write("* Load",24+40*1,1);
       Display_Write("0 SetN",24+40*2,1);
       Display_Write("# Fast",24+40*3,1);
     break;

@@ -81,7 +81,7 @@ char Controller_User_Input(volatile char pressed){
 			    float voltage = (3.3/(0xFFF))*reading;//convert from 12-bit value to volt to lux
 			    float luxfloat = 3000 * (1/(voltage*voltage));//3v = 60lux , 1v 3000 lux 2v = 1000 lux
 			    sprintf(lux, "%.2f", luxfloat);// Populate string
-
+				AIRSENS_init();
 			 	//Get current Air pressure
 			    int air_reading = AIRSENS_getPress();
 			    sprintf(air, "%d", air_reading);// Populate string
@@ -226,28 +226,53 @@ char Controller_User_Input(volatile char pressed){
 	          break;
 	        case 10:
 	        
-	        if(sta.state == 2){cLight_Sensor_State = 0;int a = LightFollow();}//If we are in light follower screen
-	        
-	        if(sta.state == 5){ //If we are in settings screen
-			  Display_Write("_ ",217,0);
-			  Delay(4000000);
-			  unsigned char pressed;
-			  while(1){
-				pressed = Keypad_Read();
-				if(pressed != 0 && pressed < 11){
-					char *pressed_str = malloc(3*sizeof(char *));
-					if(pressed_str == 0){
-					  return 0;
-					}
-			    	sprintf(pressed_str, "%d", pressed);// Populate string
-					Display_Write(pressed_str,217,0);
-					free(pressed_str);
-					sta.alm_h = pressed;
-					Delay(4000000);
-					break;
+		        if(sta.state == 2){cLight_Sensor_State = 0;int a = LightFollow();}//If we are in light follower screen
+		        //Load test data
+			    if(sta.state == 5){ //If we are in settings screen
+					Display_Write("Loading data:",112,1);
+					Display_Write("[          ]",152,1);
+					
+		        	for (int i = 0; i < 10; i++)
+		        	{
+		        		Display_Write("~",153+i,1);
+						Delay(2000000);
+						    MEM_save(25.5, 100000);
+						    MEM_save(23.3, 102000);
+						    MEM_newDay();
+						    MEM_save(10, 140000);
+						    MEM_save(12, 145000);
+						    MEM_newDay();
+						    MEM_save(-2, 90000);
+						    MEM_save(-5, 100000);
+							MEM_newDay();
+						    MEM_save(-2, 90000);
+						    MEM_save(-5, 100000);
+							MEM_newDay();
+						    MEM_save(20, 80000);
+						    MEM_save(15, 90000);
+							MEM_newDay();
+						    MEM_save(15, 103000);
+						    MEM_save(16, 102000);
+							MEM_newDay();
+						    MEM_save(20, 90000);
+						    MEM_save(13, 100000);
+							MEM_newDay();
+						    MEM_save(12, 90000);
+						    MEM_save(11, 100000);
+							MEM_newDay();
+						    MEM_save(10, 90000);
+						    MEM_save(9, 100000);
+							MEM_save(11,90000);
+							MEM_save(12,90000);
+							MEM_save(13,90000);
+							MEM_save(14,90000);
+							MEM_save(15,90000);
+							MEM_save(16,90000);
+							MEM_save(17,90000);
+		        	}
+		        	Display_Write("Completed.  ",152,1);
+
 				}
-			  }
-			}
 
 
 	          break;
