@@ -39,6 +39,7 @@ void Display_Clear_Graphics();
 
 void Display_Write_Header(char error_code,char* title,char* time);
 void Display_Write_Sidebar();
+void Display_Draw_Borders(void);
 
 /* clears display */
 void Display_Clear_Text(void);

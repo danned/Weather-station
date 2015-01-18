@@ -133,11 +133,14 @@ char Controller_User_Input(volatile char pressed){
 	      else{
 		switch(pressed){
 	        case 6:
-	        //TODO Stop light follower
+	        
 
 	          break;
-	        case 7:
+	        case 7: //TODO CLEAR GRAPHICS!
 		        if(sta.state == 3){
+		        	Display_Clear_Graphics();
+		        	Display_Draw_Axis();
+		        	Display_Draw_Borders();
 					char count = 0;
 					cur_week++;
 			        temp_t* temp = mem.temp;
@@ -153,10 +156,23 @@ char Controller_User_Input(volatile char pressed){
 					     count++;
 					     temp = temp->next;
 					}
+								char *cur_week_str = malloc(2*sizeof(char *));
+				if(cur_week_str == 0){
+				  return 0;
 				}
+		    	sprintf(cur_week_str, "%d", cur_week);// Populate string
+		    	Display_Write("Weeks ago:               ",87,0);
+				Display_Write(cur_week_str,132,0);
+				free(cur_week_str);
+				Delay(800000);
+			}
+
 	          break;
-	        case 8:
+	        case 8: //TODO CLEAR GRAPHICS!
 	          if(sta.state == 3){
+	          	Display_Clear_Graphics();
+	          	Display_Draw_Axis();
+	          	Display_Draw_Borders();
 					char count = 0;
 					cur_week--;
 			        temp_t* temp = mem.temp;
@@ -172,7 +188,17 @@ char Controller_User_Input(volatile char pressed){
 					     count++;
 					     temp = temp->next;
 					}
+								char *cur_week_str1 = malloc(3*sizeof(char *));
+				if(cur_week_str1 == 0){
+				  return 0;
 				}
+		    	sprintf(cur_week_str1, "%d", cur_week);// Populate string
+		    	Display_Write("Weeks ago:               ",87,0);
+				Display_Write(cur_week_str1,132,0);
+				free(cur_week_str1);
+				Delay(800000);
+			}
+
 	          break;
 	        case 9:
 	        	if(sta.state == 5){ //If we are in settings screen

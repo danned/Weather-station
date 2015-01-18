@@ -859,3 +859,21 @@ void Display_Draw_Axis(){
   }
 
 }
+/*Draws the axis for showing graph*/
+void Display_Draw_Borders(){
+   /*Draw vertical line*/
+  for(int i =0;i<160;i++ ){
+   Display_Draw_Pixel(40,i);
+  }
+  
+  /*Draw horizontal line*/
+  Display_Write_Data(0x40);
+  Display_Write_Data(0x41);
+  Display_Write_Command(0x24);//Set coordinates
+  for(int i =0;i<40;i++ ){
+    Display_Write_Data(0xFF);
+    Display_Write_Command(0xC0);
+  }
+
+}
+
