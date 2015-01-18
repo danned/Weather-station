@@ -33,6 +33,7 @@ void Display_Draw_Sun(int xw, int yw, int rw);
 void Display_Draw_Arc(int xw, int yw, int rw);
 void Display_Draw_Axis(void);
 void Display_Draw_Temp_Graph(temp_t* data, char count);
+void Display_Draw_Air_Graph(void);
 /*Empties graphics memory, EXPENSIVE!*/
 void Display_Clear_Graphics();
 

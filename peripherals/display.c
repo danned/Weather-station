@@ -114,11 +114,11 @@ void Display_Write_Home_Screen(char* temp, char* lux, char* air, char* date){
     Display_Write("Temp: ",167,0);
     Display_Write(temp,172,0);
     Display_Write(" Cels",177,0);
-    
+
     Display_Write("Illu: ",207,0);
     Display_Write(lux,212,0);
     Display_Write(" Lux",218,0);
-    
+
     Display_Write("Air: ",247,0);
     Display_Write(air,252,0);
     Display_Write(" kPa",0,1);
@@ -345,48 +345,130 @@ void Display_Write_Air_Screen(char* date){
   Display_Write("Hi",167,0);
   Display_Write("--",71,1);
   Display_Write("Lo",15,2);
+
+  //fetch the last 7 days air pressure
+  Display_Draw_Air_Graph();
 }
 void Display_Write_Settings_Screen(void){
-    Display_Write("N= ",88,0);
-    Display_Write("10",90,0); //TODO Implement getting N value from state
-    Display_Write("Fast: ",168,0);
-    if(sta.mode > 0){
-      Display_Write("ENABLED",174,0);
-    }else{
-      Display_Write("DISABLED",174,0);
-    }
+  Display_Write("N= ",88,0);
+  char *N = malloc(5*sizeof(char *));
+  if(N == 0){
+    //TODO Handle error
+  }
+  sprintf(N, "%d", sta.n_avg);
+  Display_Write(N,90,0);
+  free(N);
+  Display_Write("Fast: ",168,0);
+  if(sta.mode > 0){
+    Display_Write("ENABLED",174,0);
+  }else{
+    Display_Write("DISABLED",174,0);
+  }
+
+  Display_Write("Alarm L:  ",248,0);
+  char *alm_l = malloc(5*sizeof(char *));
+  if(alm_l == 0){
+    //TODO Handle error
+  }
+  sprintf(alm_l, "%d", sta.alm_l);
+  Display_Write(alm_l,1,1);
+  free(alm_l);  
+  //Settings for temp alarm upper and lower limits
+  Display_Write("Alarm H:  ",32,1);
+  char *alm_h = malloc(5*sizeof(char *));
+  if(alm_h == 0){
+    //TODO Handle error
+  }
+  sprintf(alm_h, "%d", sta.alm_h);
+  Display_Write(alm_h,41,1);
+  free(alm_h);
+
 }
 void Display_Write_Testing_Screen(char temp_pass,char air_pass,char light_pass,char mem_pass){
 
-  Display_Write("Temp module: ",90,0);
+  Display_Write("Temp module: ",81,0);
 	if(temp_pass ==1){
-		Display_Write("PASSED!",105,0); //TODO Implement
+		Display_Write("PASSED!",96,0); //TODO Implement
 	}else{
-	  Display_Write("FAILED!",105,0);
+	  Display_Write("FAILED!",96,0);
 	}
 
-	Display_Write("Air module: ",130,0);
+	Display_Write("Air module: ",121,0);
 	if(air_pass ==1){
-    	Display_Write("PASSED!",145,0); //TODO Implement
+    	Display_Write("PASSED!",136,0); //TODO Implement
 	}else{
-    	Display_Write("FAILED!",145,0); //TODO Implement
+    	Display_Write("FAILED!",136,0); //TODO Implement
 	}
 
-	Display_Write("Light module: ",170,0);
+	Display_Write("Light module: ",161,0);
 	if(light_pass ==1){
-    	Display_Write("PASSED!",185,0); //TODO Implement
+    	Display_Write("PASSED!",176,0); //TODO Implement
 	}else{
-    	Display_Write("FAILED!",185,0); //TODO Implement
+    	Display_Write("FAILED!",176,0); //TODO Implement
 	}
 
-	Display_Write("Mem check: ",210,0);
+	Display_Write("Mem check: ",201,0);
 	if(mem_pass == 1){
-    	Display_Write("PASSED!",225,0); //TODO Implement
+    	Display_Write("PASSED!",216,0); //TODO Implement
 	}else{
-    	Display_Write("FAILED!",225,0); //TODO Implement
+    	Display_Write("FAILED!",216,0); //TODO Implement
 	}
 }
+/*Draws the bar graphs for one week three bars for every day min avg max*/
+void Display_Draw_Air_Graph(){
 
+  int min;
+  int avg;
+  int max;
+for (int j = 0; j < 7; j++){
+	  min = mem.pres.min[j];
+	  avg = mem.pres.avg[j];
+	  max = mem.pres.max[j];
+
+	  //Normalize
+	  if(min>120000){
+		 min = 120000;
+	  }
+	   if(avg>120000){
+		 avg = 120000;
+	  }
+	   if(max>120000){
+		 max = 120000;
+	  }
+	  if(min<90000){
+		 min = 90000;
+	  }
+	   if(avg<90000){
+		 avg = 90000;
+	  }
+	   if(max<90000){
+		 max = 90000;
+	  }
+
+	  //Draw min bar, origin is at (62,100)
+	  int start_pos = 61+(j*11)+0;
+	  for(int i =0;i< ((min/1000)-90)*3;i++ ){
+		Display_Draw_Pixel(start_pos,110-i);
+		Display_Draw_Pixel(start_pos+1,110-i);
+		Display_Draw_Pixel(start_pos+2,110-i);
+	  }
+	  //Draw avg bar
+	  start_pos = 61+(j*11)+3;
+	  for(int i =0;i<((avg/1000)-90)*3;i++ ){
+		Display_Draw_Pixel(start_pos,110-i);
+		Display_Draw_Pixel(start_pos+1,110-i);
+		Display_Draw_Pixel(start_pos+2,110-i);
+	  }
+	  //Draw max bar
+	  start_pos = 61+(j*11)+7;
+	  /*Draw vertical line*/
+	  for(int i =0;i<((max/1000-90))*3;i++ ){
+		Display_Draw_Pixel(start_pos,110-i);
+		Display_Draw_Pixel(start_pos+1,110-i);
+		Display_Draw_Pixel(start_pos+2,110-i);
+	  }
+	}
+}
 /*Draws the bar graphs for one week three bars for every day min avg max*/
 void Display_Draw_Temp_Graph(temp_t* temp, char count){
  //TODO assign from temperature struct
@@ -489,6 +571,8 @@ void Display_Write_Sidebar(){
 
     case 5: //Conf Settings screen
       //Display_Write("* =10",24+40,1);
+      Display_Write("9 SetL",24+40*0,1);
+      Display_Write("* SetH",24+40*1,1);
       Display_Write("0 SetN",24+40*2,1);
       Display_Write("# Fast",24+40*3,1);
     break;

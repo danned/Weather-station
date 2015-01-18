@@ -103,6 +103,8 @@ static void stationInit(){
 	sta.mode = 0;
 	sta.state = 0;
 	sta.n_avg = 3;
+	sta.alm_h = 27; //Standard Upper and lower limits for temperature alarm indicator
+	sta.alm_l = 15;
 	sta.temp_sum_f = 0;
 	sta.status.MEAS = 0;
 	sta.status.TEMP_REQ = 0;
@@ -117,16 +119,17 @@ static void stationInit(){
 
 	/*Show system test screen for a while*/
 	Display_Write_Header(1,"System test","00:00");
-	//Display_Write_Sidebar(0);
-	Display_Write_Testing_Screen(Temp_Test(),1,1,1); //TODO add the other test results
+	Display_Write_Testing_Screen(Temp_Test(),0,0,0); //TODO add the other test results
 	//Push any button to remove testing screen
 	while(!Keypad_Read()){}
+	Display_Clear_Text();
 	Delay(2000000);
 
 	/*Force user to enter date and time*/
 	Display_Write_Header(0,"Date and time","00:00");
 	Display_Write_Sidebar();
-	Display_Write_Date_Screen(); //TODO PUT THIS BACK<-------------
+	//Display_Write_Date_Screen(); //TODO PUT THIS BACK<-------------
+
 }
 
 /**

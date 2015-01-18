@@ -142,9 +142,114 @@ char Controller_User_Input(volatile char pressed){
 	          //TODO State 5 move up (select setting above)(also increase)
 	          break;
 	        case 9:
+	        	if(sta.state == 5){ //If we are in settings screen
+			  Display_Write("_ ",1,1);
+			  Delay(4000000);
+			  char l_val = 0;
+			  char h_val = 0;
+			  char entries_done = 0;
+			  //Display_Write("_",94+((entries_done%2)*40),0);
+			  unsigned char pressed;
+			  while(entries_done < 4){
+				  pressed = Keypad_Read();
+			    if(pressed != 0){
+
+			    	switch(pressed){
+			        case 1:
+			          Display_Write("1",1+((entries_done%2)*40),1); //write the number at correct place
+			            entries_done++;
+					    break;
+			        case 2:
+			          Display_Write("2",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			            entries_done++;
+					    break;
+			        case 3:
+			          Display_Write("3",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			            entries_done++;
+			        break;
+			        case 4:
+						   Display_Write("4",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			          entries_done++;
+			        break;
+			        case 5:
+						Display_Write("5",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			            entries_done++;
+			        break;
+			        case 6:
+						Display_Write("6",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			            entries_done++;
+			        break;
+			        case 7:
+						Display_Write("7",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			            entries_done++;
+			        break;
+			        case 8:
+						Display_Write("8",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			            entries_done++;
+			        break;
+			        case 9:
+						Display_Write("9",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			            entries_done++;
+			        break;
+			        case 11:
+						Display_Write("0",1+((entries_done/2)*40)+(entries_done%2),1); //write the number at correct place
+			            entries_done++;
+
+			        break;
+			    }
+
+				if(!(pressed == 10 || pressed == 12)){
+					if(pressed == 11){pressed = 0;} //Quickfix to make saving easier
+
+					//Find out if its cent year month or date user is entering
+					switch((entries_done-1)/2){
+					  case 0:
+						l_val = (l_val*10)+pressed;
+					  break;
+					  case 1:
+						h_val = (h_val*10)+pressed;
+					  break;
+					}
+				}
+
+
+			    //Press star to move to next item
+			  while(Keypad_Read() != 10){}
+			  Display_Write("_",1+((entries_done/2)*40)+(entries_done%2),1);
+				Delay(2000000);
+			    }
+			  }
+			  sta.alm_h = h_val;
+			  sta.alm_l = l_val;
+
+			}
 	          break;
 	        case 10:
-	        if(sta.state == 2){cLight_Sensor_State = 0;int a = LightFollow();}
+	        
+	        if(sta.state == 2){cLight_Sensor_State = 0;int a = LightFollow();}//If we are in light follower screen
+	        
+	        if(sta.state == 5){ //If we are in settings screen
+			  Display_Write("_ ",217,0);
+			  Delay(4000000);
+			  unsigned char pressed;
+			  while(1){
+				pressed = Keypad_Read();
+				if(pressed != 0 && pressed < 11){
+					char *pressed_str = malloc(3*sizeof(char *));
+					if(pressed_str == 0){
+					  return 0;
+					}
+			    	sprintf(pressed_str, "%d", pressed);// Populate string
+					Display_Write(pressed_str,217,0);
+					free(pressed_str);
+					sta.alm_h = pressed;
+					Delay(4000000);
+					break;
+				}
+			  }
+			}
+
+
 	          break;
 	        case 11:
 	          if(sta.state == 5){
