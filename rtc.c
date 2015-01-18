@@ -33,22 +33,25 @@ void RTC_Init(char sec, char min, char hr, char cent, char year, char month, cha
 	intStart();
 }
 
-inline void intStart(){
-	*AT91C_RTC_TIMALR = 1<<7;// set minute interrupt on time interrupt
-	intSetMode(0);
+void intStart(){
+	
+	intSetMode(1);
 	NVIC_ClearPendingIRQ(RTC_IRQn);
   	NVIC_SetPriority(RTC_IRQn, 7);
   	NVIC_EnableIRQ(RTC_IRQn);
 }
 /************************************************************************/
-/* 0 = sec, 1 = min                                                     */
+/* 0 = normal, 1 = fast                                                 */
 /************************************************************************/
-inline void intSetMode(char mode){
+void intSetMode(char mode){
 	*AT91C_RTC_IDR = 0x1f; // disable all interrupts
-	if((mode) == 0){
+	if((mode) == 1){
 		*AT91C_RTC_IER = 1<<2; //enable second periodic interrupt
+		*AT91C_RTC_TIMALR = 1<<7;// set minute interrupt on time interrupt
+		*AT91C_RTC_IER = 1<<1;
 		//*AT91C_RTC_TIMALR = 1<<15;
-	}else if(mode == 1){
+	}else if(mode == 0){
+		*AT91C_RTC_TIMALR = 1<<23|1<<7;// set hour and minute interrupt on time interrupt
 		*AT91C_RTC_IER = 1<<1;
 	}//wrong mode do nothing
 }

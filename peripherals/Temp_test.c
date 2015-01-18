@@ -13,6 +13,9 @@ Gives correct value at -5 degrees C
 
 */
 #include "Temp_test.h"
+#include "temp_sensor.h"
+#include "../includes/at91sam3x8.h"
+#include "../includes/common.h"
 
 float Temp_Get(void);
 char cTimeToReadTemp;

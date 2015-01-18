@@ -4,17 +4,23 @@
  * Created: 2014-12-11 17:03:22
  *  Author: Daniel and Staffan
  */
-#include "includes/common.h"
 #include "mem.h"
+#include "rtc.h"
+#include "controller.h"
+#include "includes/common.h"
+#include "includes/at91sam3x8.h"
+#include "includes/system_sam3x.h"
+#include "peripherals/air_sensor.h"
 #include "peripherals/temp_sensor.h"
 #include "peripherals/light_sensor.h"
 #include "peripherals/keypad.h"
 #include "peripherals/servo.h"
 #include "peripherals/display.h"
-#include "controller.h"
-#include "includes/system_sam3x.h"
-#include "rtc.h"
-#include "includes/at91sam3x8.h"
+#include "peripherals/Temp_Test.h"
+
+
+
+
 
 
 
@@ -49,7 +55,7 @@ void stationInit();
 static void saveMeas(){
 	if(sta.status.MEAS > 0){
 		sta.status.MEAS = 0;
-		MEM_save(sta.temp_sum_f/(float)sta.n_avg);
+		MEM_saveTemp(sta.temp_sum_f/(float)sta.n_avg );
 		sta.temp_sum_f = 0;
 		//TODO: add saving of humidity. Maybe display updates
 		if(cLight_Sensor_State == -1)
@@ -169,7 +175,7 @@ void RTC_Handler(void){
 	sta.status.MEAS = 1;
 
 	//should trigger every day for normal mode. Every hour for fast mode
-	sta.status.NEW_DAY = 1;
+	//sta.status.NEW_DAY = 1;
 
 
 

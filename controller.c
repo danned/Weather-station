@@ -84,7 +84,7 @@ char Controller_User_Input(volatile char pressed){
 			    sprintf(lux, "%.2f", luxfloat);// Populate string
 				AIRSENS_init();
 			 	//Get current Air pressure
-			    int air_reading = AIRSENS_getPress();
+			    int air_reading = AIRSENS_getPres();
 			    sprintf(air, "%d", air_reading);// Populate string
 
 				//Write to display and finish

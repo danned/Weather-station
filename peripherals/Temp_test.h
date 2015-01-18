@@ -1,7 +1,7 @@
 //header file for temp test
-
-
-#include "../includes/at91sam3x8.h"
-#include "../includes/common.h"
+#ifndef _TEMP_SENSOR_H_
+#define _TEMP_SENSOR_H_
 
 signed char Temp_Test( void );
+
+#endif //_TEMP_TEST_H_

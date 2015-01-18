@@ -33,6 +33,7 @@ typedef struct{
 	status_t status;
 	char mode;
 	char state;
+	int fast_count;
 	int n_avg;
 	int alm_h;
 	int alm_l;

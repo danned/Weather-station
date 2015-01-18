@@ -44,7 +44,7 @@ char cTemp_Measurement_Ready_Flag = 0; //Shared!
 ----------------PUBLIC functions-----------------
 */
 void Temp_Init(void){
-	*AT91C_PMC_PCER = (1<<12);//Init PIOB, PID 12
+	*AT91C_PMC_PCER = (0xF<<12);//Init PIOB, PID 12
 	*AT91C_PIOB_PER = (1<<25); //PB25 - TIOA0 - Pin 2 arduino
 	*AT91C_PIOB_ODR = (1<<25);
 	*AT91C_PIOB_CODR = (1<<25); //We want low as default state

@@ -82,12 +82,12 @@ int MEM_init( void );
 /*  1 on success, old value overwritten									*/
 /* -1 on error															*/
 /************************************************************************/
-int MEM_tempSave(float new_value_f);
+int MEM_saveTemp(float new_value_f);
 
 
-int MEM_presSave(unsigned int new_value_u32);
+int MEM_savePres(unsigned int new_value_u32);
 
-int MEM_Save(float new_temp_f, unsigned int new_pres_u32);
+int MEM_save(float new_temp_f, unsigned int new_pres_u32);
 
 /************************************************************************/
 /* Removes oldest entry of list											*/

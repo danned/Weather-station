@@ -22,7 +22,7 @@ void AIRSENS_start( );
 void AIRSENS_stop( );
 char AIRSENS_read( char reg );
 void AIRSENS_write( char reg, char data );
-unsigned int AIRSENS_getPress();
+unsigned int AIRSENS_getPres();
 /*
 	void IIC_RegWrite(byte address, byte reg,byte val);
 	byte IIC_RegRead(byte address, byte reg);

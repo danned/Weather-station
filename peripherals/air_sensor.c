@@ -90,7 +90,7 @@ void AIRSENS_write( char reg, char data ){
 }
 
 
-unsigned int AIRSENS_getPress(){
+unsigned int AIRSENS_getPres(){
     unsigned char msb = AIRSENS_read(BMP180_P_OUT_MSB);
     unsigned char csb = AIRSENS_read(BMP180_P_OUT_CSB);
     unsigned char lsb = AIRSENS_read(BMP180_P_OUT_LSB);

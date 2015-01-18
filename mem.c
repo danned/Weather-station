@@ -82,7 +82,7 @@ int MEM_init( void ){
 /*  3 Success. New Max and Min saved									*/
 /* -1 fail. no value TODO: implement									*/
 /************************************************************************/
-int MEM_tempSave(float new_val_f){
+int MEM_saveTemp(float new_val_f){
 	temp_t *cur_node = mem.temp;
 	short int new_val_s = (short int) (new_val_f*100);// saves value of 2 decimals. truncate rest
 	char ret_val = 0;
@@ -114,7 +114,7 @@ int MEM_tempSave(float new_val_f){
 /*  3 Success. New Max and Min saved									*/
 /* -1 fail. no value TODO: implement									*/
 /************************************************************************/
-int MEM_presSave(unsigned int new_val_u32){
+int MEM_savePres(unsigned int new_val_u32){
 	int ret_val = 0;
 	if( new_val_u32 > mem.pres.max[mem.pres.day] ){
 		mem.pres.max[mem.pres.day] = new_val_u32;
@@ -134,9 +134,9 @@ int MEM_presSave(unsigned int new_val_u32){
 
 int MEM_save(float new_temp_f, unsigned int new_pres_u32){
 	int ret_val = 0;
-	if(MEM_tempSave( new_temp_f ) > 0)
+	if(MEM_saveTemp( new_temp_f ) > 0)
 		ret_val += 1;
-	if(MEM_presSave( new_pres_u32 ) > 0)
+	if(MEM_savePres( new_pres_u32 ) > 0)
 		ret_val += 2;
 
 	return ret_val;
