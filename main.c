@@ -106,7 +106,7 @@ static void stationInit(){
 	//RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
 
 	/* start initializing variables */
-	sta.mode = 0;
+	sta.FAST_MODE = 0;
 	sta.state = 0;
 	sta.n_avg = 3;
 	sta.alm_h = 27; //Standard Upper and lower limits for temperature alarm indicator

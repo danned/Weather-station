@@ -133,7 +133,7 @@ char Controller_User_Input(volatile char pressed){
 	      else{
 		switch(pressed){
 	        case 6:
-	        
+
 
 	          break;
 	        case 7: //TODO CLEAR GRAPHICS!
@@ -361,11 +361,11 @@ char Controller_User_Input(volatile char pressed){
 	          if(sta.state == 2){cLight_Sensor_State = -1;}
 	          if(sta.state == 5){
 	          	DISPLAY_write("_         ",174,0);
-	          	if(sta.mode > 0){
-	          		sta.mode = 0;
+	          	if(sta.FAST_MODE > 0){
+	          		sta.FAST_MODE = 0;
 	          		DISPLAY_write("DISABLED",174,0);
 	          	}else{
-	          		sta.mode = 1;
+	          		sta.FAST_MODE = 1;
 	          		DISPLAY_write("ENABLED",174,0);
 	          	}
 	          	Delay(2000000);

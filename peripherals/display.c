@@ -96,7 +96,7 @@ void DISPLAY_writeLightScreen(void){
 /*Temperature log screen, shows last 7 days worth of temp data as graphs*/
 void DISPLAY_writeTempScreen(char* date){
   DISPLAY_write(date,87,0);
-  
+
   //Prepare Graphing
   DISPLAY_drawAxis();
   DISPLAY_write("Tdy",57,2);
@@ -297,7 +297,7 @@ void DISPLAY_writeDateSetScreen(void){
 
 /*Shows the logged air pressure reading as bar graphs*/
 void DISPLAY_writeAirScreen(char* date){
-  
+
   //Prepare graphing
   DISPLAY_write(date,98,0);
   DISPLAY_drawAxis();
@@ -311,7 +311,7 @@ void DISPLAY_writeAirScreen(char* date){
 
 /*Draws out the settings screen*/
 void DISPLAY_writeSettingsScreen(void){
-  
+
   //First off, the avergaing N value status
   DISPLAY_write("N= ",88,0);
   char *N = malloc(5*sizeof(char *));
@@ -324,7 +324,7 @@ void DISPLAY_writeSettingsScreen(void){
 
   //Second fast mode status
   DISPLAY_write("Fast: ",168,0);
-  if(sta.mode > 0){
+  if(sta.FAST_MODE > 0){
     DISPLAY_write("ENABLED",174,0);
   }else{
     DISPLAY_write("DISABLED",174,0);
@@ -600,39 +600,39 @@ void DISPLAY_clearText(){
 
 }
 
-//Fill one pixel
+/* Take coordinates, recalculates them to a pixel in a segment and fills it */
 void DISPLAY_drawPixel(int x, int y){
-    int nXRest;   // rest vid modulo
-    int nXPos;
-    int nBit = 6;
-    int move1;
+    int nXRest;   // rest from modulo
+    int nXPos;    //The "cell" position
+    int nBit = 6; //Number of bits in each
+    int move1;    //position to move cursor to
     int move2;
 
-    //find position in x
-    nXPos = x/nBit;
-    nXPos = (y-1)*40 + nXPos;
+    nXPos = x/nBit; //find cell position by first seeing how many cells fit
+    nXPos = (y-1)*40 + nXPos; //Offset downward y*40 rows (40 from screen width)
 
-    nXRest = x%nBit;
+    nXRest = x%nBit;  //Now which pixel inside the cell
     nXRest = nBit - nXRest;
 
+    //CLEANUP Why did i do this?
     if(nXRest == nBit){
       nXPos--;
       nXRest = 0;
     }
-
+    //Format for writing to screen in two bytes
     move1 = nXPos & 0xFF;
     move2 = (nXPos & 0xFF00)>>8;
 
-        DISPLAY_writeData(move1);
-        DISPLAY_writeData(0x40 + move2); //0x40 is our graphic mem start adress
-        DISPLAY_writeCommand(0x24); //move cursor
+    //Now write to display by setting cursor at correct place using two data bytes
+    DISPLAY_writeData(move1);
+    DISPLAY_writeData(0x40 + move2); //0x40 is our graphic mem start adress
+    DISPLAY_writeCommand(0x24); //move cursor
 
-        DISPLAY_writeCommand(0xF8 + nXRest);
+    DISPLAY_writeCommand(0xF8 + nXRest); //Fill pixel
 
 }
 
-/*Draw a smal blob*/
-//TODO Take illu factor and create rays of  appr length
+/*Borrowed algortihm - Draws a circle at coordinates with radius*/
 void DISPLAY_drawSun(int xw, int yw, int rw){
     int h;
     int x;
@@ -649,7 +649,7 @@ void DISPLAY_drawSun(int xw, int yw, int rw){
             DISPLAY_drawPixel(x + xw, y + yw);
         }
 }
-/*Draw the arc the sun should follow*/
+/*Borrowed algortihm - Draw the arc the sun should follow*/
 void DISPLAY_drawArc(int xw, int yw, int rw){
   int f = 1 - rw;
   int ddF_x = 1;
@@ -702,7 +702,7 @@ void DISPLAY_drawBorders(){
   for(int i =0;i<160;i++ ){
    DISPLAY_drawPixel(40,i);
   }
-  
+
   /*Draw horizontal line*/
   DISPLAY_writeData(0x40);
   DISPLAY_writeData(0x41);
