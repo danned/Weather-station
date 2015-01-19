@@ -35,7 +35,7 @@ void main(void) {
 	AIRSENS_init();
 	MEM_init();
 	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
-	sta.mode = 1;
+	sta.FAST_MODE = 1;
 	sta.state = 0;
 	sta.n_avg = 3;
 	sta.temp_sum_f = 0;
@@ -50,10 +50,11 @@ void main(void) {
 		tempSens();
 		if(sta.status.MEAS == 1){
 			sta.status.MEAS = 0;
-			if(mem.temp->count>0)
+			if(mem.temp->count>0){
 				MEM_save((sta.temp_sum_f/mem.temp->count), AIRSENS_getPres() );
-			sta.temp_sum_f = 0;
-			mem.temp->count = 0;
+				sta.temp_sum_f = 0;
+				mem.temp->count = 0;
+			}
 		}
 		if(sta.status.NEW_DAY){
 			sta.status.NEW_DAY = 0;
@@ -68,9 +69,9 @@ void RTC_Handler(void){
 	
 	
 	if( (*AT91C_RTC_TIMR&0xFF) == 0 ){
-		if(sta.mode == 0){
+		if(!sta.FAST_MODE){
 			sta.status.MEAS = 1;
-		}else if(sta.mode == 1){
+		}else if(sta.FAST_MODE){
 			if(sta.fast_count > 3){
 				sta.fast_count = 0;
 				sta.status.NEW_DAY = 1;
@@ -97,13 +98,13 @@ void RTC_Handler(void){
 void SysTick_Handler(void){
 	static int meas_count = 0;
 	meas_count++;
-	if(sta.mode == 1){//fast mode
+	if(sta.FAST_MODE){//fast mode
 		if(meas_count > 300){
 			sta.status.TEMP_REQ = 1;
 			
 			meas_count = 0;
 		}
-	}else if(sta.mode == 0){//normal mode
+	}else if(!sta.FAST_MODE){//normal mode
 		if(meas_count > 19999){
 			
 			sta.status.TEMP_REQ = 1;

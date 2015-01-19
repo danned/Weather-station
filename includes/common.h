@@ -18,20 +18,19 @@
  * End of bitmasks
  *----------------------------------------------------------------*/
 //extern char cLight_Sensor_State = -1;
-extern float fTemp_Sum;		// Can probably be local variables
-extern int iN_Avg;			// in main program
-extern int MODE;
+
 extern void Delay(int Value);
 
 typedef struct{
 	char MEAS : 1;
 	char TEMP_REQ : 1;
 	char NEW_DAY : 1;
+	
 }status_t;
 
 typedef struct{
 	status_t status;
-	char mode;
+	char FAST_MODE : 1;
 	char state;
 	int fast_count;
 	int n_avg;
