@@ -18,8 +18,31 @@
 #include "../includes/system_sam3x.h"
 
 
+lightsens_t lightsens;
 
-signed char cLight_Sensor_State = -1;
+static void LIGHTSENS_setState(char state){
+	if(state == LIGHTSENS_INACTIVE){
+		lightsens.state.INACTIVE = 1;
+		lightsens.state.READING = 0;
+		lightsens.state.READ_DONE = 0;
+		lightsens.state.READ_REQ = 0;
+	}else if(state == LIGHTSENS_READ_REQ){
+		lightsens.state.INACTIVE = 0;
+		lightsens.state.READING = 0;
+		lightsens.state.READ_DONE = 0;
+		lightsens.state.READ_REQ = 1;
+	}else if(state == LIGHTSENS_DONE){
+		lightsens.state.INACTIVE = 0;
+		lightsens.state.READING = 0;
+		lightsens.state.READ_DONE = 1;
+		lightsens.state.READ_REQ = 0;
+	}else if(state == LIGHTSENS_READING){
+		lightsens.state.INACTIVE = 0;
+		lightsens.state.READING = 1;
+		lightsens.state.READ_DONE = 0;
+		lightsens.state.READ_REQ = 0;
+	}
+}
 /*----------------------------------------------------------------
  * \brief Light sensor init.
  * Enables clock for ADC block, and configures adc to 14MHz and resets adc
@@ -27,6 +50,7 @@ signed char cLight_Sensor_State = -1;
  *---------------------------------------------------------------- */
 void LIGHTSENS_init(void){
 	//Init clock ADC
+	LIGHTSENS_setState(LIGHTSENS_INACTIVE);
 	*AT91C_PMC_PCER1 = (1<<5);
 
 	//Config adc
@@ -46,7 +70,7 @@ void LIGHTSENS_init(void){
  * Interrupt is enabled on data ready
  *---------------------------------------------------------------- */
 void LIGHTSENS_startMeas(void){
-  cLight_Sensor_State = 2;
+	LIGHTSENS_setState(LIGHTSENS_READING);
   *AT91C_ADCC_CHER = AT91C_ADC_CH0|AT91C_ADC_CH1; //channel enable AD13
   *AT91C_ADCC_IER = (1<<24); //Enabling COMPARE interrupt
   *AT91C_ADCC_CR = AT91C_ADC_START; //channel start conversion
@@ -81,7 +105,7 @@ float LIGHTSENS_getDiff(){
  * This flag indicates that the conversion is ready and data is ready to be read.
  *----------------------------------------------------------------*/
 void ADC_Handler(void){
-	cLight_Sensor_State = 1;
+	LIGHTSENS_setState(LIGHTSENS_READ_REQ);
 	*AT91C_ADCC_IDR = (1<<24);
 
 }

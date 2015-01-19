@@ -14,13 +14,26 @@
  *----------------------------------------------------------------*/
 #ifndef _LIGHT_SENSOR_H_
 #define _LIGHT_SENSOR_H_
+#define LIGHTSENS_INACTIVE 0
+#define LIGHTSENS_READ_REQ 1
+#define LIGHTSENS_DONE 2
+#define LIGHTSENS_READING 3
 
+typedef struct{
+	char INACTIVE : 1;
+	char READ_REQ : 1;
+	char READ_DONE : 1;
+	char READING : 1;
+}lightsens_state_t;
+typedef struct{
+	lightsens_state_t state;
+}lightsens_t;
 
 /*----------------------------------------------------------------
  * This variable is used to keep in track what state the light sensor is.
  * 1 is done. -1 is inactive. 2 is busy. 0 is set when reading is required
  *----------------------------------------------------------------*/
-extern signed char cLight_Sensor_State;
+extern lightsens_t lightsens;
 
 
 /*----------------------------------------------------------------
@@ -51,4 +64,6 @@ float LIGHTSENS_getDiff(void);
  *----------------------------------------------------------------*/
 void ADC_Handler(void);
 
+
+void LIGHTSENS_setState(char state);
 #endif // _LIGHT_SENSOR_H_

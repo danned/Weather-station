@@ -12,6 +12,7 @@
 #include "mem.h"
 #include "rtc.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include "includes/common.h"
 mem_t mem;
 

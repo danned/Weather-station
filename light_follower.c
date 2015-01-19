@@ -1,15 +1,16 @@
 #include "peripherals/light_sensor.h"
+#include "peripherals/keypad.h"
 #include "peripherals/servo.h"
 #include "includes/system_sam3x.h"
 #include "includes/at91sam3x8.h"
 
 //extern int ms_counter = 0;
 static void lightSens(){
-	if(cLight_Sensor_State  == 0 ){
+	if(lightsens.state.READ_REQ ){
 		LIGHTSENS_startMeas();
-	}else if(cLight_Sensor_State == 1){
+	}else if(lightsens.state.READ_DONE){
 		//printf("Diff: %f\n",LIGHTSENS_getDiff());
-		cLight_Sensor_State = -1;
+		LIGHTSENS_setState(LIGHTSENS_INACTIVE);
 		if(*AT91C_ADCC_CDR0 > 0x800){
 				SERVO_setPos(SERVO_getPos()-100);
 		}else{
@@ -27,6 +28,7 @@ int LightFollow(){
 		lightSens();
 		if(Keypad_Read()==12){break;}
 	}
+	return 1;
 }
 
 /*

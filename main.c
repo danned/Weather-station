@@ -55,8 +55,8 @@ static void saveMeas(){
 		MEM_saveTemp(sta.temp_sum_f/(float)sta.n_avg );
 		sta.temp_sum_f = 0;
 		//TODO: add saving of humidity. Maybe display updates
-		if(cLight_Sensor_State == -1)
-			cLight_Sensor_State = 0; //sets to update lux value onscreen
+		if(lightsens.state.INACTIVE)
+			LIGHTSENS_setState(LIGHTSENS_READ_REQ); //sets to update lux value onscreen
 	}
 }
 
@@ -86,12 +86,11 @@ static void tempSens(){
 }
 
 static void lightSens(){
-	if(cLight_Sensor_State  == 0 ){
+	if(lightsens.state.READ_REQ){
 		LIGHTSENS_startMeas();
-		cLight_Sensor_State = 2;
-	}else if(cLight_Sensor_State == 1){
+	}else if(lightsens.state.READ_DONE){
 		//printf("Diff: %f\n",LIGHTSENS_getDiff());
-		cLight_Sensor_State = -1;
+		LIGHTSENS_setState(0);
 	}
 }
 
@@ -188,8 +187,8 @@ void RTC_Handler(void){
 void SysTick_Handler(void){
 	measure();
 	ms_counter ++;
-	if((ms_counter >= 100 && cLight_Sensor_State != 2) ){
-	 cLight_Sensor_State = 0;
+	if((ms_counter >= 100 && !lightsens.state.READING) ){
+	 lightsens.state.READ_REQ = 1;
 	 ms_counter = 0;
 	}
 }
