@@ -68,7 +68,7 @@ char Controller_User_Input(volatile char pressed){
 				}
 
 				//Get current temperature
-				float temperature = Temp_Get();
+				float temperature = TEMP_get();
 				if(temperature >25 || temperature <0){
 					nTempWarning = 1; //TODO not correct
 				}

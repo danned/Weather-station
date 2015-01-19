@@ -17,10 +17,10 @@ Gives correct value at -5 degrees C
 #include "../includes/at91sam3x8.h"
 #include "../includes/common.h"
 
-float Temp_Get(void);
+float TEMP_get(void);
 char cTimeToReadTemp;
-extern char  cTemp_Reset_Ready_Flag;
-extern char cTemp_Measurement_Ready_Flag;
+extern char  temperature.status.RESET_READY;
+extern char temperature.status.READ_READY;
 /* Test full operation*/
 signed char Temp_Test( void ){
 cTimeToReadTemp = 1; //simulate one systick
@@ -35,15 +35,15 @@ cTimeToReadTemp = 1; //simulate one systick
 	    //----Temperature readings-----
 	    if(cTimeToReadTemp == 1){
 	      cTimeToReadTemp = 0;
-	      Temp_Reset();
+	      TEMP_reset();
 	    }
-	    if(cTemp_Reset_Ready_Flag == 1){
-	      cTemp_Reset_Ready_Flag = 0;
-	      Temp_Read();
+	    if(temperature.status.RESET_READY == 1){
+	      temperature.status.RESET_READY = 0;
+	      TEMP_read();
 	    }
-	    if(cTemp_Measurement_Ready_Flag == 1){
-		    cTemp_Measurement_Ready_Flag = 0;
-			float answer = Temp_Get();
+	    if(temperature.status.READ_READY == 1){
+		    temperature.status.READ_READY = 0;
+			float answer = TEMP_get();
 		    //printf("Measured temp: %.2f \n",answer);
 		    //Check that answer is a decent value
 		    if(answer >-20 && answer <60){

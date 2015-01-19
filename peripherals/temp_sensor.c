@@ -5,13 +5,24 @@
 #include "../includes/system_sam3x.h"
 #include "../includes/at91sam3x8.h"
 #include "../includes/common.h"
-char cTemp_Reset_Ready_Flag = 0; //Shared!
-char cTemp_Measurement_Ready_Flag = 0; //Shared!
+char temperature.status.RESET_READY = 0; //Shared!
+char temperature.status.READ_READY = 0; //Shared!
 
-/*
-----------------PUBLIC functions-----------------
-*/
-void Temp_Init(void){
+/* air pressure end */
+typedef struct{
+	char RESET_READY  : 1;
+	char READ_READY : 1;
+}temp_status_t;
+
+typedef struct{
+	temp_status_t status;
+}temp_t;
+
+extern temp_t temperature;
+/************************************************************************/
+/* Init function for temp temp_sensor				                    */
+/************************************************************************/
+void TEMP_init(void){
 	*AT91C_PMC_PCER = (0xF<<12);//Init PIOB, PID 12
 	*AT91C_PIOB_PER = (1<<25); //PB25 - TIOA0 - Pin 2 arduino
 	*AT91C_PIOB_ODR = (1<<25);
@@ -37,13 +48,18 @@ void Temp_Init(void){
   	NVIC_EnableIRQ(TC1_IRQn);
 
 }
-void Temp_Reset(void){
+/************************************************************************/
+/* Making a reading	- 3 steps								            */
+/************************************************************************/
+/*First step of making a reading*/
+void TEMP_reset(void){
 
 	*AT91C_PIOB_OER = (1<<25); //Set pin low
 	*AT91C_TC1_CCR = AT91C_TC_SWTRG; //Start counting
 	*AT91C_TC1_IER = AT91C_TC_CPCS; //Enable interrupt on
 }
-void Temp_Read(void){
+/*Second step of making a reading*/
+void TEMP_read(void){
   	*AT91C_PIOB_ODR = (1<<25); //Setup with high 10us
 	 Delay(SETUP_DELAY);
 	 *AT91C_PIOB_OER = (1<<25); //Start pulse assuming low 2.5us
@@ -53,35 +69,34 @@ void Temp_Read(void){
 
 	 *AT91C_TC0_CCR = 1;
 }
-float Temp_Get(void){
+/*Third step of making a reading*/
+float TEMP_get(void){
 
 	uint32_t nTimeA = *AT91C_TC0_RA;
 	uint32_t nTimeB = *AT91C_TC0_RB;
 	uint32_t nTimeDiff = nTimeB - nTimeA;
-	//printf("Measured temp: %.2f \n",Conv_Celsius(nTimeDiff));
-	return Conv_Celsius(nTimeDiff);
+	//printf("Measured temp: %.2f \n",TEMP_convCelsius(nTimeDiff));
+	return TEMP_convCelsius(nTimeDiff);
 }
 
 
-/* ---------------PRIVATE ------------------------
-*/
-//When 15ms reset pulse is complete we get into tc0
-//OR when RB has loaded value from chip response
+/************************************************************************/
+/* Internal											                    */
+/************************************************************************/
+//when RB has loaded value from chip response
 void TC0_Handler(void){
   volatile int dummy = *AT91C_TC0_SR;
     //*AT91C_TC0_IDR = AT91C_TC_LDRBS;
-     cTemp_Measurement_Ready_Flag = 1;
+     temperature.status.READ_READY = 1;
 }
+//When 15ms reset pulse is complete we get into tc0
 void TC1_Handler(void){
   int dummy = *AT91C_TC1_SR;
     *AT91C_TC1_IDR = AT91C_TC_CPCS;
-   cTemp_Reset_Ready_Flag = 1;
+   temperature.status.RESET_READY = 1;
 }
-
-/*
-Converts ticks into celsius
-*/
-float Conv_Celsius(int ticks){
+/*Converts ticks into celsius*/
+float TEMP_convCelsius(int ticks){
   float result = ((float) ticks / (42*5) - 273.15); //(((float)ticks/42)/5)-273.15;
   return result;
 }

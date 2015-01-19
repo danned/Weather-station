@@ -3,50 +3,47 @@ Temp sensor driver for MAX6575L. Using asynchronous one-wire interface readings.
 Sequence started using Reset (required before every reading). See example.
 Works safely down to one reading every 20ms. can be read once ever 17ms with testing setup but not recommended.s
 
-Functions to use> void Temp_Init(), void _Reset(), void _Read() and float _Get()
+Functions to use> void TEMP_init(), void _Reset(), void _Read() and float _Get()
 
 Blocks used: TC0,TC1, PIOB
 
 ------- Usage example: -----
-extern char cTemp_Reset_Ready_Flag = 0;
-extern char cTemp_Measurement_Ready_Flag = 0;
+extern char temperature.status.RESET_READY = 0;
+extern char temperature.status.READ_READY = 0;
 
 //<---Inside main loop--->
     //Start temp sensor reset somehow (for example using systick)
     if(cTimeToReadTemp == 1){
-       Temp_Reset();
+       TEMP_reset();
     }
      //start temp sensor reading
-    if(cTemp_Reset_Ready_Flag  == 1){
-     Temp_Read();
+    if(temperature.status.RESET_READY  == 1){
+     TEMP_read();
     }
 	//fetch reading
-    if(cTemp_Measurement_Ready_Flag == 1){
-    float temp = Temp_Get();
+    if(temperature.status.READ_READY == 1){
+    float temp = TEMP_get();
     printf("%f",temp);
     }
 ---------------------------
 TODO:
-- Cleanup comments
-- Testing, what if systicks gets ahead of my timer
+- 
 */
 #ifndef _TEMP_SENSOR_H_
 #define _TEMP_SENSOR_H_
-
-/*  */
-void Start_Temp_Reset( void );
-
-/* */
-void Temp_Start_Measure(void);
-/* */
-void Temp_Read();
+extern temp_t temperature;
+/*Reset sequence - needed to give a start pulse*/
+void TEMP_reset(void);
+/*Read value*/
+void TEMP_read();
 /* initializes clock and pio for temp sensor*/
-void Temp_Init(void);
-/* */
+void TEMP_init(void);
+/*Handles the interrupt from captured answer pulse */
 void TC0_Handler(void);
-
-/*  */
-float Conv_Celsius(int ticks);
-float Temp_Get(void);
-void Temp_Reset(void);
+/*Handles the interrupt from timer counting to 15ms*/
+void TC1_Handler(void);
+/*gets latest finished temp reading*/
+float TEMP_get(void);
+/* Simple helper to convert from time to celsius */
+float TEMP_convCelsius(int ticks);
 #endif // _TEMP_SENSOR_H_

@@ -36,9 +36,6 @@ char nMemWarning = 0; // 0 OR 2   2 is active warning!
 
 int ms_counter = 0;
 
-extern char cTemp_Reset_Ready_Flag;
-extern char cTemp_Measurement_Ready_Flag;
-
 //char cMeasure = 0; deprecated. see sta.status.MEAS
 //char cTimeToReadTemp = 0; deprecated. see sta.status.TEMP_REQ;
 /** Prototypes. NOT USED
@@ -76,13 +73,13 @@ static void measure(){
  */
 static void tempSens(){
 	if(sta.status.TEMP_REQ == 1){
-		Temp_Reset();
+		TEMP_reset();
 	}
-	if(cTemp_Reset_Ready_Flag  == 1){
-		Temp_Read();
+	if(temperature.status.RESET_READY  == 1){
+		TEMP_read();
 	}
-	if(cTemp_Measurement_Ready_Flag == 1){
-		sta.temp_sum_f += Temp_Get();
+	if(temperature.status.READ_READY == 1){
+		sta.temp_sum_f += TEMP_get();
 		//printf("%f",temp);
 	}
 
@@ -118,7 +115,7 @@ static void stationInit(){
 	MEM_init();
 	//MEM_test();
 	Keypad_Init();
-	Temp_Init();
+	TEMP_init();
 	DISPLAY_init();
 	LIGHTSENS_init();
 	SERVO_init();
