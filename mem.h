@@ -100,7 +100,7 @@ int MEM_remove();
 /**
  * Returns float value of temp stored at node
  */
-temp_t MEM_get( temp_t *node_pr );
+mem_temp_t MEM_get( mem_temp_t *node_pr );
 
 /************************************************************************/
 /* Adds new day to linked list											*/
