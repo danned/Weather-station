@@ -46,7 +46,7 @@ int MEM_init( void ){
 	//mem.temp = NULL;
 
 	/* temp init start */
-	mem.temp = malloc(sizeof(temp_t) );
+	mem.temp = malloc(sizeof(mem_temp_t) );
 	if(mem.temp == NULL){ // Address of root to mem at null, error
 		/* need a error message*/
 		return -1;
@@ -83,7 +83,7 @@ int MEM_init( void ){
 /* -1 fail. no value TODO: implement									*/
 /************************************************************************/
 int MEM_saveTemp(float new_val_f){
-	temp_t *cur_node = mem.temp;
+	mem_temp_t *cur_node = mem.temp;
 	short int new_val_s = (short int) (new_val_f*100);// saves value of 2 decimals. truncate rest
 	char ret_val = 0;
 	int temp_sum = (cur_node->avg*cur_node->count) + new_val_s;
@@ -188,7 +188,7 @@ int MEM_save(float new_temp_f, unsigned int new_pres_u32){
 /* -2 = no nodes to remove, empty list									*/
 /************************************************************************/
 int MEM_remove(){
-	temp_t *it_pr = mem.temp;
+	mem_temp_t *it_pr = mem.temp;
 	if(it_pr != NULL){
 		if(it_pr->next != NULL){
 
@@ -212,7 +212,7 @@ int MEM_remove(){
 /**
  * Returns float value of temp stored at node Completely useless atm. maybe write get function to return object of floats
  */
-temp_t MEM_get( temp_t *node_pr ){
+mem_temp_t MEM_get( mem_temp_t *node_pr ){
 	//if(node_pr != NULL){
 		return *node_pr;
 	//}else{
@@ -235,14 +235,14 @@ int MEM_newDay(){
 	/* start update day temp */
 	int ret_val = 0;
 	//mem.temp->avg /= mem.temp->count;
-	temp_t *new_node_pr = malloc(sizeof(temp_t));
+	mem_temp_t *new_node_pr = malloc(sizeof(mem_temp_t));
 	if(new_node_pr == NULL){// memory is full. Remove oldest entry
 		mem.status.MEM_FULL = TRUE;
 		signed char resp = MEM_remove();
 		if(resp < 0){ // unable to clear space in memory
 			//mem.status.MEM_ERROR = TRUE;
 		}else{
-			new_node_pr = malloc(sizeof(temp_t));
+			new_node_pr = malloc(sizeof(mem_temp_t));
 		}
 	}
 
@@ -291,8 +291,8 @@ int MEM_newDay(){
 /* -1 if unable to allocate mem (out of memory	)						*/
 /************************************************************************/
 int addNode(short int new_temp, datestamp_t time){
-	temp_t *tmp_node_pr;
-	tmp_node_pr = malloc(sizeof(temp_t));
+	mem_temp_t *tmp_node_pr;
+	tmp_node_pr = malloc(sizeof(mem_temp_t));
 
 	if(tmp_node_pr!= NULL){
 		//tmp_node_pr->temp = new_temp;
@@ -455,7 +455,7 @@ int MEM_test(void){
 	MEM_newDay();
     MEM_save(10, 90000);
     MEM_save(9, 100000);
-    temp_t *tmp = mem.temp;
+    mem_temp_t *tmp = mem.temp;
     char count = 0;
     //Get last 7 days worth of data from database
     while(tmp != NULL/* && count <7 */){
