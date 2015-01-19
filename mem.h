@@ -34,7 +34,7 @@ typedef struct node{
 	short count; // this might be removed
 	datestamp_t date;
 	struct node *next;
-}temp_t;
+}mem_temp_t;
 /* temperature end */
 
 /* datastructures for air pressure start */
@@ -50,7 +50,7 @@ typedef struct {
 	unsigned int max[7];
 	unsigned int avg[7];
 	unsigned int min[7];
-}air_pres_t;
+}mem_air_pres_t;
 
 /* air pressure end */
 typedef struct{
@@ -59,9 +59,9 @@ typedef struct{
 }mem_status_t;
 
 typedef struct{
-	temp_t *temp;
+	mem_temp_t *temp;
 	
-	air_pres_t pres;
+	mem_air_pres_t pres;
 	mem_status_t status;
 }mem_t;
 
