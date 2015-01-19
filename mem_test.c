@@ -7,7 +7,7 @@
 #include "peripherals/temp_sensor.h"
 #include "peripherals/air_sensor.h"
 program_t sta;
-char count = 0;
+//static int meas_count = 0;
 extern char cTemp_Reset_Ready_Flag;
 extern char cTemp_Measurement_Ready_Flag;
 
@@ -50,13 +50,15 @@ void main(void) {
 		tempSens();
 		if(sta.status.MEAS == 1){
 			sta.status.MEAS = 0;
-			MEM_save((sta.temp_sum_f/mem.temp->count), AIRSENS_getPres() );
+			if(mem.temp->count>0)
+				MEM_save((sta.temp_sum_f/mem.temp->count), AIRSENS_getPres() );
 			sta.temp_sum_f = 0;
 			mem.temp->count = 0;
 		}
 		if(sta.status.NEW_DAY){
 			sta.status.NEW_DAY = 0;
 			MEM_newDay();
+			//meas_count = 0;
 		}
 	}
 }
@@ -93,19 +95,19 @@ void RTC_Handler(void){
 }
 
 void SysTick_Handler(void){
-	static int measCount = 0;
-	measCount++;
+	static int meas_count = 0;
+	meas_count++;
 	if(sta.mode == 1){//fast mode
-		if(measCount > 300){
+		if(meas_count > 300){
 			sta.status.TEMP_REQ = 1;
 			
-			measCount = 0;
+			meas_count = 0;
 		}
 	}else if(sta.mode == 0){//normal mode
-		if(measCount > 19999){
+		if(meas_count > 19999){
 			
 			sta.status.TEMP_REQ = 1;
-			measCount = 0;
+			meas_count = 0;
 		}
 	}
 }
