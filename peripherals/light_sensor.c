@@ -20,7 +20,7 @@
 
 lightsens_t lightsens;
 
-static void LIGHTSENS_setState(char state){
+void LIGHTSENS_setState(char state){
 	if(state == LIGHTSENS_INACTIVE){
 		lightsens.state.INACTIVE = 1;
 		lightsens.state.READING = 0;

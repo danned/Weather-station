@@ -25,10 +25,11 @@ TODO:
 #include "peripherals/display.h"
 #include "peripherals/temp_sensor.h"
 #include "peripherals/air_sensor.h"
+#include "peripherals/light_sensor.h"
 #include "includes/at91sam3x8.h"
 #include "includes/common.h"
 #include "rtc.h"
-extern signed char cLight_Sensor_State;
+
 static int cur_week = 0;
 /* Main flow control structure - takes a pressed key val*/
 char Controller_User_Input(volatile char pressed){
@@ -285,7 +286,7 @@ char Controller_User_Input(volatile char pressed){
 	          break;
 	        case 10:
 
-		        if(sta.state == 2){cLight_Sensor_State = 0;int a = LightFollow();}//If we are in light follower screen
+		        if(sta.state == 2){LIGHTSENS_setState(LIGHTSENS_READ_REQ);int a = LightFollow();}//If we are in light follower screen
 		        //Load test data
 			    if(sta.state == 5){ //If we are in settings screen
 					DISPLAY_write("Loading data:",112,1);
@@ -358,7 +359,7 @@ char Controller_User_Input(volatile char pressed){
 			  }
 	          break;
 	        case 12:
-	          if(sta.state == 2){cLight_Sensor_State = -1;}
+	          if(sta.state == 2){LIGHTSENS_setState(LIGHTSENS_INACTIVE);}
 	          if(sta.state == 5){
 	          	DISPLAY_write("_         ",174,0);
 	          	if(sta.FAST_MODE > 0){
