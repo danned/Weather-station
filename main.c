@@ -16,7 +16,7 @@
 #include "peripherals/keypad.h"
 #include "peripherals/servo.h"
 #include "peripherals/display.h"
-#include "peripherals/Temp_Test.h"
+#include "peripherals/Temp_test.h"
 
 
 
@@ -122,7 +122,7 @@ static void stationInit(){
 
 	/*Show system test screen for a while*/
 	DISPLAY_writeHeader(1,"System test","00:00");
-	DISPLAY_writeTestingScreen(Temp_Test(),0,0,0); //TODO add the other test results
+	DISPLAY_writeTestingScreen(mem_temp_test(),0,0,0); //TODO add the other test results
 	//Push any button to remove testing screen
 	while(!Keypad_Read()){}
 	DISPLAY_clearText();

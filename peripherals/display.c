@@ -107,7 +107,7 @@ void DISPLAY_writeTempScreen(char* date){
 
   //Fetch last 7 days of temp data
   datestamp_t todays_datestamp = mem.temp->date; //TODO get date from RTC
-  temp_t *tmp = mem.temp;
+  mem_temp_t *tmp = mem.temp;
   char count = 0;
   while(tmp != NULL && count <7 ){
       DISPLAY_drawTempGraph(tmp, count); //Draw bar graph
@@ -436,7 +436,7 @@ for (int j = 0; j < 7; j++){
 	}
 }
 /*Draws the bar graphs for one week three bars for every day min avg max*/
-void DISPLAY_drawTempGraph(temp_t* temp, char count){
+void DISPLAY_drawTempGraph(mem_temp_t* temp, char count){
  //TODO assign from temperature struct
  signed char min = temp->min;
  signed char avg = temp->avg;

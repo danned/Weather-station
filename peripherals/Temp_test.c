@@ -19,10 +19,8 @@ Gives correct value at -5 degrees C
 
 float TEMP_get(void);
 char cTimeToReadTemp;
-extern char  temperature.status.RESET_READY;
-extern char temperature.status.READ_READY;
 /* Test full operation*/
-signed char Temp_Test( void ){
+signed char mem_temp_test( void ){
 cTimeToReadTemp = 1; //simulate one systick
     signed char passed = 0;
     register unsigned int timeout_counter = 0;

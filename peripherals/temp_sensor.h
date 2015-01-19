@@ -31,6 +31,15 @@ TODO:
 */
 #ifndef _TEMP_SENSOR_H_
 #define _TEMP_SENSOR_H_
+typedef struct{
+	char RESET_READY  : 1;
+	char READ_READY : 1;
+}temp_status_t;
+
+typedef struct{
+	temp_status_t status;
+}temp_t;
+
 extern temp_t temperature;
 /*Reset sequence - needed to give a start pulse*/
 void TEMP_reset(void);

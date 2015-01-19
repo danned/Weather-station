@@ -143,7 +143,7 @@ char Controller_User_Input(volatile char pressed){
 		        	DISPLAY_drawBorders();
 					char count = 0;
 					cur_week++;
-			        temp_t* temp = mem.temp;
+			        mem_temp_t* temp = mem.temp;
 					 while(temp != NULL && count <cur_week*7 ){
 					     count++;
 					     temp = temp->next;
@@ -175,7 +175,7 @@ char Controller_User_Input(volatile char pressed){
 	          	DISPLAY_drawBorders();
 					char count = 0;
 					cur_week--;
-			        temp_t* temp = mem.temp;
+			        mem_temp_t* temp = mem.temp;
 					 while(temp != NULL && count <cur_week*7 ){
 					     count++;
 					     temp = temp->next;

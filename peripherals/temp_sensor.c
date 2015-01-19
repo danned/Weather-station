@@ -5,24 +5,14 @@
 #include "../includes/system_sam3x.h"
 #include "../includes/at91sam3x8.h"
 #include "../includes/common.h"
-char temperature.status.RESET_READY = 0; //Shared!
-char temperature.status.READ_READY = 0; //Shared!
+temp_t temperature;
 
-/* air pressure end */
-typedef struct{
-	char RESET_READY  : 1;
-	char READ_READY : 1;
-}temp_status_t;
-
-typedef struct{
-	temp_status_t status;
-}temp_t;
-
-extern temp_t temperature;
 /************************************************************************/
 /* Init function for temp temp_sensor				                    */
 /************************************************************************/
 void TEMP_init(void){
+	temperature.status.RESET_READY = 0; //Shared!
+	temperature.status.READ_READY = 0; //Shared!
 	*AT91C_PMC_PCER = (0xF<<12);//Init PIOB, PID 12
 	*AT91C_PIOB_PER = (1<<25); //PB25 - TIOA0 - Pin 2 arduino
 	*AT91C_PIOB_ODR = (1<<25);

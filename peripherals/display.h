@@ -77,7 +77,7 @@ void DISPLAY_writeDatetimeScreen(void);
 void DISPLAY_drawSun(int xw, int yw, int rw);
 void DISPLAY_drawArc(int xw, int yw, int rw);
 void DISPLAY_drawAxis(void);
-void DISPLAY_drawTempGraph(temp_t* data, char count);
+void DISPLAY_drawTempGraph(mem_temp_t* data, char count);
 void DISPLAY_drawAirGraph(void);
 void DISPLAY_drawBorders(void);
 #endif // _DISPLAY_H_

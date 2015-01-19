@@ -1,7 +1,7 @@
 //header file for temp test
-#ifndef _TEMP_TEST_H_
-#define _TEMP_TEST_H_
+#ifndef _mem_temp_tEST_H_
+#define _mem_temp_tEST_H_
 
-signed char Temp_Test( void );
+signed char mem_temp_test( void );
 
-#endif //_TEMP_TEST_H_
+#endif //_mem_temp_tEST_H_

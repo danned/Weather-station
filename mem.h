@@ -25,7 +25,7 @@ typedef struct {
 	short avg;
 	short max;
 	short count; // this might be removed
-}temp_t;
+}mem_temp_t;
 */
 typedef struct node{
 	short min;
@@ -40,7 +40,7 @@ typedef struct node{
 /* datastructures for air pressure start */
 
 /*typedef struct{
-	
+
 }pres_value_t;
 */
 
@@ -60,12 +60,12 @@ typedef struct{
 
 typedef struct{
 	mem_temp_t *temp;
-	
+
 	mem_air_pres_t pres;
 	mem_status_t status;
 }mem_t;
 
-//extern temp_t *mem_root_pr;
+//extern mem_temp_t *mem_root_pr;
 extern mem_t mem;
 
 /************************************************************************/
