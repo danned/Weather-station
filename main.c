@@ -119,22 +119,22 @@ static void stationInit(){
 	//MEM_test();
 	Keypad_Init();
 	Temp_Init();
-	Display_Init();
+	DISPLAY_init();
 	LIGHTSENS_init();
 	SERVO_init();
 
 	/*Show system test screen for a while*/
-	Display_Write_Header(1,"System test","00:00");
-	Display_Write_Testing_Screen(Temp_Test(),0,0,0); //TODO add the other test results
+	DISPLAY_writeHeader(1,"System test","00:00");
+	DISPLAY_writeTestingScreen(Temp_Test(),0,0,0); //TODO add the other test results
 	//Push any button to remove testing screen
 	while(!Keypad_Read()){}
-	Display_Clear_Text();
+	DISPLAY_clearText();
 	Delay(2000000);
 
 	/*Force user to enter date and time*/
-	Display_Write_Header(0,"Date and time","00:00");
-	Display_Write_Sidebar();
-	//Display_Write_Date_Screen(); //TODO PUT THIS BACK<-------------
+	DISPLAY_writeHeader(0,"Date and time","00:00");
+	DISPLAY_writeSidebar();
+	//DISPLAY_writeDateSetScreen(); //TODO PUT THIS BACK<-------------
 
 }
 
@@ -147,7 +147,7 @@ int main(void)
 {
 
     stationInit();// initializes station
-    //TODO Insert set state and draw date-time screen with void Display_Write_Datetime_Screen(void)
+    //TODO Insert set state and draw date-time screen with void DISPLAY_writeDatetimeScreen(void)
 	while (1)
     {
 
@@ -159,7 +159,7 @@ int main(void)
 		tempSens();//if flag is set, temp will be measured
 		lightSens();
 		saveMeas();//if flag is set. Values will be saved
-		//Display_Write("hejhej",0,0);
+		//DISPLAY_write("hejhej",0,0);
     }
 }
 
