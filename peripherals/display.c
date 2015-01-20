@@ -109,11 +109,27 @@ void DISPLAY_writeTempScreen(char* date){
   datestamp_t todays_datestamp = mem.temp->date; //TODO get date from RTC
   mem_temp_t *tmp = mem.temp;
   char count = 0;
-  while(tmp != NULL && count <7 ){
-      DISPLAY_drawTempGraph(tmp, count); //Draw bar graph
-      count++;
-      tmp = tmp->next;
+  //Write out in text
+  //Create string to write out averages in text
+  DISPLAY_write("Avg:",67,0);
+  char *avg_str = malloc(3*sizeof(char *));
+  if(avg_str == 0){
+    //TODO Handle error
   }
+  while(tmp != NULL && count <7 ){
+    DISPLAY_drawTempGraph(tmp, count); //Draw bar graph  
+
+    short average = tmp->avg;
+    sprintf(avg_str, "%d", average);
+    DISPLAY_write(avg_str,107+(count*40),0);
+
+    tmp = tmp->next;
+    count++;
+  }
+  free(avg_str);
+
+
+
 }
 /*Draws the initial set date screen on startup a lot of user input
 The algorithm used to determine which entry user is at is done using integer
@@ -229,7 +245,7 @@ void DISPLAY_writeDateSetScreen(void){
       if(pressed != 0){
         switch(pressed){
           case 1:
-            DISPLAY_write("2",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
+            DISPLAY_write("1",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
               time_entries_done++;
         break;
           case 2:

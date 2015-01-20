@@ -42,7 +42,7 @@ char Controller_User_Input(volatile char pressed){
 			if(time == 0){
 			  return 0;
 			}
-	        char *date = malloc(12*sizeof(char *)); //TODO change from 15
+	        char *date = malloc(11*sizeof(char *)); //TODO change from 15
 			if(date == 0){
 			  return 0;
 			}
@@ -68,10 +68,10 @@ char Controller_User_Input(volatile char pressed){
 				  return 0;
 				}
 
-				//Get current temperature
-				float temperature = TEMP_get();
-				if(temperature >25 || temperature <0){
-					nTempWarning = 1; //TODO not correct
+				//Get current temperature and check towards alarm
+				float temperature = mem.cur_temp;
+				if(temperature >sta.alm_h || temperature <sta.alm_l){
+					nTempWarning = 1;
 				}
 				else{
 					nTempWarning = 0;

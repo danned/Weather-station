@@ -85,6 +85,7 @@ int MEM_init( void ){
 /************************************************************************/
 int MEM_saveTemp(float new_val_f){
 	mem_temp_t *cur_node = mem.temp;
+
 	short int new_val_s = (short int) (new_val_f*100);// saves value of 2 decimals. truncate rest
 	char ret_val = 0;
 	int temp_sum = (cur_node->avg*cur_node->count) + new_val_s;
@@ -135,6 +136,7 @@ int MEM_savePres(unsigned int new_val_u32){
 
 int MEM_save(float new_temp_f, unsigned int new_pres_u32){
 	int ret_val = 0;
+	mem.cur_temp = new_temp_f;
 	if(MEM_saveTemp( new_temp_f ) > 0)
 		ret_val += 1;
 	if(MEM_savePres( new_pres_u32 ) > 0)

@@ -50,13 +50,20 @@ void stationInit();
  * \brief inline method for saving current values to memory
  */
 static void saveMeas(){
-	if(sta.status.MEAS > 0){
+	if(sta.status.MEAS){
 		sta.status.MEAS = 0;
-		MEM_saveTemp(sta.temp_sum_f/(float)sta.n_avg );
-		sta.temp_sum_f = 0;
-		//TODO: add saving of humidity. Maybe display updates
-		if(lightsens.state.INACTIVE)
-			LIGHTSENS_setState(LIGHTSENS_READ_REQ); //sets to update lux value onscreen
+		if(mem.temp->count>0){
+			MEM_save((sta.temp_sum_f/mem.temp->count), AIRSENS_getPres() );
+			sta.temp_sum_f = 0;
+			mem.temp->count = 0;
+			if(lightsens.state.INACTIVE)
+				LIGHTSENS_setState(LIGHTSENS_READ_REQ); //sets to update lux value onscreen
+		}
+	}
+	if(sta.status.NEW_DAY){
+		sta.status.NEW_DAY = 0;
+		MEM_newDay();
+		//meas_count = 0;
 	}
 }
 
@@ -69,12 +76,12 @@ static void measure(){
 	if(sta.FAST_MODE){//fast mode
 		if(meas_count > (1000/sta.n_avg-40)){
 			sta.status.TEMP_REQ = 1;
-			
+
 			meas_count = 0;
 		}
 	}else if(!sta.FAST_MODE){//normal mode
 		if(meas_count > (60000/sta.n_avg)){
-			
+
 			sta.status.TEMP_REQ = 1;
 			meas_count = 0;
 		}
@@ -143,7 +150,7 @@ static void stationInit(){
 	/*Force user to enter date and time*/
 	DISPLAY_writeHeader(0,"Date and time","00:00");
 	DISPLAY_writeSidebar();
-	//DISPLAY_writeDateSetScreen(); //TODO PUT THIS BACK<-------------
+	DISPLAY_writeDateSetScreen(); //TODO PUT THIS BACK<-------------
 
 }
 
@@ -179,18 +186,28 @@ int main(void)
  * aswell var with sum of measurement results. Globals are found in common.h.
  */
 void RTC_Handler(void){
-	//should trigger every minute for normal mode. Every second for fast mode
-
-	sta.status.MEAS = 1;
-
-	//should trigger every day for normal mode. Every hour for fast mode
-	//sta.status.NEW_DAY = 1;
-
-
-
-
+if( (*AT91C_RTC_TIMR&0xFF) == 0 ){
+		if(!sta.FAST_MODE){
+			sta.status.MEAS = 1;
+		}else if(sta.FAST_MODE){
+			if(sta.fast_count > 3){
+				sta.fast_count = 0;
+				sta.status.NEW_DAY = 1;
+			}else{
+				sta.fast_count++;
+			}
+		}
+	}
+	
+	if( ( *AT91C_RTC_SR&AT91C_RTC_SECEV ) > 0){
+		sta.status.MEAS = 1;
+	}
+	
+	if(*AT91C_RTC_TIMR&(0x7F<<16) == 0){
+		sta.status.NEW_DAY = 1;
+	}
+	
 	*AT91C_RTC_SCCR = 3<<1;
-	//printf("RTC Interrupt!");
 }
 
 /**

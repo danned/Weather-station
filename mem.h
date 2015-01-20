@@ -60,7 +60,7 @@ typedef struct{
 
 typedef struct{
 	mem_temp_t *temp;
-
+	float cur_temp;
 	mem_air_pres_t pres;
 	mem_status_t status;
 }mem_t;
