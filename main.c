@@ -61,11 +61,24 @@ static void saveMeas(){
 }
 
 /**
- * \brief call this function to start measuring
+ * \brief call this function to start measuring temperature
  */
 static void measure(){
-	 sta.status.TEMP_REQ = 1;
-	 //TODO: add measuring of humidity
+	static int meas_count = 0;
+	meas_count++;
+	if(sta.FAST_MODE){//fast mode
+		if(meas_count > (1000/sta.n_avg-40)){
+			sta.status.TEMP_REQ = 1;
+			
+			meas_count = 0;
+		}
+	}else if(!sta.FAST_MODE){//normal mode
+		if(meas_count > (60000/sta.n_avg)){
+			
+			sta.status.TEMP_REQ = 1;
+			meas_count = 0;
+		}
+	}
 }
 
 /**

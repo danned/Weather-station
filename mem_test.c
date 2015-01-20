@@ -99,13 +99,13 @@ void SysTick_Handler(void){
 	static int meas_count = 0;
 	meas_count++;
 	if(sta.FAST_MODE){//fast mode
-		if(meas_count > 300){
+		if(meas_count > (1000/sta.n_avg-40)){
 			sta.status.TEMP_REQ = 1;
 			
 			meas_count = 0;
 		}
 	}else if(!sta.FAST_MODE){//normal mode
-		if(meas_count > 19999){
+		if(meas_count > (60000/sta.n_avg)){
 			
 			sta.status.TEMP_REQ = 1;
 			meas_count = 0;
