@@ -51,20 +51,17 @@ void stationInit();
  */
 static void saveMeas(){
 	if(sta.status.MEAS){
-		sta.status.MEAS = 0;
-		if(mem.temp->count>0){
-			MEM_save((sta.temp_sum_f/mem.temp->count), AIRSENS_getPres() );
-			sta.temp_sum_f = 0;
-			mem.temp->count = 0;
-			if(lightsens.state.INACTIVE)
-				LIGHTSENS_setState(LIGHTSENS_READ_REQ); //sets to update lux value onscreen
+			sta.status.MEAS = 0;
+			if(mem.temp->count>0){
+				MEM_save((sta.temp_sum_f/mem.temp->count), AIRSENS_getPres() );
+				sta.temp_sum_f = 0;
+				mem.temp->count = 0;
+			}
 		}
-	}
-	if(sta.status.NEW_DAY){
-		sta.status.NEW_DAY = 0;
-		MEM_newDay();
-		//meas_count = 0;
-	}
+		if(sta.status.NEW_DAY){
+			sta.status.NEW_DAY = 0;
+			MEM_newDay();
+		}
 }
 
 /**
@@ -81,7 +78,6 @@ static void measure(){
 		}
 	}else if(!sta.FAST_MODE){//normal mode
 		if(meas_count > (60000/sta.n_avg)){
-
 			sta.status.TEMP_REQ = 1;
 			meas_count = 0;
 		}
@@ -95,12 +91,12 @@ static void tempSens(){
 	if(sta.status.TEMP_REQ == 1){
 		TEMP_reset();
 	}
-	if(temperature.status.RESET_READY  == 1){
+	if(temperature.status.RESET_READY){
 		TEMP_read();
 	}
-	if(temperature.status.READ_READY == 1){
+	if(temperature.status.READ_READY){
 		sta.temp_sum_f += TEMP_get();
-		//printf("%f",temp);
+		mem.temp->count++;
 	}
 
 }
