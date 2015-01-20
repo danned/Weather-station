@@ -43,13 +43,14 @@ void TEMP_init(void){
 /************************************************************************/
 /*First step of making a reading*/
 void TEMP_reset(void){
-
+	sta.status.TEMP_REQ = 0;
 	*AT91C_PIOB_OER = (1<<25); //Set pin low
 	*AT91C_TC1_CCR = AT91C_TC_SWTRG; //Start counting
 	*AT91C_TC1_IER = AT91C_TC_CPCS; //Enable interrupt on
 }
 /*Second step of making a reading*/
 void TEMP_read(void){
+	temperature.status.RESET_READY = 0;
   	*AT91C_PIOB_ODR = (1<<25); //Setup with high 10us
 	 Delay(SETUP_DELAY);
 	 *AT91C_PIOB_OER = (1<<25); //Start pulse assuming low 2.5us
@@ -61,7 +62,7 @@ void TEMP_read(void){
 }
 /*Third step of making a reading*/
 float TEMP_get(void){
-
+	temperature.status.READ_READY = 0;
 	uint32_t nTimeA = *AT91C_TC0_RA;
 	uint32_t nTimeB = *AT91C_TC0_RB;
 	uint32_t nTimeDiff = nTimeB - nTimeA;
