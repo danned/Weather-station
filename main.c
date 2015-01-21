@@ -18,12 +18,6 @@
 #include "peripherals/display.h"
 #include "peripherals/Temp_test.h"
 
-
-
-
-
-
-
 program_t sta;
 
 /*float fTemp_Sum = 0;
@@ -33,9 +27,10 @@ int MODE = 0;//default mode
 char nState = 0; //keeps track of current state*/
 char nTempWarning = 0; //0 OR 1
 char nMemWarning = 0; // 0 OR 2   2 is active warning!
-
+char *time;
 int ms_counter = 0;
-
+char update_time = 0;
+int sec_counter = 0;
 //char cMeasure = 0; deprecated. see sta.status.MEAS
 //char cTimeToReadTemp = 0; deprecated. see sta.status.TEMP_REQ;
 /** Prototypes. NOT USED
@@ -105,7 +100,6 @@ static void lightSens(){
 	if(lightsens.state.READ_REQ){
 		LIGHTSENS_startMeas();
 	}else if(lightsens.state.READ_DONE){
-		//printf("Diff: %f\n",LIGHTSENS_getDiff());
 		LIGHTSENS_setState(0);
 	}
 }
@@ -141,7 +135,7 @@ static void stationInit(){
 	//Push any button to remove testing screen
 	while(!Keypad_Read()){}
 	DISPLAY_clearText();
-	Delay(2000000);
+	Delay(2000000); //FIXME Quickfix for bouncing
 
 	/*Force user to enter date and time*/
 	DISPLAY_writeHeader(0,"Date and time","00:00");
@@ -158,10 +152,17 @@ static void stationInit(){
 int main(void)
 {
 
+
     stationInit();// initializes station
     //TODO Insert set state and draw date-time screen with void DISPLAY_writeDatetimeScreen(void)
+	time = malloc(8*sizeof(char *));
+	if(time == 0){
+		 //TODO Handle error
+	}
+
 	while (1)
     {
+
 		//---- State INDEPENDENT Keypad readings ----
 		unsigned char pressed = Keypad_Read();
 		Controller_User_Input(pressed);
@@ -169,6 +170,17 @@ int main(void)
 		tempSens();//if flag is set, temp will be measured
 		lightSens();
 		saveMeas();//if flag is set. Values will be saved
+
+		//Update the clock every second
+		if(update_time){
+			update_time = 0;    //TODO Update time only once every second
+		 RTC_Get_Time_String(time);
+		 DISPLAY_write(time,24,0);
+		}
+		//Update realtime clock
+
+
+
 		//DISPLAY_write("hejhej",0,0);
     }
 }
@@ -202,6 +214,7 @@ if( (*AT91C_RTC_TIMR&0xFF) == 0 ){
 	}
 
 	*AT91C_RTC_SCCR = 3<<1;
+
 }
 
 /**
@@ -211,9 +224,14 @@ if( (*AT91C_RTC_TIMR&0xFF) == 0 ){
 void SysTick_Handler(void){
 	measure();
 	ms_counter ++;
+	sec_counter ++;
 	if((ms_counter >= 100 && !lightsens.state.READING) ){
 	 lightsens.state.READ_REQ = 1;
 	 ms_counter = 0;
+	}
+	if(sec_counter >999){
+		sec_counter = 0;
+		update_time = 1;
 	}
 }
 

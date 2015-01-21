@@ -42,7 +42,6 @@ cTimeToReadTemp = 1; //simulate one systick
 	    if(temperature.status.READ_READY == 1){
 		    temperature.status.READ_READY = 0;
 			float answer = TEMP_get();
-		    //printf("Measured temp: %.2f \n",answer);
 		    //Check that answer is a decent value
 		    if(answer >-20 && answer <60){
 			    passed = 1; //passed

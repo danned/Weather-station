@@ -29,7 +29,7 @@ TODO:
 #include "includes/at91sam3x8.h"
 #include "includes/common.h"
 #include "rtc.h"
-
+extern char* time;
 static int cur_week = 0;
 /* Main flow control structure - takes a pressed key val*/
 char Controller_User_Input(volatile char pressed){
@@ -38,10 +38,10 @@ char Controller_User_Input(volatile char pressed){
 			DISPLAY_clearText();
 	  		DISPLAY_clearGraphics(); //TODO change this to only clear whats necessary
 	  		//Alloc time and date string
-			char *time = malloc(8*sizeof(char *));
+			/*char *time = malloc(8*sizeof(char *));
 			if(time == 0){
 			  return 0;
-			}
+			}*/
 	        char *date = malloc(10*sizeof(char *)); //TODO change from 15
 			if(date == 0){
 			  return 0;
@@ -49,7 +49,6 @@ char Controller_User_Input(volatile char pressed){
 			//Populate strings with time and date
 			RTC_Get_Time_String(time);
 			RTC_Get_Date_String(date);
-			printf("Pressed: %d\n",pressed);
 			//First 5 menu options:
 	        switch(pressed){
 	          case 1:
@@ -125,9 +124,6 @@ char Controller_User_Input(volatile char pressed){
 			free(time);
 			free(date);
 	        DISPLAY_writeSidebar();
-	        /*
-	        *AT91C_PWMC_CH2_CDTYR = (int)1838.0*(1.0+((1.0/9.0)*(float)pressed));
-	        printf("%d",pressed);*/
 	        pressed = 0;
 	      }
 	      //State dependent keypad readings

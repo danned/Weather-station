@@ -66,7 +66,6 @@ float TEMP_get(void){
 	uint32_t nTimeA = *AT91C_TC0_RA;
 	uint32_t nTimeB = *AT91C_TC0_RB;
 	uint32_t nTimeDiff = nTimeB - nTimeA;
-	//printf("Measured temp: %.2f \n",TEMP_convCelsius(nTimeDiff));
 	return TEMP_convCelsius(nTimeDiff);
 }
 

@@ -32,7 +32,6 @@ void RTC_Init(char sec, char min, char hr, char cent, char year, char month, cha
    Delay(4000000);//FIXME Qucikfix for ISSUE #12
   *AT91C_RTC_CR = 0; //Start counting
 
-
 	//Interupt_RTC_Set_Mode();
 	intStart();
 }
@@ -71,11 +70,7 @@ char make_BCD_pattern(char val){
 char reverse_BCD_pattern(char val){
 	char result = 0;
 	// get the dec bcd value
-	//printf("The val: %d \n", val);
 	result = ((val >> 4)*10) + (val & 0x0F);
-	//printf("Tens: %d \n", (val >> 4)*10);
-	//printf("Singles: %d \n", (val & 0x0F));
-	//printf("Reversed: %d \n", result);
 	return result;
 }
 /*RTC Get current time or date in raw BCD format*/
@@ -101,11 +96,7 @@ void RTC_Get_Time_String(char* time){
   char min = (mask & (bcd_time >> 8));
   mask = 0x3F;
   char hr = (mask & (bcd_time >> 16));
-  //printf("Hr: %d\n",hr );
-  //printf("min: %d\n",min );
-  //printf("sec: %d\n",sec );
   sprintf(time, "%d:%d:%d", reverse_BCD_pattern(hr),reverse_BCD_pattern(min),reverse_BCD_pattern(sec));// TODO do not use sprintf
-  	//printf("%s\n", time);
 }
 
 //TODO FOR STAEF NEEDS DOCUMENTATION OR REWRITE BADLY

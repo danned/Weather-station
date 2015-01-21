@@ -63,7 +63,7 @@ char AIRSENS_read( char reg ){
 		timeout ++;
 	}
         if(timeout >=10000){
-            printf("Timeout read\n");
+            //printf("Timeout read\n");
         }
 	char c_Return_Data = *AT91C_TWI0_RHR;
 
@@ -84,7 +84,7 @@ void AIRSENS_write( char reg, char data ){
 		timeout ++;
 	}
         if(timeout >=10000){
-            printf("Timeout write\n");
+            //printf("Timeout write\n");
         }
 	//Air_Sensor_Ready();
 }
