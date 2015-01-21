@@ -111,7 +111,7 @@ void DISPLAY_writeTempScreen(char* date){
   char count = 0;
   //Write out in text
   //Create string to write out averages in text
-  DISPLAY_write("Avg:",67,0);
+  DISPLAY_write("Avg: ",65,0);
   char *avg_str = malloc(3*sizeof(char *));
   if(avg_str == 0){
     //TODO Handle error
@@ -121,7 +121,7 @@ void DISPLAY_writeTempScreen(char* date){
 
     short average = tmp->avg;
     sprintf(avg_str, "%d", average);
-    DISPLAY_write(avg_str,107+(count*40),0);
+    DISPLAY_write(avg_str,70+(count*40),0);
 
     tmp = tmp->next;
     count++;
@@ -454,9 +454,9 @@ for (int j = 0; j < 7; j++){
 /*Draws the bar graphs for one week three bars for every day min avg max*/
 void DISPLAY_drawTempGraph(mem_temp_t* temp, char count){
  //TODO assign from temperature struct
- signed char min = temp->min;
- signed char avg = temp->avg;
- signed char max = temp->max;
+ signed char min = temp->min/100;
+ signed char avg = temp->avg/100;
+ signed char max = temp->max/100;
 //Normalize values to spec 0-40 degrees celsius
   if(min>40){
      min = 40;

@@ -146,7 +146,7 @@ static void stationInit(){
 	/*Force user to enter date and time*/
 	DISPLAY_writeHeader(0,"Date and time","00:00");
 	DISPLAY_writeSidebar();
-	DISPLAY_writeDateSetScreen(); //TODO PUT THIS BACK<-------------
+	//DISPLAY_writeDateSetScreen(); //TODO PUT THIS BACK<-------------
 
 }
 
@@ -162,12 +162,10 @@ int main(void)
     //TODO Insert set state and draw date-time screen with void DISPLAY_writeDatetimeScreen(void)
 	while (1)
     {
-
-
-		 /*CONTROLLER CODE*/
 		//---- State INDEPENDENT Keypad readings ----
 		unsigned char pressed = Keypad_Read();
 		Controller_User_Input(pressed);
+		Delay(40000); //FIXME Qucikfix for ISSUE #10
 		tempSens();//if flag is set, temp will be measured
 		lightSens();
 		saveMeas();//if flag is set. Values will be saved
@@ -194,15 +192,15 @@ if( (*AT91C_RTC_TIMR&0xFF) == 0 ){
 			}
 		}
 	}
-	
+
 	if( ( *AT91C_RTC_SR&AT91C_RTC_SECEV ) > 0){
 		sta.status.MEAS = 1;
 	}
-	
+
 	if(*AT91C_RTC_TIMR&(0x7F<<16) == 0){
 		sta.status.NEW_DAY = 1;
 	}
-	
+
 	*AT91C_RTC_SCCR = 3<<1;
 }
 

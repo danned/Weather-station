@@ -105,7 +105,7 @@ float LIGHTSENS_getDiff(){
  * This flag indicates that the conversion is ready and data is ready to be read.
  *----------------------------------------------------------------*/
 void ADC_Handler(void){
-	LIGHTSENS_setState(LIGHTSENS_READ_REQ);
+	LIGHTSENS_setState(LIGHTSENS_DONE);
 	*AT91C_ADCC_IDR = (1<<24);
 
 }

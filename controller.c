@@ -38,18 +38,18 @@ char Controller_User_Input(volatile char pressed){
 			DISPLAY_clearText();
 	  		DISPLAY_clearGraphics(); //TODO change this to only clear whats necessary
 	  		//Alloc time and date string
-			char *time = malloc(15*sizeof(char *));
+			char *time = malloc(8*sizeof(char *));
 			if(time == 0){
 			  return 0;
 			}
-	        char *date = malloc(11*sizeof(char *)); //TODO change from 15
+	        char *date = malloc(10*sizeof(char *)); //TODO change from 15
 			if(date == 0){
 			  return 0;
 			}
 			//Populate strings with time and date
 			RTC_Get_Time_String(time);
 			RTC_Get_Date_String(date);
-
+			printf("Pressed: %d\n",pressed);
 			//First 5 menu options:
 	        switch(pressed){
 	          case 1:
@@ -285,8 +285,11 @@ char Controller_User_Input(volatile char pressed){
 			}
 	          break;
 	        case 10:
-
-		        if(sta.state == 2){LIGHTSENS_setState(LIGHTSENS_READ_REQ);int a = LightFollow();}//If we are in light follower screen
+			//If we are in light follower screen
+		        if(sta.state == 2){
+				  LIGHTSENS_setState(LIGHTSENS_READ_REQ);
+				  int a = LightFollow();
+				}
 		        //Load test data
 			    if(sta.state == 5){ //If we are in settings screen
 					DISPLAY_write("Loading data:",112,1);

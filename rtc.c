@@ -19,13 +19,17 @@ Usage: Set values in natural BCD numbers. for example highest value in sec and m
 3. Date: First 7 bits is century, 1 empty, next 7 bits are year, next 5 is month, next 3 is day, next six is date
 */
 void RTC_Init(char sec, char min, char hr, char cent, char year, char month, char date, char day){
-  //Stop counting with upd_cal and upd_tim to be able to set datetime
+  //Stop counting with upd_cal and upd_tim to be able to set datetime DELAYS BECAUSE RACE CONDITION QUICKFIX
   *AT91C_RTC_CR = AT91C_RTC_UPDTIM|AT91C_RTC_UPDCAL; //AT91C_RTC_TIMEVSEL_DAY24 if we want trigger every night
+   Delay(4000000);//FIXME Qucikfix for ISSUE #12
   *AT91C_RTC_MR = (0); //Set 24-hr mode, not necessary but added for clarity AT91C_RTC_HRMOD
-  Delay(40000);
+  Delay(4000000);//FIXME Qucikfix for ISSUE #12
   *AT91C_RTC_SCCR = 1; //acknowledge clear status now we can set time
+   Delay(4000000);//FIXME Qucikfix for ISSUE #12
   *AT91C_RTC_TIMR = make_BCD_pattern(sec)|(make_BCD_pattern(min)<<8)|(make_BCD_pattern(hr)<<16); //
+   Delay(4000000);//FIXME Qucikfix for ISSUE #12
   *AT91C_RTC_CALR = (make_BCD_pattern(cent))|(make_BCD_pattern(year)<<8)|(make_BCD_pattern(month)<<16)|(make_BCD_pattern(date)<<24)|(make_BCD_pattern(day)<<21);
+   Delay(4000000);//FIXME Qucikfix for ISSUE #12
   *AT91C_RTC_CR = 0; //Start counting
 
 
@@ -34,7 +38,7 @@ void RTC_Init(char sec, char min, char hr, char cent, char year, char month, cha
 }
 
 void intStart(){
-	
+
 	intSetMode(1);
 	NVIC_ClearPendingIRQ(RTC_IRQn);
   	NVIC_SetPriority(RTC_IRQn, 7);
@@ -100,7 +104,7 @@ void RTC_Get_Time_String(char* time){
   //printf("Hr: %d\n",hr );
   //printf("min: %d\n",min );
   //printf("sec: %d\n",sec );
-  sprintf(time, "Time: %d:%d:%d \n", reverse_BCD_pattern(hr),reverse_BCD_pattern(min),reverse_BCD_pattern(sec));// TODO do not use sprintf
+  sprintf(time, "%d:%d:%d", reverse_BCD_pattern(hr),reverse_BCD_pattern(min),reverse_BCD_pattern(sec));// TODO do not use sprintf
   	//printf("%s\n", time);
 }
 
@@ -118,7 +122,7 @@ void RTC_Get_Date_String(char* date){
    mask = 0x3F;
   char date2 = (char)(mask & (bcd_date >> 24));
 
-  sprintf(date, "Date: %d%d-%d-%d \n", reverse_BCD_pattern(cent),reverse_BCD_pattern(year),reverse_BCD_pattern(month),reverse_BCD_pattern(date2));// TODO do not use sprintf
+  sprintf(date, "%d%d-%d-%d", reverse_BCD_pattern(cent),reverse_BCD_pattern(year),reverse_BCD_pattern(month),reverse_BCD_pattern(date2));// TODO do not use sprintf
 }
 
 datestamp_t RTC_getDate(){
@@ -144,7 +148,7 @@ void RTC_Get_Day_String(char* day){
 
   mask = 0x7F;
   char dayz = (char)(mask && (bcd_date >> 21));
-sprintf(day, "Day: %d\n", reverse_BCD_pattern(dayz));// TODO do not use sprintf
+sprintf(day, "%d\n", reverse_BCD_pattern(dayz));// TODO do not use sprintf
 }
 
 
