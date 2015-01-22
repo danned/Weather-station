@@ -1,6 +1,8 @@
 /*
  * Station.c
  *
+ * 
+ *
  * Created: 2014-12-11 17:03:22
  *  Author: Daniel and Staffan
  */
@@ -20,26 +22,12 @@
 
 program_t sta;
 
-/*float fTemp_Sum = 0;
-int iN_Avg = 3;//default setting
-int MODE = 0;//default mode
-
-char nState = 0; //keeps track of current state*/
-char nTempWarning = 0; //0 OR 1
-char nMemWarning = 0; // 0 OR 2   2 is active warning!
 char *time;
 int ms_counter = 0;
 char update_time = 0;
 int sec_counter = 0;
 //char cMeasure = 0; deprecated. see sta.status.MEAS
 //char cTimeToReadTemp = 0; deprecated. see sta.status.TEMP_REQ;
-/** Prototypes. NOT USED
-void saveMeas();
-void tempSensor();
-void lightSensor();
-void measure();
-void stationInit();
-*/
 
 /**
  * \brief inline method for saving current values to memory
@@ -141,7 +129,8 @@ static void stationInit(){
 	DISPLAY_writeHeader(0,"Date and time","00:00");
 	DISPLAY_writeSidebar();
 	//DISPLAY_writeDateSetScreen(); //TODO PUT THIS BACK<-------------
-
+	ctrl.status.MEM_WARN = 0;
+	ctrl.status.TEMP_WARN = 0;
 }
 
 /**
@@ -160,21 +149,24 @@ int main(void)
 		 //TODO Handle error
 	}
 
-	while (1)
-    {
-
+	while (1){
 		unsigned char pressed = Keypad_Read();
-		Controller_User_Input(pressed);
-		Delay(40000); //FIXME Qucikfix for ISSUE #10
+		CTRL_userInput(pressed);
+		
+		/* -- FIXME Quickfix for ISSUE #10 --- */
+		Delay(40000);					
+		/*--------------------------------------*/
+
+		/*Readings - if flags are set*/
 		tempSens();//if flag is set, temp will be measured
 		lightSens();
 		saveMeas();//if flag is set. Values will be saved
 
-		//Update the dynamic things every second
+		//Update dynamic things every second
 		if(update_time){
-			update_time = 0;    //TODO Update time only once every second
-		 RTC_Get_Time_String(time);
-		 DISPLAY_write(time,24,0);
+			update_time = 0;  
+			 RTC_Get_Time_String(time);
+			 DISPLAY_write(time,24,0);
 		}
 
     }
@@ -209,7 +201,6 @@ if( (*AT91C_RTC_TIMR&0xFF) == 0 ){
 	}
 
 	*AT91C_RTC_SCCR = 3<<1;
-
 }
 
 /**
@@ -229,8 +220,6 @@ void SysTick_Handler(void){
 		update_time = 1;
 
 	}
-
-
 }
 
 void NMI_Handler( void ){while(1){}}

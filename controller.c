@@ -1,21 +1,5 @@
-/* Controller that handles the different states
-and how they respond to user input.
-Depends on:
-sta.state
-nTempWarning
-nMemWarning
-
-Usage example:
-while(1){
-   char pressed = Keypad_Read();
-   Controller_User_Input(pressed);
-}
-TODO:
-- Big cleanup
-- Dependency checks
-- Create helpers
-- Testing
-
+/* 
+See controller.h for info
 */
 
 #include "controller.h"
@@ -29,19 +13,17 @@ TODO:
 #include "includes/at91sam3x8.h"
 #include "includes/common.h"
 #include "rtc.h"
-extern char* time;
-static int cur_week = 0;
+
+extern char* time;	//Pointer to the time string that gets updated all the time
+static int cur_week = 0; // Keeps track of how many weeks back you have browsed
+ctrl_t ctrl;
+
 /* Main flow control structure - takes a pressed key val*/
-char Controller_User_Input(volatile char pressed){
+char CTRL_userInput(char pressed){
 		if(pressed != 0){
 	      if(pressed <= 5){
 			DISPLAY_clearText();
 	  		DISPLAY_clearGraphics(); //TODO change this to only clear whats necessary
-	  		//Alloc time and date string
-			/*char *time = malloc(8*sizeof(char *));
-			if(time == 0){
-			  return 0;
-			}*/
 	        char *date = malloc(10*sizeof(char *)); //TODO change from 15
 			if(date == 0){
 			  return 0;
@@ -70,10 +52,10 @@ char Controller_User_Input(volatile char pressed){
 				//Get current temperature and check towards alarm
 				float temperature = mem.cur_temp;
 				if(temperature >sta.alm_h || temperature <sta.alm_l){
-					nTempWarning = 1;
+					ctrl.status.TEMP_WARN = 1;
 				}
 				else{
-					nTempWarning = 0;
+					ctrl.status.TEMP_WARN = 0;
 				}
 			    sprintf(temp, "%.2f", temperature);// Populate string
 
@@ -88,7 +70,7 @@ char Controller_User_Input(volatile char pressed){
 			    sprintf(air, "%d", air_reading);// Populate string
 
 				//Write to display and finish
-		        DISPLAY_writeHeader(Controller_Get_Warnings(), "Home screen", time);
+		        DISPLAY_writeHeader(CTRL_getWarnings(), "Home screen", time);
 		        DISPLAY_writeHomeScreen(temp,lux,air,date);
 			    free(lux);
 				free(temp);
@@ -98,30 +80,30 @@ char Controller_User_Input(volatile char pressed){
 
 	          case 2:
 	            sta.state = 2;
-			    DISPLAY_writeHeader(Controller_Get_Warnings(), "Sun tracker", time);
+			    DISPLAY_writeHeader(CTRL_getWarnings(), "Sun tracker", time);
 			    DISPLAY_writeLightScreen();
 			    //TODO Enable tracking mode, also remember to disable on state change somehow
 	            break;
 	          case 3:
 	            sta.state = 3;
 
-	            DISPLAY_writeHeader(Controller_Get_Warnings(), "Temp Hist", time);
+	            DISPLAY_writeHeader(CTRL_getWarnings(), "Temp Hist", time);
 	            DISPLAY_writeTempScreen(date); //This has to take the  temp data or something
 
 	            break;
 
 	          case 4:
 	            sta.state = 4;
-	            DISPLAY_writeHeader(Controller_Get_Warnings(), "Air History", time);
+	            DISPLAY_writeHeader(CTRL_getWarnings(), "Air History", time);
 	            DISPLAY_writeAirScreen(date);
 	            break;
 	          case 5:
 	            sta.state = 5;
-	            DISPLAY_writeHeader(Controller_Get_Warnings(), "Settings Screen", time);
+	            DISPLAY_writeHeader(CTRL_getWarnings(), "Settings Screen", time);
 	            DISPLAY_writeSettingsScreen();
 	            break;
 	        }
-			free(time);
+			//free(time);
 			free(date);
 	        DISPLAY_writeSidebar();
 	        pressed = 0;
@@ -378,8 +360,8 @@ char Controller_User_Input(volatile char pressed){
 	return 1;
 }
 }
-char Controller_Get_Warnings(void){
-  return nTempWarning+nMemWarning;
+char CTRL_getWarnings(void){
+  return ctrl.status.TEMP_WARN+ctrl.status.MEM_WARN;
 }
 
 
