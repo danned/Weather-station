@@ -17,11 +17,11 @@ extern char temperature.status.READ_READY = 0;
        TEMP_reset();
     }
      //start temp sensor reading
-    if(temperature.status.RESET_READY  == 1){
+    if(temperature.status.RESET_READY ){
      TEMP_read();
     }
 	//fetch reading
-    if(temperature.status.READ_READY == 1){
+    if(temperature.status.READ_READY){
     float temp = TEMP_get();
     printf("%f",temp);
     }

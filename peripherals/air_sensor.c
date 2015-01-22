@@ -7,9 +7,6 @@ void AIRSENS_init(){
 		we will only be reading the sensor. will only do following commands once
 		-Set control register: - master enable
 			TWI_CR= MSEN + SVDIS
-
-
-
 	*/
 	*AT91C_PMC_PCER = (1<<22)|(1<<11);
     *AT91C_PIOA_PDR = (3<<17);
@@ -21,8 +18,6 @@ void AIRSENS_init(){
           //asm("nop");
 	AIRSENS_write(BMP180_CTRL_REG1, BMP180_CTRL_REG_SBYB |1<<BMP180_CTRL_REG_OS );// set raw data output, oversample ratio = 2. Alt = 0. Sbyb = 1
 	AIRSENS_write(BMP180_PT_DATA_CFG, BMP180_PT_DATA_CFG_PDEFE|BMP180_PT_DATA_CFG_DREM );
-
-
 }
 
 void AIRSENS_start(){
@@ -88,7 +83,6 @@ void AIRSENS_write( char reg, char data ){
         }
 	//Air_Sensor_Ready();
 }
-
 
 unsigned int AIRSENS_getPres(){
     unsigned char msb = AIRSENS_read(BMP180_P_OUT_MSB);

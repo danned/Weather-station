@@ -109,7 +109,7 @@ static void stationInit(){
 	/* Initialize the SAM system */
 	SystemInit();
 	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
-	//RTC_Init(00,00,22,20,14,12,14,7);//should be initialized at welcome screen
+	RTC_Init(13,30,00,20,15,01,28,1);//should be initialized at welcome screen
 
 	/* start initializing variables */
 	sta.FAST_MODE = 0;
@@ -163,7 +163,6 @@ int main(void)
 	while (1)
     {
 
-		//---- State INDEPENDENT Keypad readings ----
 		unsigned char pressed = Keypad_Read();
 		Controller_User_Input(pressed);
 		Delay(40000); //FIXME Qucikfix for ISSUE #10
@@ -171,17 +170,13 @@ int main(void)
 		lightSens();
 		saveMeas();//if flag is set. Values will be saved
 
-		//Update the clock every second
+		//Update the dynamic things every second
 		if(update_time){
 			update_time = 0;    //TODO Update time only once every second
 		 RTC_Get_Time_String(time);
 		 DISPLAY_write(time,24,0);
 		}
-		//Update realtime clock
 
-
-
-		//DISPLAY_write("hejhej",0,0);
     }
 }
 
@@ -232,7 +227,10 @@ void SysTick_Handler(void){
 	if(sec_counter >999){
 		sec_counter = 0;
 		update_time = 1;
+
 	}
+
+
 }
 
 void NMI_Handler( void ){while(1){}}

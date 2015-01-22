@@ -1,5 +1,5 @@
 /* - Staffan Piledahl
-Driver for LCD Display
+Driver for LCD Display see display.h for more info
 */
 #include "display.h"
 #include "../rtc.h"
@@ -134,6 +134,8 @@ void DISPLAY_writeTempScreen(char* date){
 /*Draws the initial set date screen on startup a lot of user input
 The algorithm used to determine which entry user is at is done using integer
 diviosn and modulu
+
+TODO: Split and move to Controller
 */
 void DISPLAY_writeDateSetScreen(void){
 
@@ -728,6 +730,12 @@ void DISPLAY_drawBorders(){
     DISPLAY_writeCommand(0xC0);
   }
 
+}
+//NOT USED  - TODO finish this
+void DISPLAY_drawNewSun(int angle){
+    if(angle <45){DISPLAY_drawSun(80, 110, 10);}
+    else if(angle >135){DISPLAY_drawSun(115, 90, 10);}
+    else{DISPLAY_drawSun(150, 110, 10);}
 }
 /************************************************************************/
 /* Internal!                                                            */
