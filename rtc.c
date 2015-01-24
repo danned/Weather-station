@@ -10,7 +10,7 @@
 #include "includes/system_sam3x.h"
 
 void intStart();
-void intSetMode(char mode);
+
  /* Real time clock - see page ~256 of atmel doc when working with this
 Cent is 19 or 20, year is for example 15, day is 1-7 weekday. date is 1-31
 Usage: Set values in natural BCD numbers. for example highest value in sec and min is 59
@@ -38,7 +38,7 @@ void RTC_Init(char sec, char min, char hr, char cent, char year, char month, cha
 
 void intStart(){
 
-	intSetMode(1);
+	RTC_intSetMode(1);
 	NVIC_ClearPendingIRQ(RTC_IRQn);
   	NVIC_SetPriority(RTC_IRQn, 7);
   	NVIC_EnableIRQ(RTC_IRQn);
@@ -46,7 +46,7 @@ void intStart(){
 /************************************************************************/
 /* 0 = normal, 1 = fast                                                 */
 /************************************************************************/
-void intSetMode(char mode){
+void RTC_intSetMode(char mode){
 	*AT91C_RTC_IDR = 0x1f; // disable all interrupts
 	if((mode) == 1){
 		*AT91C_RTC_IER = 1<<2; //enable second periodic interrupt

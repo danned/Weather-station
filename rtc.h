@@ -9,6 +9,7 @@
 char make_BCD_pattern(char val);
 char reverse_BCD_pattern(char val);
 void RTC_Init(char sec, char min, char hr, char cent, char year, char month, char date, char day);
+void RTC_intSetMode(char mode);
 int RTC_Get_Date(void);
 int RTC_Get_Time(void);
 void RTC_Get_Time_String(char* time);
