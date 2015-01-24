@@ -237,7 +237,6 @@ mem_temp_t MEM_get( mem_temp_t *node_pr ){
 int MEM_newDay(){
 	/* start update day temp */
 	int ret_val = 0;
-	//mem.temp->avg /= mem.temp->count;
 	mem_temp_t *new_node_pr = malloc(sizeof(mem_temp_t));
 	if(new_node_pr == NULL){// memory is full. Remove oldest entry
 		mem.status.MEM_FULL = TRUE;
@@ -253,11 +252,6 @@ int MEM_newDay(){
 		new_node_pr->next = mem.temp;
 		mem.temp = new_node_pr;
 		initTemp();
-		/*mem.temp->min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
-		mem.temp->max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
-		mem.temp->avg = 0; 		 // initialize avg to 0
-		mem.temp->date = RTC_getDate();
-		mem.temp->count = 0;*/
 		ret_val += 1;
 	}else{
 		mem.status.MEM_ERROR = TRUE;
@@ -265,8 +259,6 @@ int MEM_newDay(){
 	/* end update day temp */
 
 	/* start update day pressure */
-
-	//mem.pres.avg[mem.pres.day] /= mem.pres.count;
 
 	if(++mem.pres.day >= 7)
 		mem.pres.day = 0;
@@ -326,152 +318,50 @@ datestamp_t getDate(){
 	return newStamp;
 }
 
+/**
+ * MEMORY TEST
+ */
 int MEM_test(void){
     MEM_init();
-    MEM_save(25.5, 100000);
-    MEM_save(23.3, 102000);
-    MEM_newDay();
-    MEM_save(10, 140000);
-    MEM_save(12, 145000);
-    MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(20, 80000);
-    MEM_save(15, 90000);
-	MEM_newDay();
-    MEM_save(15, 103000);
-    MEM_save(16, 102000);
-	MEM_newDay();
-    MEM_save(20, 90000);
-    MEM_save(13, 100000);
-	MEM_newDay();
-    MEM_save(12, 90000);
-    MEM_save(11, 100000);
-	MEM_newDay();
-    MEM_save(10, 90000);
-    MEM_save(9, 100000);
-	MEM_save(25.5, 100000);
-    MEM_save(23.3, 102000);
-    MEM_newDay();
-    MEM_save(10, 140000);
-    MEM_save(12, 145000);
-    MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(20, 80000);
-    MEM_save(15, 90000);
-	MEM_newDay();
-    MEM_save(15, 103000);
-    MEM_save(16, 102000);
-	MEM_newDay();
-    MEM_save(20, 90000);
-    MEM_save(13, 100000);
-	MEM_newDay();
-    MEM_save(12, 90000);
-    MEM_save(11, 100000);
-	MEM_newDay();
-    MEM_save(10, 90000);
-    MEM_save(9, 100000);
-	MEM_save(25.5, 100000);
-    MEM_save(23.3, 102000);
-    MEM_newDay();
-    MEM_save(10, 140000);
-    MEM_save(12, 145000);
-    MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(20, 80000);
-    MEM_save(15, 90000);
-	MEM_newDay();
-    MEM_save(15, 103000);
-    MEM_save(16, 102000);
-	MEM_newDay();
-    MEM_save(20, 90000);
-    MEM_save(13, 100000);
-	MEM_newDay();
-    MEM_save(12, 90000);
-    MEM_save(11, 100000);
-	MEM_newDay();
-    MEM_save(10, 90000);
-    MEM_save(9, 100000);
-	MEM_save(25.5, 100000);
-    MEM_save(23.3, 102000);
-    MEM_newDay();
-    MEM_save(10, 140000);
-    MEM_save(12, 145000);
-    MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(20, 80000);
-    MEM_save(15, 90000);
-	MEM_newDay();
-    MEM_save(15, 103000);
-    MEM_save(16, 102000);
-	MEM_newDay();
-    MEM_save(20, 90000);
-    MEM_save(13, 100000);
-	MEM_newDay();
-    MEM_save(12, 90000);
-    MEM_save(11, 100000);
-	MEM_newDay();
-    MEM_save(10, 90000);
-    MEM_save(9, 100000);
-	MEM_save(25.5, 100000);
-    MEM_save(23.3, 102000);
-    MEM_newDay();
-    MEM_save(10, 140000);
-    MEM_save(12, 145000);
-    MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(-2, 90000);
-    MEM_save(-5, 100000);
-	MEM_newDay();
-    MEM_save(20, 80000);
-    MEM_save(15, 90000);
-	MEM_newDay();
-    MEM_save(15, 103000);
-    MEM_save(16, 102000);
-	MEM_newDay();
-    MEM_save(20, 90000);
-    MEM_save(13, 100000);
-	MEM_newDay();
-    MEM_save(12, 90000);
-    MEM_save(11, 100000);
-	MEM_newDay();
-    MEM_save(10, 90000);
-    MEM_save(9, 100000);
-    mem_temp_t *tmp = mem.temp;
-    char count = 0;
-    //Get last 7 days worth of data from database
-    while(tmp != NULL/* && count <7 */){
-        //Display_Draw_Graph(&temp->, count);
-        printf("temp values: max: %f. min: %f. avg: %f\n",((float)MEM_get(tmp).max)/100,((float)MEM_get(tmp).min)/100,((float)MEM_get(tmp).avg)/100);
-        count++;
-        tmp = tmp->next;
-    }
-	for(int i = 0;i<7;i++){
-		printf("pressure values: max: %d. min %d. avg: %d\n", mem.pres.max[i], mem.pres.min[i], mem.pres.avg[i]);
+    // TESTING TEMP MEM
+	int i = 0;
+	for(; MEM_newDay() > 0; i++){
+		MEM_saveTemp(20.4);
 	}
-
-	return 0;
+	if(!mem.status.MEM_FULL){
+		return -1;
+	}
+	mem_temp_t *it = mem.temp;
+	int count = 0;
+	while(it!= NULL){
+		it = it->next;
+		count++;
+	}
+	if(count != i-1){
+		return -2;
+	}
+	MEM_remove();
+	it = mem.temp;
+	int count2;
+	while(it!= NULL){
+		it = it->next;
+		count2++;
+	}
+	if(count2 != count-1){
+		return -3;
+	}
+	if(mem.temp->max/100 != 20.4 ||mem.temp->min/100 != 20.4 || mem.temp->avg/100 != 20.4){
+		return -4;
+	}
+	// TESTING AIR PRESSURE MEM
+	for(int pres = 0; pres < 10; pres++){
+		MEM_savePres(pres);
+		if(mem.pres.max[mem.pres.day] != pres)
+			return -5;
+		MEM_newDay();
+	}
+	
+	return 1;
 }
 
 

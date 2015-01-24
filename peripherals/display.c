@@ -6,6 +6,9 @@ Driver for LCD Display see display.h for more info
 #include <math.h>
 #include "../includes/at91sam3x8.h"
 #include "../includes/common.h"
+#include "keypad.h"
+#include "servo.h"
+#include <stdio.h>
 
 #define LONG_DELAY 100
 #define SHORT_DELAY 20
@@ -106,7 +109,7 @@ void DISPLAY_writeTempScreen(char* date){
   DISPLAY_write("0",16,2);
 
   //Fetch last 7 days of temp data
-  datestamp_t todays_datestamp = mem.temp->date; //TODO get date from RTC
+  //datestamp_t todays_datestamp = mem.temp->date; //TODO get date from RTC
   mem_temp_t *tmp = mem.temp;
   char count = 0;
   //Write out in text

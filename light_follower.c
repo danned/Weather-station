@@ -16,10 +16,12 @@ if(pressed == start){
 TODO:
 - 
 */
-
+#include "light_follower.h"
+#include <stdio.h>
 #include "peripherals/light_sensor.h"
 #include "peripherals/keypad.h"
 #include "peripherals/servo.h"
+#include "peripherals/display.h"
 #include "includes/system_sam3x.h"
 #include "includes/at91sam3x8.h"
 #include <stdlib.h>

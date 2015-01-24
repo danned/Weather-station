@@ -11,6 +11,6 @@ int main2(){
     printf("Status: %x \n", status);
 
   while(1){
-    printf("Pressure: %d\n", AIRSENS_getPress() );
+    printf("Pressure: %d\n", AIRSENS_getPres() );
   }
 }

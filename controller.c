@@ -4,12 +4,14 @@ See controller.h for info
 
 #include "controller.h"
 #include "mem.h"
+#include "light_follower.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "peripherals/display.h"
 #include "peripherals/temp_sensor.h"
 #include "peripherals/air_sensor.h"
 #include "peripherals/light_sensor.h"
+#include "peripherals/keypad.h"
 #include "includes/at91sam3x8.h"
 #include "includes/common.h"
 #include "rtc.h"
@@ -358,7 +360,8 @@ char CTRL_userInput(char pressed){
 		}
 	}
 	return 1;
-}
+	}
+	return 1;
 }
 char CTRL_getWarnings(void){
   return ctrl.status.TEMP_WARN+ctrl.status.MEM_WARN;

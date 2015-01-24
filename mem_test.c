@@ -7,31 +7,25 @@
 #include "peripherals/temp_sensor.h"
 #include "peripherals/air_sensor.h"
 program_t sta;
-//static int meas_count = 0;
-extern char cTemp_Reset_Ready_Flag;
-extern char cTemp_Measurement_Ready_Flag;
+
 
 static void tempSens(){
 	if(sta.status.TEMP_REQ == 1){
-		sta.status.TEMP_REQ = 0;
-		Temp_Reset();
+		TEMP_reset();
 	}
-	if(cTemp_Reset_Ready_Flag  == 1){
-	 	cTemp_Reset_Ready_Flag = 0;
-		Temp_Read();
+	if(temperature.status.RESET_READY){
+		TEMP_read();
 	}
-	if(cTemp_Measurement_Ready_Flag == 1){
-		cTemp_Measurement_Ready_Flag = 0;
-		sta.temp_sum_f += Temp_Get();
+	if(temperature.status.READ_READY){
+		sta.temp_sum_f += TEMP_get();
 		mem.temp->count++;
-		//printf("%f",temp);
 	}
 
 }
 
 void main(void) {
 	SystemInit();
-	Temp_Init();
+	TEMP_init();
 	AIRSENS_init();
 	MEM_init();
 	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
@@ -66,8 +60,6 @@ void main(void) {
 
 void RTC_Handler(void){
 
-	
-	
 	if( (*AT91C_RTC_TIMR&0xFF) == 0 ){
 		if(!sta.FAST_MODE){
 			sta.status.MEAS = 1;
