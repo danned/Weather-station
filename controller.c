@@ -342,6 +342,7 @@ char CTRL_userInput(char pressed){
 	          		sta.FAST_MODE = 1;
 	          		DISPLAY_write("ENABLED",174,0);
 	          	}
+				RTC_intSetMode(sta.FAST_MODE);
 	          	Delay(2000000);
 
 	          }
@@ -354,7 +355,7 @@ char CTRL_userInput(char pressed){
 	return 1;
 }
 char CTRL_getWarnings(void){
-  return ctrl.status.TEMP_WARN+ctrl.status.MEM_WARN;
+  return ctrl.status.TEMP_WARN+ctrl.status.MEM_WARN<<1;
 }
 
 

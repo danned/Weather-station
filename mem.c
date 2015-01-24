@@ -318,49 +318,64 @@ datestamp_t getDate(){
 	return newStamp;
 }
 
+static void clearMem(){
+  while(MEM_remove() < 2);
+
+  if(MEM_remove() == -2){
+	MEM_newDay();
+	mem.status.MEM_FULL = 0;
+  }
+  else mem.status.MEM_ERROR = 1;
+
+  for(int i = 0 ; i<7 ; i++)
+	initPres(i);
+}
 /**
  * MEMORY TEST
  */
 int MEM_test(void){
-    MEM_init();
     // TESTING TEMP MEM
 	int i = 0;
-	for(; MEM_newDay() > 0; i++){
+	for(; !mem.status.MEM_FULL; i++){
 		MEM_saveTemp(20.4);
+		MEM_newDay();
 	}
-	if(!mem.status.MEM_FULL){
-		return -1;
-	}
+	MEM_saveTemp(20.4);
 	mem_temp_t *it = mem.temp;
 	int count = 0;
 	while(it!= NULL){
 		it = it->next;
 		count++;
 	}
-	if(count != i-1){
+	if(count != i){
+	  clearMem();
 		return -2;
 	}
 	MEM_remove();
 	it = mem.temp;
-	int count2;
+	int count2 = 0;
 	while(it!= NULL){
 		it = it->next;
 		count2++;
 	}
 	if(count2 != count-1){
-		return -3;
+		clearMem();
+	  return -3;
 	}
-	if(mem.temp->max/100 != 20.4 ||mem.temp->min/100 != 20.4 || mem.temp->avg/100 != 20.4){
-		return -4;
+	if((float)mem.temp->max/100.0 != 20.4 || (float)mem.temp->min/100.0 != 20.4 || (float)mem.temp->avg/100.0 != 20.4){
+		clearMem();
+	  return -4;
 	}
 	// TESTING AIR PRESSURE MEM
 	for(int pres = 0; pres < 10; pres++){
 		MEM_savePres(pres);
-		if(mem.pres.max[mem.pres.day] != pres)
+		if(mem.pres.max[mem.pres.day] != pres){
+		  	clearMem();
 			return -5;
+		}
 		MEM_newDay();
 	}
-	
+	clearMem();
 	return 1;
 }
 
