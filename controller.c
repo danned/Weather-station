@@ -141,7 +141,7 @@ char CTRL_userInput(char pressed){
 				if(cur_week_str == 0){
 				  return 0;
 				}
-		    	sprintf(cur_week_str, "%d", cur_week);// Populate string
+		    	sprintf(cur_week_str, "%2d", cur_week);// Populate string
 		    	DISPLAY_write("Weeks ago:               ",87,0);
 				DISPLAY_write(cur_week_str,132,0);
 				free(cur_week_str);
@@ -150,7 +150,7 @@ char CTRL_userInput(char pressed){
 
 	          break;
 	        case 8: //TODO CLEAR GRAPHICS!
-	          if(sta.state == 3){
+	          if(sta.state == 3 && cur_week >0){
 	          	DISPLAY_clearGraphics();
 	          	DISPLAY_drawAxis();
 	          	DISPLAY_drawBorders();
@@ -169,11 +169,11 @@ char CTRL_userInput(char pressed){
 					     count++;
 					     temp = temp->next;
 					}
-								char *cur_week_str1 = malloc(3*sizeof(char *));
+				char *cur_week_str1 = malloc(3*sizeof(char *));
 				if(cur_week_str1 == 0){
 				  return 0;
 				}
-		    	sprintf(cur_week_str1, "%d", cur_week);// Populate string
+		    	sprintf(cur_week_str1, "%2d", cur_week);// Populate string
 		    	DISPLAY_write("Weeks ago:               ",87,0);
 				DISPLAY_write(cur_week_str1,132,0);
 				free(cur_week_str1);
@@ -355,7 +355,7 @@ char CTRL_userInput(char pressed){
 	return 1;
 }
 char CTRL_getWarnings(void){
-  return ctrl.status.TEMP_WARN+ctrl.status.MEM_WARN<<1;
+  return ctrl.status.TEMP_WARN+(mem.status.MEM_FULL << 1);
 }
 
 

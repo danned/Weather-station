@@ -114,22 +114,17 @@ void DISPLAY_writeTempScreen(char* date){
   char count = 0;
   //Write out in text
   //Create string to write out averages in text
-  DISPLAY_write("Avg: ",65,0);
-  char *avg_str = malloc(3*sizeof(char *));
-  if(avg_str == 0){
-    //TODO Handle error
-  }
   while(tmp != NULL && count <7 ){
-    DISPLAY_drawTempGraph(tmp, count); //Draw bar graph  
+    DISPLAY_drawTempGraph(tmp, count); //Draw bar graph
 
-    short average = tmp->avg;
-    sprintf(avg_str, "%d", average);
-    DISPLAY_write(avg_str,70+(count*40),0);
+    //short average = tmp->avg;
+    //sprintf(avg_str, "%d", average);
+    //DISPLAY_write(avg_str,70+(count*40),0);
 
     tmp = tmp->next;
     count++;
   }
-  free(avg_str);
+ // free(avg_str);
 
 }
 /*Draws the initial set date screen on startup a lot of user input
@@ -431,21 +426,21 @@ for (int j = 0; j < 7; j++){
 	  }
 
 	  //Draw min bar, origin is at (62,100)
-	  int start_pos = 61+(j*11)+0;
+	  int start_pos = 61+(j*19)+0;
 	  for(int i =0;i< ((min/1000)-90)*3;i++ ){
 		DISPLAY_drawPixel(start_pos,110-i);
 		DISPLAY_drawPixel(start_pos+1,110-i);
 		DISPLAY_drawPixel(start_pos+2,110-i);
 	  }
 	  //Draw avg bar
-	  start_pos = 61+(j*11)+3;
+	  start_pos = 61+(j*19)+4;
 	  for(int i =0;i<((avg/1000)-90)*3;i++ ){
 		DISPLAY_drawPixel(start_pos,110-i);
 		DISPLAY_drawPixel(start_pos+1,110-i);
 		DISPLAY_drawPixel(start_pos+2,110-i);
 	  }
 	  //Draw max bar
-	  start_pos = 61+(j*11)+7;
+	  start_pos = 61+(j*19)+8;
 	  /*Draw vertical line*/
 	  for(int i =0;i<((max/1000-90))*3;i++ ){
 		DISPLAY_drawPixel(start_pos,110-i);

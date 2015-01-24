@@ -96,7 +96,7 @@ void RTC_Get_Time_String(char* time){
   char min = (mask & (bcd_time >> 8));
   mask = 0x3F;
   char hr = (mask & (bcd_time >> 16));
-  sprintf(time, "%d:%d:%d", reverse_BCD_pattern(hr),reverse_BCD_pattern(min),reverse_BCD_pattern(sec));// TODO do not use sprintf
+  sprintf(time, "%2d:%2d:%2d", reverse_BCD_pattern(hr),reverse_BCD_pattern(min),reverse_BCD_pattern(sec));// TODO do not use sprintf
 }
 
 //TODO FOR STAEF NEEDS DOCUMENTATION OR REWRITE BADLY
@@ -113,7 +113,7 @@ void RTC_Get_Date_String(char* date){
    mask = 0x3F;
   char date2 = (char)(mask & (bcd_date >> 24));
 
-  sprintf(date, "%d%d-%d-%d", reverse_BCD_pattern(cent),reverse_BCD_pattern(year),reverse_BCD_pattern(month),reverse_BCD_pattern(date2));// TODO do not use sprintf
+  sprintf(date, "%2d%2d-%2d-%2d", reverse_BCD_pattern(cent),reverse_BCD_pattern(year),reverse_BCD_pattern(month),reverse_BCD_pattern(date2));// TODO do not use sprintf
 }
 
 datestamp_t RTC_getDate(){
