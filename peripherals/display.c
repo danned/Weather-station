@@ -131,8 +131,6 @@ void DISPLAY_writeTempScreen(char* date){
   }
   free(avg_str);
 
-
-
 }
 /*Draws the initial set date screen on startup a lot of user input
 The algorithm used to determine which entry user is at is done using integer
@@ -482,21 +480,21 @@ void DISPLAY_drawTempGraph(mem_temp_t* temp, char count){
      max = 0;
   }
   //Draw min bar, origin is at (62,100)
-  int start_pos = 61+(count*11)+0;
+  int start_pos = 61+(count*19)+0;
   for(int i =0;i< min*2;i++ ){
     DISPLAY_drawPixel(start_pos,110-i);
     DISPLAY_drawPixel(start_pos+1,110-i);
     DISPLAY_drawPixel(start_pos+2,110-i);
   }
   //Draw avg bar
-  start_pos = 61+(count*11)+3;
+  start_pos = 61+(count*19)+4;
   for(int i =0;i<avg*2;i++ ){
     DISPLAY_drawPixel(start_pos,110-i);
     DISPLAY_drawPixel(start_pos+1,110-i);
     DISPLAY_drawPixel(start_pos+2,110-i);
   }
   //Draw max bar
-  start_pos = 61+(count*11)+7;
+  start_pos = 61+(count*19)+8;
   /*Draw vertical line*/
   for(int i =0;i<max*2;i++ ){
     DISPLAY_drawPixel(start_pos,110-i);

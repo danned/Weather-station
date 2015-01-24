@@ -1,4 +1,4 @@
-/*temp_sensor.h - Staffan Piledahl
+/*temp_sensor.h - Staffan Piledahl, Daniel Dahlberg
 Temp sensor driver for MAX6575L. Using asynchronous one-wire interface readings. Uses flags to tell main what to do next.
 Sequence started using Reset (required before every reading). See example.
 Works safely down to one reading every 20ms. can be read once ever 17ms with testing setup but not recommended.s

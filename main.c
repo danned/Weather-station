@@ -1,7 +1,7 @@
 /*
  * Station.c
  *
- * 
+ *
  *
  * Created: 2014-12-11 17:03:22
  *  Author: Daniel and Staffan
@@ -128,7 +128,7 @@ static void stationInit(){
 	/*Force user to enter date and time*/
 	DISPLAY_writeHeader(0,"Date and time","00:00");
 	DISPLAY_writeSidebar();
-	//DISPLAY_writeDateSetScreen(); //TODO PUT THIS BACK<-------------
+	DISPLAY_writeDateSetScreen(); //TODO PUT THIS BACK<-------------
 	ctrl.status.MEM_WARN = 0;
 	ctrl.status.TEMP_WARN = 0;
 }
@@ -152,9 +152,9 @@ int main(void)
 	while (1){
 		unsigned char pressed = Keypad_Read();
 		CTRL_userInput(pressed);
-		
+
 		/* -- FIXME Quickfix for ISSUE #10 --- */
-		Delay(40000);					
+		Delay(40000);
 		/*--------------------------------------*/
 
 		/*Readings - if flags are set*/
@@ -164,7 +164,7 @@ int main(void)
 
 		//Update dynamic things every second
 		if(update_time){
-			update_time = 0;  
+			update_time = 0;
 			 RTC_Get_Time_String(time);
 			 DISPLAY_write(time,24,0);
 		}

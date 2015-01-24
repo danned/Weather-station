@@ -1,4 +1,4 @@
-/* 
+/*
 See controller.h for info
 */
 
@@ -278,43 +278,33 @@ char CTRL_userInput(char pressed){
 		        	for (int i = 0; i < 10; i++)
 		        	{
 		        		DISPLAY_write("~",153+i,1);
-						Delay(2000000);
+						Delay(1000000);
+					}
 						//MEM_init();
-						    MEM_save(25.5, 100000);
-						    MEM_save(23.3, 102000);
+						    MEM_save(35, 98000);
+						    MEM_save(15, 102000);
 						    MEM_newDay();
-						    MEM_save(10, 140000);
-						    MEM_save(12, 145000);
+						    MEM_save(25, 115000);
+						    MEM_save(10, 100000);
 						    MEM_newDay();
-						    MEM_save(-2, 90000);
-						    MEM_save(-5, 100000);
-							MEM_newDay();
-						    MEM_save(-2, 90000);
-						    MEM_save(-5, 100000);
-							MEM_newDay();
-						    MEM_save(20, 80000);
-						    MEM_save(15, 90000);
-							MEM_newDay();
-						    MEM_save(15, 103000);
-						    MEM_save(16, 102000);
-							MEM_newDay();
-						    MEM_save(20, 90000);
-						    MEM_save(13, 100000);
-							MEM_newDay();
-						    MEM_save(12, 90000);
-						    MEM_save(11, 100000);
-							MEM_newDay();
-						    MEM_save(10, 90000);
-						    MEM_save(9, 100000);
-							MEM_save(11,90000);
-							MEM_save(12,90000);
-							MEM_save(13,90000);
-							MEM_save(14,90000);
-							MEM_save(15,90000);
-							MEM_save(16,90000);
-							MEM_save(17,90000);
-		        	}
+							MEM_save(10, 95000);
+						    MEM_save(15, 102000);
+						    MEM_newDay();
+						    MEM_save(25, 100000);
+						    MEM_save(35, 105000);
+						    MEM_newDay();
+						    MEM_save(15, 102000);
+							MEM_save(20, 100000);
+						    MEM_newDay();
+						    MEM_save(5, 140000);
+						    MEM_save(10, 145000);
+						    MEM_newDay();
+							MEM_save(1, 110000);
+							MEM_save(39, 90000);
+						    MEM_newDay();
+
 		        	DISPLAY_write("Completed.  ",152,1);
+					Delay(2000000);
 
 				}
 
