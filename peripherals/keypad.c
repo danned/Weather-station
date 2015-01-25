@@ -16,7 +16,7 @@
  * PIOC pin 2 3 4 5 will be configured as input
  * PIOD pin 2 and 0 will be configured as output set to 1
  * --------------------------------------------------------*/
-void Keypad_Init(void){
+void KEYPAD_init(void){
 
 	/*  enables clock for PIOC & PIOD  if not already active*/
 	*AT91C_PMC_PCER = (3<<13);
@@ -44,7 +44,7 @@ void Keypad_Init(void){
  * Returns last found button
  * ----------------------------------------------------------------
  */
-int Keypad_Read(void){
+int KEYPAD_read(void){
 	unsigned int button = 0;
 
 	/* enables PIOC pin 7 8 9 as output */

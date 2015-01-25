@@ -198,7 +198,7 @@ char CTRL_userInput(char pressed){
 			  //DISPLAY_write("_",94+((entries_done%2)*40),0);
 			  unsigned char pressed;
 			  while(entries_done < 4){
-				  pressed = Keypad_Read();
+				  pressed = KEYPAD_read();
 			    if(pressed != 0){
 
 			    	switch(pressed){
@@ -261,7 +261,7 @@ char CTRL_userInput(char pressed){
 
 
 			    //Press star to move to next item
-			  while(Keypad_Read() != 10){}
+			  while(KEYPAD_read() != 10){}
 			  DISPLAY_write("_",1+((entries_done/2)*40)+(entries_done%2),1);
 				Delay(2000000);
 			    }
@@ -347,7 +347,7 @@ char CTRL_userInput(char pressed){
 			  DISPLAY_write("_ ",90,0);
 			  unsigned char pressed;
 			  while(1){
-				pressed = Keypad_Read();
+				pressed = KEYPAD_read();
 				if(pressed != 0 && pressed < 11){
 					char *pressed_str = malloc(3*sizeof(char));
 					if(pressed_str == 0){

@@ -62,7 +62,7 @@ int LightFollow(){
 		  free(angle_str);
 	  }
 		lightSens();
-		if(Keypad_Read()==12){break;}
+		if(KEYPAD_read()==12){break;}
 	}
 	return 1;
 }

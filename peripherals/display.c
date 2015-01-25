@@ -185,7 +185,7 @@ void DISPLAY_writeDateSetScreen(void){
   while(date_entries_done < 8){
 		if(key_counter > 300){
 			key_counter = 0;
-			pressed = Keypad_Read();
+			pressed = KEYPAD_read();
 		}
 	if(((pressed > 0 && pressed < 10) || pressed == 11)){
 		
@@ -257,7 +257,7 @@ void DISPLAY_writeDateSetScreen(void){
   while(time_entries_done < 6){
 		if(key_counter > 300){
 			key_counter = 0;
-			pressed = Keypad_Read();
+			pressed = KEYPAD_read();
 		}
 	if(((pressed > 0 && pressed < 10) || pressed == 11)){
 		if(pressed == 11)

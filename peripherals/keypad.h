@@ -18,7 +18,7 @@
  * Configures pin 7 8 9 as input again
  * Returns value of last found button
  * ----------------------------------------------------------------*/
-int Keypad_Read(void);
+int KEYPAD_read(void);
 
 
 /* --------------------------------------------------------
@@ -27,6 +27,6 @@ int Keypad_Read(void);
  * PIOC pin 2 3 4 5 will be configured as input
  * PIOD pin 2 and 0 will be configured as output set to 1
  * --------------------------------------------------------*/
-void Keypad_Init(void);
+void KEYPAD_init(void);
 
 #endif // _KEYPAD_H_

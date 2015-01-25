@@ -113,7 +113,7 @@ static void stationInit(){
 	/* stop initializing variables */
 	MEM_init();
 	//MEM_test();
-	Keypad_Init();
+	KEYPAD_init();
 	TEMP_init();
 	DISPLAY_init();
 	LIGHTSENS_init();
@@ -123,9 +123,9 @@ static void stationInit(){
 	DISPLAY_writeHeader(1,"System test","00:00");
 	DISPLAY_writeTestingScreen(mem_temp_test(),0,0,MEM_test()); //TODO add the other test results
 	//Push any button to remove testing screen
-	while(!Keypad_Read()){}
+	while(!KEYPAD_read()){}
 	DISPLAY_clearText();
-	Delay(2000000); //FIXME Quickfix for bouncing
+	//Delay(2000000); //FIXME Quickfix for bouncing
 
 	/*Force user to enter date and time*/
 	DISPLAY_writeHeader(0,"Date and time","00:00");
@@ -155,7 +155,7 @@ int main(void)
 	while (1){
 		if(key_counter>100 && pressed == 0){
 			key_counter = 0;
-			pressed = Keypad_Read();
+			pressed = KEYPAD_read();
 		}
 		if(pressed != 0){
 			CTRL_userInput(pressed);
