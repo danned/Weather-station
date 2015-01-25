@@ -31,7 +31,6 @@ typedef struct node{
 	short min;
 	short avg;
 	short max;
-	short count; // this might be removed
 	datestamp_t date;
 	struct node *next;
 }mem_temp_t;
@@ -60,6 +59,7 @@ typedef struct{
 
 typedef struct{
 	mem_temp_t *temp;
+	char temp_count;
 	float cur_temp;
 	mem_air_pres_t pres;
 	mem_status_t status;

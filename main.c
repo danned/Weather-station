@@ -36,10 +36,10 @@ int sec_counter = 0;
 static void saveMeas(){
 	if(sta.status.MEAS){
 			sta.status.MEAS = 0;
-			if(mem.temp->count>0){
-				MEM_save((sta.temp_sum_f/mem.temp->count), AIRSENS_getPres() );
+			if(sta.n_count>0){
+				MEM_save((sta.temp_sum_f/mem.temp_count), AIRSENS_getPres() );
 				sta.temp_sum_f = 0;
-				mem.temp->count = 0;
+				sta.n_count = 0;
 			}
 		}
 		if(sta.status.NEW_DAY){
@@ -80,7 +80,7 @@ static void tempSens(){
 	}
 	if(temperature.status.READ_READY){
 		sta.temp_sum_f += TEMP_get();
-		mem.temp->count++;
+		sta.n_count++;
 	}
 
 }
@@ -104,6 +104,7 @@ static void stationInit(){
 	sta.FAST_MODE = 0;
 	sta.state = 0;
 	sta.n_avg = 3;
+	sta.n_count = 0;
 	sta.alm_h = 27; //Standard Upper and lower limits for temperature alarm indicator
 	sta.alm_l = 15;
 	sta.temp_sum_f = 0;
@@ -179,36 +180,6 @@ int main(void)
     }
 }
 
-/**
- * \brief Triggers at new day in normal mode. Every hour in fast mode.
- * adds a new node for temp and updates var for airpressure
- * Requires a global var of N saying how many measurements to average
- * aswell var with sum of measurement results. Globals are found in common.h.
- */
-void RTC_Handler(void){
-if( (*AT91C_RTC_TIMR&0xFF) == 0 ){
-		if(!sta.FAST_MODE){
-			sta.status.MEAS = 1;
-		}else if(sta.FAST_MODE){
-			if(sta.fast_count > 3){
-				sta.fast_count = 0;
-				sta.status.NEW_DAY = 1;
-			}else{
-				sta.fast_count++;
-			}
-		}
-	}
-
-	if( ( *AT91C_RTC_SR&AT91C_RTC_SECEV ) > 0){
-		sta.status.MEAS = 1;
-	}
-
-	if(*AT91C_RTC_TIMR&(0x7F<<16) == 0){
-		sta.status.NEW_DAY = 1;
-	}
-
-	*AT91C_RTC_SCCR = 3<<1;
-}
 
 /**
  * \brief SysTick triggers measurement of sensors TODO maybe use another counter. SysTick is used by other functions which needs it to interrupt every ms

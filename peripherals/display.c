@@ -74,7 +74,7 @@ void DISPLAY_writeHomeScreen(char* temp, char* lux, char* air, char* date){
 
     DISPLAY_write("Air: ",247,0);
     DISPLAY_write(air,252,0);
-    DISPLAY_write(" kPa",0,1);
+    DISPLAY_write(" hPa",0,1);
 }
 
 /*Light follower screen, draws an arc and a sun*/

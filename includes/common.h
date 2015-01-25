@@ -34,6 +34,7 @@ typedef struct{
 	char state;
 	int fast_count;
 	int n_avg;
+	int n_count;
 	int alm_h;
 	int alm_l;
 	float temp_sum_f;

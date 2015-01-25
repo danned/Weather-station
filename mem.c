@@ -28,7 +28,7 @@ static void initTemp(){
 	mem.temp->max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
 	mem.temp->avg = 0; 		 // initialize avg to 0
 	mem.temp->date = RTC_getDate();
-	mem.temp->count = 0;
+	mem.temp_count = 0;
 }
 
 static void initPres(int day){
@@ -83,9 +83,9 @@ int MEM_saveTemp(float new_val_f){
 
 	short int new_val_s = (short int) (new_val_f*100);// saves value of 2 decimals. truncate rest
 	char ret_val = 0;
-	int temp_sum = (cur_node->avg*cur_node->count) + new_val_s;
-	cur_node->count++;
-	cur_node->avg= temp_sum/cur_node->count;
+	int temp_sum = (cur_node->avg*mem.temp_count) + new_val_s;
+	mem.temp_count++;
+	cur_node->avg= temp_sum/mem.temp_count;
 
 	if(new_val_s < cur_node->min){
 		cur_node->min = new_val_s;
