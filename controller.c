@@ -316,7 +316,7 @@ char CTRL_userInput(char pressed){
 				}
 						        //Load test data
 			    else if(sta.state == 5 && sta.FAST_MODE){ //If we are in settings screen
-					DISPLAY_write("Loading data:",112,1);
+					DISPLAY_write("Filling mem:",112,1);
 					DISPLAY_write("[          ]",152,1);
 
 		        	for (int i = 0; i < 10; i++)
