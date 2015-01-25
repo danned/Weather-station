@@ -12,10 +12,11 @@ Driver for LCD Display see display.h for more info
 
 #define LONG_DELAY 100
 #define SHORT_DELAY 20
-
+extern int key_counter;
+display_t disp;
 /* Initializes PIO for display */
 void DISPLAY_init(void){
-
+	disp.counter = 0;
   /* TODO INLINE FUNCTION GOES HERE enables clock for PIOC & PIOD */
   *AT91C_PMC_PCER = (3<<13);
 
@@ -83,9 +84,10 @@ void DISPLAY_writeLightScreen(void){
   DISPLAY_write("Sun position ",95,0);
   int reading = SERVO_getPos();
   reading = (reading)/44; //Turn into angle
-  char *angle = malloc(12*sizeof(char *));
-  if(angle == 0){
-    //TODO Handle error
+  char *angle = malloc(12*sizeof(char));
+  while(angle == 0){
+    MEM_remove();
+	angle = malloc(12*sizeof(char));
   }
   sprintf(angle, "%d degrees", reading);
   DISPLAY_write(angle,128,0);
@@ -154,157 +156,144 @@ void DISPLAY_writeDateSetScreen(void){
   /*Let user enter the 8 numbers needed and print them on screen accordingly
   After each number user must confirm and move to next number using star key
   */
-  DISPLAY_write("_",94+((date_entries_done%2)*40),0);
-  unsigned char pressed;
-  while(date_entries_done < 8){
-	  pressed = Keypad_Read();
-    if(pressed != 0){
-
-    	switch(pressed){
-        case 1:
-          DISPLAY_write("1",94+((date_entries_done%2)*40),0); //write the number at correct place
-            date_entries_done++;
-		    break;
-        case 2:
-          DISPLAY_write("2",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-            date_entries_done++;
-		    break;
-        case 3:
-          DISPLAY_write("3",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-            date_entries_done++;
-        break;
-        case 4:
-			   DISPLAY_write("4",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-          date_entries_done++;
-        break;
-        case 5:
-			DISPLAY_write("5",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-            date_entries_done++;
-        break;
-        case 6:
-			DISPLAY_write("6",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-            date_entries_done++;
-        break;
-        case 7:
-			DISPLAY_write("7",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-            date_entries_done++;
-        break;
-        case 8:
-			DISPLAY_write("8",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-            date_entries_done++;
-        break;
-        case 9:
-			DISPLAY_write("9",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-            date_entries_done++;
-        break;
-        case 11:
-			DISPLAY_write("0",94+((date_entries_done/2)*40)+(date_entries_done%2),0); //write the number at correct place
-            date_entries_done++;
-
-        break;
-    }
-/*Now save the number user entered, it is a two digit number hence *10*/
-	if(!(pressed == 10 || pressed == 12)){
-		if(pressed == 11){pressed = 0;} //Quickfix to make saving easier
-
-		//Find out if its cent year month or date user is entering
-		switch((date_entries_done-1)/2){
-		  case 0:
-			cent = (cent*10)+pressed;
-		  break;
-		  case 1:
-			year = (year*10)+pressed;
-		  break;
-		  case  2:
-			month = (month*10)+pressed;
-		  break;
-		  case 3:
-			date = (date*10)+pressed;
-		  break;
-		}
+  
+  unsigned char pressed = 0;
+  key_counter = 0;
+  
+  	char *cent_s = malloc(sizeof(char)*3);
+	if(cent_s == 0){
+		MEM_remove();
+		cent_s = malloc(sizeof(char)*3);
 	}
-
-  //Press star to move to next item
-  while(Keypad_Read() != 10){}
-  DISPLAY_write("_",94+((date_entries_done/2)*40)+(date_entries_done%2),0);
-	Delay(2000000);
+	*cent_s = 0;
+	char *year_s = malloc(sizeof(char)*3);
+	if(year_s == 0){
+		MEM_remove();
+		year_s = malloc(sizeof(char)*3);
+	}
+	*year_s = 0;
+	char *month_s = malloc(sizeof(char)*3);
+	if(month_s == 0){
+		MEM_remove();
+		month_s = malloc(sizeof(char)*3);
+	}
+	*month_s = 0;
+	char *date_s = malloc(sizeof(char)*3);
+	if(date_s == 0){
+		MEM_remove();
+		date_s = malloc(sizeof(char)*3);
+	}
+	*date_s = 0;		
+  while(date_entries_done < 8){
+		if(key_counter > 300){
+			key_counter = 0;
+			pressed = Keypad_Read();
+		}
+	if(((pressed > 0 && pressed < 10) || pressed == 11)){
+		
+	if(pressed == 11)
+		pressed = 0;
+	
+	switch(date_entries_done){
+		case 0:
+		case 1:
+			cent = (cent*10)+pressed;
+			sprintf(cent_s,"%2d",cent);
+			date_entries_done++;
+			break;
+		case 2:
+		case 3:
+			year = (year*10)+pressed;
+			sprintf(year_s,"%2d",year);
+			date_entries_done++;
+		break;
+		case 4:
+		case 5:
+			month = (month*10)+pressed;
+			sprintf(month_s,"%2d",month);
+			date_entries_done++;
+			break;
+			case 6:
+			case 7:
+			date = (date*10)+pressed;
+			sprintf(date_s,"%2d",date);
+			date_entries_done++;
+		  break;
+	}
+	DISPLAY_write(cent_s, 94 ,0);
+	DISPLAY_write(year_s, 134,0);
+	DISPLAY_write(month_s, 174,0);
+	DISPLAY_write(date_s, 214,0);
+	pressed = 0;
     }
   }
-
+  free(cent_s);
+  free(year_s);
+  free(month_s);
+  free(date_s);
   /*Same procedure for time*/
   DISPLAY_write("Hr:                ",88,0);
   DISPLAY_write("Min:               ",128,0);
   DISPLAY_write("Sec:              ",168,0);
   DISPLAY_write("                   ",208,0);
   DISPLAY_write("                    ",248,0);
-  DISPLAY_write("_",94+((time_entries_done/2)*40)+(time_entries_done%2),0);
+  char *hr_s = malloc(sizeof(char)*3);
+	if(hr_s == 0){
+		MEM_remove();
+		cent_s = malloc(sizeof(char)*3);
+	}
+	*hr_s = 0;
+	char *min_s = malloc(sizeof(char)*3);
+	if(min_s == 0){
+		MEM_remove();
+		min_s = malloc(sizeof(char)*3);
+	}
+	*min_s = 0;
+	char *sec_s = malloc(sizeof(char)*3);
+	if(sec_s == 0){
+		MEM_remove();
+		sec_s = malloc(sizeof(char)*3);
+	}
+	*sec_s = 0;
+	
   while(time_entries_done < 6){
-    pressed = Keypad_Read();
-      if(pressed != 0){
-        switch(pressed){
-          case 1:
-            DISPLAY_write("1",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-        break;
-          case 2:
-            DISPLAY_write("2",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-        break;
-          case 3:
-            DISPLAY_write("3",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-          break;
-          case 4:
-        DISPLAY_write("4",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-          break;
-          case 5:
-        DISPLAY_write("5",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-          break;
-          case 6:
-        DISPLAY_write("6",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-          break;
-          case 7:
-        DISPLAY_write("7",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-          break;
-          case 8:
-        DISPLAY_write("8",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-          break;
-          case 9:
-        DISPLAY_write("9",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-          break;
-          case 11:
-        DISPLAY_write("0",94+((time_entries_done/2)*40)+(time_entries_done%2),0); //write the number at correct place
-              time_entries_done++;
-          break;
-      }
+		if(key_counter > 300){
+			key_counter = 0;
+			pressed = Keypad_Read();
+		}
+	if(((pressed > 0 && pressed < 10) || pressed == 11)){
+ 		switch(time_entries_done){
+		case 0:
+		case 1:
+			hr = (hr*10)+pressed;
+			sprintf(hr_s,"%2d",hr);
+			time_entries_done++;
+			break;
+		case 2:
+		case 3:
+			sec = (min*10)+pressed;
+			sprintf(min_s,"%2d",min);
+			time_entries_done++;
+		break;
+		case 4:
+		case 5:
+			min = (sec*10)+pressed;
+			sprintf(sec_s,"%2d",sec);
+			time_entries_done++;
+		break;
+	}
 
-      if(!(pressed == 10 || pressed == 12)){
-        if(pressed == 11){pressed = 0;} //Quickfix to make saving easier
-        //Find out if its hr min or sec or date user is entering
-        switch((time_entries_done-1)/2){
-          case 0:
-            hr = (hr*10)+pressed;
-          break;
-          case 1:
-            min = (min*10)+pressed;
-          break;
-          case  2:
-            sec = (sec*10)+pressed;
-          break;
-        }
-      }
-      //Press star to move to next item
-    while(Keypad_Read() != 10){}
-    DISPLAY_write("_",94+((time_entries_done/2)*40)+(time_entries_done%2),0);
-    Delay(2000000);
+     
     }
-  }
+    DISPLAY_write(hr_s, 94 ,0);
+	DISPLAY_write(min_s, 134,0);
+	DISPLAY_write(sec_s, 174,0);
+    
+	pressed = 0;
+    }
+  free(hr_s);
+  free(min_s);
+  free(sec_s);
   //And write new date amd time to real time clock
   RTC_Init(sec, min,hr, cent, year, month, date, 1); //TODO do day aswell, hardcoded for now
 }
@@ -328,9 +317,10 @@ void DISPLAY_writeSettingsScreen(void){
 
   //First off, the avergaing N value status
   DISPLAY_write("N= ",88,0);
-  char *N = malloc(5*sizeof(char *));
-  if(N == 0){
-    //TODO Handle error
+  char *N = malloc(5*sizeof(char));
+  while(N == 0){
+    MEM_remove();
+	malloc(5*sizeof(char));
   }
   sprintf(N, "%d", sta.n_avg);
   DISPLAY_write(N,90,0);
@@ -346,18 +336,20 @@ void DISPLAY_writeSettingsScreen(void){
 
   //Lastly the upper and lower limits of temperature alarm
   DISPLAY_write("Alarm L:  ",248,0);
-  char *alm_l = malloc(5*sizeof(char *));
-  if(alm_l == 0){
-    //TODO Handle error
+  char *alm_l = malloc(5*sizeof(char));
+  while(alm_l == 0){
+	MEM_remove();
+    alm_l = malloc(5*sizeof(char));
   }
   sprintf(alm_l, "%d", sta.alm_l);
   DISPLAY_write(alm_l,1,1);
   free(alm_l);
 
   DISPLAY_write("Alarm H:  ",32,1);
-  char *alm_h = malloc(5*sizeof(char *));
-  if(alm_h == 0){
-    //TODO Handle error
+  char *alm_h = malloc(5*sizeof(char));
+  while(alm_h == 0){
+    MEM_remove();
+	alm_h = malloc(5*sizeof(char));
   }
   sprintf(alm_h, "%d", sta.alm_h);
   DISPLAY_write(alm_h,41,1);
@@ -368,30 +360,30 @@ void DISPLAY_writeTestingScreen(char temp_pass,char air_pass,char light_pass,cha
 
   DISPLAY_write("Temp module: ",81,0);
 	if(temp_pass ==1){
-		DISPLAY_write("PASSED!",96,0); //TODO Implement
+		DISPLAY_write("PASSED!",96,0); 
 	}else{
 	  DISPLAY_write("FAILED!",96,0);
 	}
 
 	DISPLAY_write("Air module: ",121,0);
 	if(air_pass ==1){
-    	DISPLAY_write("PASSED!",136,0); //TODO Implement
+    	DISPLAY_write("PASSED!",136,0); 
 	}else{
-    	DISPLAY_write("FAILED!",136,0); //TODO Implement
+    	DISPLAY_write("FAILED!",136,0); 
 	}
 
 	DISPLAY_write("Light module: ",161,0);
 	if(light_pass ==1){
-    	DISPLAY_write("PASSED!",176,0); //TODO Implement
+    	DISPLAY_write("PASSED!",176,0); 
 	}else{
-    	DISPLAY_write("FAILED!",176,0); //TODO Implement
+    	DISPLAY_write("FAILED!",176,0); 
 	}
 
 	DISPLAY_write("Mem check: ",201,0);
 	if(mem_pass == 1){
-    	DISPLAY_write("PASSED!",216,0); //TODO Implement
+    	DISPLAY_write("PASSED!",216,0); 
 	}else{
-    	DISPLAY_write("FAILED!",216,0); //TODO Implement
+    	DISPLAY_write("FAILED!",216,0); 
 	}
 }
 /*Draws the bar graphs for one week three bars for every day min avg max*/

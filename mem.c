@@ -145,44 +145,7 @@ int MEM_save(float new_temp_f, unsigned int new_pres_u32){
 	return ret_val;
 }
 
-/************************************************************************/
-/* Saves new value at first place in data structure                     */
-/* If there are no more memory, it will remove oldest entry		 		*/
-/* try again.															*/
-/* Return value:														*/
-/*  1 on success, no overwrite											*/
-/*  2 on success, old value overwritten									*/
-/* -1 Memory_remove was unable to clear space							*/
-/* -2 Memory_Remove tried to clear space but list was empty				*/
-/************************************************************************/
-/*int MEM_save(float fNew_Value){
-	short int sNew_Value = (short int)fNew_Value*100;// saves value of 2 decimals. truncate rest
-	if(mem.temp != NULL){
-		if( addNode( sNew_Value, getTime() ) < 0){
-*/			/* out of memory, remove oldest entry and try again */
-/*			int resp = MEM_remove();
-			if(resp > 0){
-				if(addNode( sNew_Value, getTime() ) > 0){
-					return 2;
-				}
-			}else{
-				return resp;
-			}
-		}else{
-*/			/* node was successfully added to list. returns 1 on success */
-/*			return 1;
-		}
-	}else{// first value saved
-		if( addNode( sNew_Value, getTime() ) == -1 ){ //this really shouldn't happen. Unable to allocate when memory is empty<-------------------TODO: get time
-			return -1;
-		}else{
-			return 1;
-		}
 
-	}
-	return -5;
-}
-*/
 /************************************************************************/
 /* Removes oldest entry of list											*/
 /* Returns 1 if success.												*/
@@ -264,7 +227,7 @@ int MEM_newDay(){
 		mem.pres.day = 0;
 
 	initPres(mem.pres.day);
-	if(mem.pres.max[mem.pres.day] == 0 && mem.pres.min == 0 && mem.pres.avg == 0 && mem.pres.count == 0)
+	if(mem.pres.max[mem.pres.day] == 0 && mem.pres.min == 2000000 && mem.pres.avg == 0 && mem.pres.count == 0)
 		ret_val+=2;
 	/* end update day pressure */
 
@@ -330,6 +293,8 @@ static void clearMem(){
   for(int i = 0 ; i<7 ; i++)
 	initPres(i);
 }
+
+
 /**
  * MEMORY TEST
  */
@@ -379,4 +344,13 @@ int MEM_test(void){
 	return 1;
 }
 
-
+int MEM_fill(void){
+    // FILLING MEM
+	int i = 0;
+	for(; !mem.status.MEM_FULL; i++){
+		MEM_saveTemp(20.4);
+		MEM_newDay();
+	}
+	
+	return 1;
+}

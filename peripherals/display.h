@@ -30,6 +30,12 @@ TODO:
 #include "../mem.h"
 #include <stdlib.h>
 
+
+typedef struct{
+	unsigned short int counter;
+}display_t;
+
+extern display_t disp;
 /************************************************************************/
 /* Basic drivers (Single screen mem mode)			                    */
 /************************************************************************/

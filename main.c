@@ -24,6 +24,7 @@ program_t sta;
 
 char *time;
 int ms_counter = 0;
+int key_counter = 0;
 char update_time = 0;
 int sec_counter = 0;
 //char cMeasure = 0; deprecated. see sta.status.MEAS
@@ -96,7 +97,7 @@ static void lightSens(){
 static void stationInit(){
 	/* Initialize the SAM system */
 	SystemInit();
-	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
+	
 	RTC_Init(13,30,00,20,15,01,28,1);//should be initialized at welcome screen
 
 	/* start initializing variables */
@@ -116,7 +117,7 @@ static void stationInit(){
 	DISPLAY_init();
 	LIGHTSENS_init();
 	SERVO_init();
-
+	SysTick_Config(84000); // config systick to interrupt w/ 1 interrupt/ms
 	/*Show system test screen for a while*/
 	DISPLAY_writeHeader(1,"System test","00:00");
 	DISPLAY_writeTestingScreen(mem_temp_test(),0,0,MEM_test()); //TODO add the other test results
@@ -144,17 +145,23 @@ int main(void)
 
     stationInit();// initializes station
     //TODO Insert set state and draw date-time screen with void DISPLAY_writeDatetimeScreen(void)
-	time = malloc(8*sizeof(char *));
+	time = malloc(8*sizeof(char));
 	if(time == 0){
-		 //TODO Handle error
+		 MEM_remove();
+		 time = malloc(8*sizeof(char));
 	}
-
+	static char pressed = 0;
 	while (1){
-		unsigned char pressed = Keypad_Read();
-		CTRL_userInput(pressed);
-
+		if(key_counter>100 && pressed == 0){
+			key_counter = 0;
+			pressed = Keypad_Read();
+		}
+		if(pressed != 0){
+			CTRL_userInput(pressed);
+			pressed = 0;
+		}
 		/* -- FIXME Quickfix for ISSUE #10 --- */
-		Delay(40000);
+		//Delay(40000);
 		/*--------------------------------------*/
 
 		/*Readings - if flags are set*/
@@ -211,6 +218,8 @@ void SysTick_Handler(void){
 	measure();
 	ms_counter ++;
 	sec_counter ++;
+	key_counter++;
+	disp.counter++;
 	if((ms_counter >= 100 && !lightsens.state.READING) ){
 	 lightsens.state.READ_REQ = 1;
 	 ms_counter = 0;

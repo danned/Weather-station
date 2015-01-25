@@ -22,13 +22,15 @@ ctrl_t ctrl;
 
 /* Main flow control structure - takes a pressed key val*/
 char CTRL_userInput(char pressed){
+		printf("%d", pressed);
 		if(pressed != 0){
 	      if(pressed <= 5){
 			DISPLAY_clearText();
 	  		DISPLAY_clearGraphics(); //TODO change this to only clear whats necessary
-	        char *date = malloc(10*sizeof(char *)); //TODO change from 15
-			if(date == 0){
-			  return 0;
+	        char *date = malloc(10*sizeof(char)); //TODO change from 15
+			while(date == 0){
+			  MEM_remove();
+			  date = malloc(10*sizeof(char)); //TODO change from 15
 			}
 			//Populate strings with time and date
 			RTC_Get_Time_String(time);
@@ -38,17 +40,20 @@ char CTRL_userInput(char pressed){
 	          case 1:
 		        sta.state = 1;
 		        //Allocate memory for strings to be used
-				char *air = malloc(15*sizeof(char *));
-				if(air == 0){
-				  return 0;
+				char *air = malloc(15*sizeof(char));
+				while(air == 0){
+				  MEM_remove();
+				  air = malloc(15*sizeof(char));
 				}
-			    char *temp = malloc(15*sizeof(char *));
-				if(temp == 0){
-				  return 0;
+			    char *temp = malloc(15*sizeof(char));
+				while(temp == 0){
+				  MEM_remove();
+				  temp = malloc(15*sizeof(char));
 				}
-				char *lux = malloc(15*sizeof(char *));
-				if(lux == 0){
-				  return 0;
+				char *lux = malloc(15*sizeof(char));
+				while(lux == 0){
+					MEM_remove();
+					lux = malloc(15*sizeof(char));
 				}
 
 				//Get current temperature and check towards alarm
@@ -137,9 +142,10 @@ char CTRL_userInput(char pressed){
 					     count++;
 					     temp = temp->next;
 					}
-								char *cur_week_str = malloc(2*sizeof(char *));
-				if(cur_week_str == 0){
-				  return 0;
+								char *cur_week_str = malloc(2*sizeof(char));
+				while(cur_week_str == 0){
+				  MEM_remove();
+				  cur_week_str = malloc(2*sizeof(char));
 				}
 		    	sprintf(cur_week_str, "%2d", cur_week);// Populate string
 		    	DISPLAY_write("Weeks ago:               ",87,0);
@@ -169,9 +175,10 @@ char CTRL_userInput(char pressed){
 					     count++;
 					     temp = temp->next;
 					}
-				char *cur_week_str1 = malloc(3*sizeof(char *));
+				char *cur_week_str1 = malloc(3*sizeof(char));
 				if(cur_week_str1 == 0){
-				  return 0;
+				  MEM_remove();
+				  cur_week_str1 = malloc(3*sizeof(char));
 				}
 		    	sprintf(cur_week_str1, "%2d", cur_week);// Populate string
 		    	DISPLAY_write("Weeks ago:               ",87,0);
@@ -318,9 +325,10 @@ char CTRL_userInput(char pressed){
 			  while(1){
 				pressed = Keypad_Read();
 				if(pressed != 0 && pressed < 11){
-					char *pressed_str = malloc(3*sizeof(char *));
+					char *pressed_str = malloc(3*sizeof(char));
 					if(pressed_str == 0){
-					  return 0;
+					  MEM_remove();
+					  pressed_str = malloc(3*sizeof(char));
 					}
 			    	sprintf(pressed_str, "%d", pressed);// Populate string
 					DISPLAY_write(pressed_str,90,0);
