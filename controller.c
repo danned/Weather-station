@@ -277,8 +277,8 @@ char CTRL_userInput(char pressed){
 				  LIGHTSENS_setState(LIGHTSENS_READ_REQ);
 				  int a = LightFollow();
 				}
-		        //Load test data
-			    if(sta.state == 5){ //If we are in settings screen
+		        //Load test data small
+			    if(sta.state == 5 && !sta.FAST_MODE){ //If we are in settings screen
 					DISPLAY_write("Loading data:",112,1);
 					DISPLAY_write("[          ]",152,1);
 
@@ -309,6 +309,23 @@ char CTRL_userInput(char pressed){
 							MEM_save(1, 110000);
 							MEM_save(39, 90000);
 						    MEM_newDay();
+
+		        	DISPLAY_write("Completed.  ",152,1);
+					Delay(2000000);
+
+				}
+						        //Load test data
+			    else if(sta.state == 5 && sta.FAST_MODE){ //If we are in settings screen
+					DISPLAY_write("Loading data:",112,1);
+					DISPLAY_write("[          ]",152,1);
+
+		        	for (int i = 0; i < 10; i++)
+		        	{
+		        		DISPLAY_write("~",153+i,1);
+						Delay(1000000);
+					}
+					
+					MEM_fill();
 
 		        	DISPLAY_write("Completed.  ",152,1);
 					Delay(2000000);
