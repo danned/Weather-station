@@ -13,10 +13,8 @@ Driver for LCD Display see display.h for more info
 #define LONG_DELAY 100
 #define SHORT_DELAY 20
 extern int key_counter;
-display_t disp;
 /* Initializes PIO for display */
 void DISPLAY_init(void){
-	disp.counter = 0;
   /* TODO INLINE FUNCTION GOES HERE enables clock for PIOC & PIOD */
   *AT91C_PMC_PCER = (3<<13);
 
@@ -262,40 +260,46 @@ void DISPLAY_writeDateSetScreen(void){
 			pressed = Keypad_Read();
 		}
 	if(((pressed > 0 && pressed < 10) || pressed == 11)){
+		if(pressed == 11)
+			pressed = 0;
  		switch(time_entries_done){
 		case 0:
 		case 1:
 			hr = (hr*10)+pressed;
 			sprintf(hr_s,"%2d",hr);
+			DISPLAY_write(hr_s, 94 ,0);
 			time_entries_done++;
 			break;
 		case 2:
 		case 3:
-			sec = (min*10)+pressed;
+			min = (min*10)+pressed;
 			sprintf(min_s,"%2d",min);
+			DISPLAY_write(min_s, 134,0);
 			time_entries_done++;
 		break;
 		case 4:
 		case 5:
-			min = (sec*10)+pressed;
+			sec = (sec*10)+pressed;
 			sprintf(sec_s,"%2d",sec);
+			DISPLAY_write(sec_s, 174,0);
 			time_entries_done++;
 		break;
 	}
 
      
     }
-    DISPLAY_write(hr_s, 94 ,0);
-	DISPLAY_write(min_s, 134,0);
-	DISPLAY_write(sec_s, 174,0);
+    
+	
+	
     
 	pressed = 0;
     }
+  RTC_Init(sec, min,hr, cent, year, month, date, 1); //TODO do day aswell, hardcoded for now
   free(hr_s);
   free(min_s);
   free(sec_s);
   //And write new date amd time to real time clock
-  RTC_Init(sec, min,hr, cent, year, month, date, 1); //TODO do day aswell, hardcoded for now
+  
 }
 
 /*Shows the logged air pressure reading as bar graphs*/

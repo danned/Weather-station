@@ -298,11 +298,15 @@ int MEM_test(void){
 	return 1;
 }
 
-void MEM_fill(void){
+int MEM_fill(void){
     // FILLING MEM
 	int i = 0;
-	for(; !mem.status.MEM_FULL; i++){
+	while(!mem.status.MEM_FULL){
+		MEM_save( rand()%40 , (rand()+95000)%110000 );
+		MEM_save( rand()%40 , (rand()+95000)%110000 );
 		MEM_save( rand()%40 , (rand()+95000)%110000 );
 		MEM_newDay();
+		i++;
 	}
+	return i;
 }

@@ -325,9 +325,16 @@ char CTRL_userInput(char pressed){
 						Delay(1000000);
 					}
 					
-					MEM_fill();
+					int days = MEM_fill();
 
-		        	DISPLAY_write("Completed.  ",152,1);
+					DISPLAY_write("Completed. ",152,1);
+					char *days_s = malloc(10*sizeof(char));
+					if(days_s == 0){
+						MEM_remove();
+						days_s = malloc(10*sizeof(char));
+					}
+					sprintf(days_s,"%d days added",days);
+					DISPLAY_write(days_s,192,1);
 					Delay(2000000);
 
 				}

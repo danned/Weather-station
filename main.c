@@ -190,7 +190,6 @@ void SysTick_Handler(void){
 	ms_counter ++;
 	sec_counter ++;
 	key_counter++;
-	disp.counter++;
 	if((ms_counter >= 100 && !lightsens.state.READING) ){
 	 lightsens.state.READ_REQ = 1;
 	 ms_counter = 0;

@@ -124,10 +124,9 @@ int MEM_newDay();
 
 /************************************************************************/
 /* Fills memory with random data										*/
-/* Returns 1 if success.												*/
-/* Returns -1 if fail													*/
+/* Returns number of days added											*/
 /************************************************************************/
-void MEM_fill(void);
+int MEM_fill(void);
 
 /************************************************************************/
 /* Memory Test															*/
