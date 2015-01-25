@@ -74,7 +74,7 @@ extern mem_t mem;
 int MEM_init( void );
 
 /************************************************************************/
-/* Saves new value at first place in data structure                     */
+/* Saves new value at first place in data structure for temp            */
 /* If there are no more memory, it will remove oldest entry		 		*/
 /* try again.															*/
 /* Return value:														*/
@@ -84,9 +84,27 @@ int MEM_init( void );
 /************************************************************************/
 int MEM_saveTemp(float new_value_f);
 
-
+/************************************************************************/
+/* Updates pressure values of current day						        */
+/* if new meas is less then saved min. Min val is updated				*/
+/* same for max. Avg will hold sum of values until new day event		*/
+/*	count holds number of measurements									*/
+/*  0 Success. No new min, max saved									*/
+/* 	1 Success. new min saved											*/
+/*  2 Success. New Max saved											*/
+/*  3 Success. New Max and Min saved									*/
+/* -1 fail. no value TODO: implement									*/
+/************************************************************************/
 int MEM_savePres(unsigned int new_value_u32);
 
+/************************************************************************/
+/* Updates pressure and temp values of current day				        */
+/*	calls MEM_savePress and MEM_saveTemp								*/
+/* 	1 only temp value saved												*/
+/*  2 only pressure value saved											*/
+/*  3 Success. pressure and temp value saved							*/
+/* -1 fail. unable to save any value									*/
+/************************************************************************/
 int MEM_save(float new_temp_f, unsigned int new_pres_u32);
 
 /************************************************************************/
@@ -97,11 +115,6 @@ int MEM_save(float new_temp_f, unsigned int new_pres_u32);
 int MEM_remove();
 
 
-/**
- * Returns float value of temp stored at node
- */
-mem_temp_t MEM_get( mem_temp_t *node_pr );
-
 /************************************************************************/
 /* Adds new day to linked list											*/
 /* Returns 1 if success.												*/
@@ -109,7 +122,20 @@ mem_temp_t MEM_get( mem_temp_t *node_pr );
 /************************************************************************/
 int MEM_newDay();
 
+/************************************************************************/
+/* Fills memory with random data										*/
+/* Returns 1 if success.												*/
+/* Returns -1 if fail													*/
+/************************************************************************/
+void MEM_fill(void);
 
+/************************************************************************/
+/* Memory Test															*/
+/* Returns 1 if success.												*/
+/* Returns -2 if number of elements is not equal to expected size 		*/
+/* Returns -4 if temp is not saved properly						 		*/
+/* Returns -5 if pressure is not saved properly					 		*/
+/************************************************************************/
 int MEM_test(void);
 
 

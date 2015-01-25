@@ -54,14 +54,9 @@ int MEM_init( void ){
 	}
 
 	mem.temp->next = NULL;
-	initTemp();
-	/*mem.temp->min = 30000;    // If min value is very high, it will be overwritten at first MEM_save
-	mem.temp->max = -30000;   // If max value is very low, it will be overwritten at first MEM_save
-	mem.temp->avg = 0; 		 // initialize avg to 0
-	mem.temp->count = 0;*/
 	mem.temp->date = RTC_getDate();
-
 	/* temp init end */
+	
 	/* pres init start */
 	for(int i = 0; i<7;i++){
 		initPres(i);
@@ -106,7 +101,7 @@ int MEM_saveTemp(float new_val_f){
 
 
 /************************************************************************/
-/* Updates pressure values of current day						                */
+/* Updates pressure values of current day						        */
 /* if new meas is less then saved min. Min val is updated				*/
 /* same for max. Avg will hold sum of values until new day event		*/
 /*	count holds number of measurements									*/
@@ -133,7 +128,14 @@ int MEM_savePres(unsigned int new_val_u32){
 	return ret_val;
 }
 
-
+/************************************************************************/
+/* Updates pressure and temp values of current day				        */
+/*	calls MEM_savePress and MEM_saveTemp								*/
+/* 	1 only temp value saved												*/
+/*  2 only pressure value saved											*/
+/*  3 Success. pressure and temp value saved							*/
+/* -1 fail. unable to save any value									*/
+/************************************************************************/
 int MEM_save(float new_temp_f, unsigned int new_pres_u32){
 	int ret_val = 0;
 	mem.cur_temp = new_temp_f;
@@ -142,6 +144,8 @@ int MEM_save(float new_temp_f, unsigned int new_pres_u32){
 	if(MEM_savePres( new_pres_u32 ) > 0)
 		ret_val += 2;
 
+	if(ret_val == 0)
+		ret_val = -1;
 	return ret_val;
 }
 
@@ -175,16 +179,7 @@ int MEM_remove(){
 	}
 }
 
-/**
- * Returns float value of temp stored at node Completely useless atm. maybe write get function to return object of floats
- */
-mem_temp_t MEM_get( mem_temp_t *node_pr ){
-	//if(node_pr != NULL){
-		return *node_pr;
-	//}else{
-		//return NULL; //TODO: this return should indicate error
-	//}
-}
+
 
 
 
@@ -227,7 +222,7 @@ int MEM_newDay(){
 		mem.pres.day = 0;
 
 	initPres(mem.pres.day);
-	if(mem.pres.max[mem.pres.day] == 0 && mem.pres.min == 2000000 && mem.pres.avg == 0 && mem.pres.count == 0)
+	if(mem.pres.max[mem.pres.day] == 0 && mem.pres.min[mem.pres.day] == 200000 && mem.pres.avg[mem.pres.day] == 0 && mem.pres.count == 0)
 		ret_val+=2;
 	/* end update day pressure */
 
@@ -236,50 +231,9 @@ int MEM_newDay(){
 
 
 /*-------------------------------------------------------------------------------------------------------------------*
- *												INTERNAL FUNCTIONS												     *
- *												  implementations												     *
+ *												INTERNAL FUNCTION												     *
+ *											clears memory for MEM_test									     		 *
  *-------------------------------------------------------------------------------------------------------------------*/
-
-
-
-/************************************************************************/
-/* Adds new node first in list	DEPRECATED								*/
-/* returns																*/
-/* 1 if node successfully added.										*/
-/* -1 if unable to allocate mem (out of memory	)						*/
-/************************************************************************/
-int addNode(short int new_temp, datestamp_t time){
-	mem_temp_t *tmp_node_pr;
-	tmp_node_pr = malloc(sizeof(mem_temp_t));
-
-	if(tmp_node_pr!= NULL){
-		//tmp_node_pr->temp = new_temp;
-		tmp_node_pr->date = time;
-		tmp_node_pr->next = mem.temp;
-		mem.temp = tmp_node_pr;
-		return 1;
-	}else{ //Unable to allocate memory. Handle error
-		return -1;
-	}
-}
-
-
-/************************************************************************/
-/* Returns current time      DEPRECATED                                 */
-/************************************************************************/
-datestamp_t getDate(){
-	/*
-	currTime = RTC_Get_Date();
-	datestamp newStamp;
-	newStamp.date =  currTime.date;	TODO: remove comments
-	newStamp.month = currTime.month;
-	newStamp.year =  currTime.year;*/
-	datestamp_t newStamp;
-	newStamp.date =  1;
-	newStamp.month = 2;
-	newStamp.year =  3;
-	return newStamp;
-}
 
 static void clearMem(){
   while(MEM_remove() < 2);
@@ -325,7 +279,7 @@ int MEM_test(void){
 	}
 	if(count2 != count-1){
 		clearMem();
-	  return -3;
+	  return -2;
 	}
 	if((float)mem.temp->max/100.0 != 20.4 || (float)mem.temp->min/100.0 != 20.4 || (float)mem.temp->avg/100.0 != 20.4){
 		clearMem();
@@ -344,13 +298,11 @@ int MEM_test(void){
 	return 1;
 }
 
-int MEM_fill(void){
+void MEM_fill(void){
     // FILLING MEM
 	int i = 0;
 	for(; !mem.status.MEM_FULL; i++){
-		MEM_saveTemp(20.4);
+		MEM_save( rand()%40 , (rand()+95000)%110000 );
 		MEM_newDay();
 	}
-	
-	return 1;
 }
