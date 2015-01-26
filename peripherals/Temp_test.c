@@ -43,7 +43,7 @@ cTimeToReadTemp = 1; //simulate one systick
 		    temperature.status.READ_READY = 0;
 			float answer = TEMP_get();
 		    //Check that answer is a decent value
-		    if(answer >-20 && answer <60){
+		    if(answer >-5 && answer <50){
 			    passed = 1; //passed
 			    break;
 		    }else{
