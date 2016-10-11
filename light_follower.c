@@ -13,7 +13,6 @@ if(pressed == start){
 	LightFollow();
 
 
-
 }
 ---------------------------
 TODO:
